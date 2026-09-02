@@ -6,6 +6,7 @@ import { Reminders } from "./pages/Reminders";
 import { Settings } from "./pages/Settings";
 import { Profile } from "./pages/Profile";
 import { Chatbot } from "./pages/Chatbot";
+import { WhoIsThis } from "./pages/WhoIsThis";
 
 export const router = createBrowserRouter([
   {
@@ -18,7 +19,7 @@ export const router = createBrowserRouter([
       { path: "settings", Component: Settings },
       { path: "profile", Component: Profile },
       { path: "chatbot", Component: Chatbot },
+      { path: "who-is-this", Component: WhoIsThis },
     ],
   },
 ]);
-

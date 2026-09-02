@@ -11,7 +11,7 @@ export function MainGameGrid() {
       description: "Identify family members & memory photos",
       icon: <Users className="w-8 h-8 sm:w-10 sm:h-10 md:w-11 md:h-11 text-[#FF6584]" />,
       bg: "bg-[#FFF0F3] border-[#FFE0E6] hover:bg-[#FFE4EC]",
-      path: "/profile",
+      path: "/who-is-this",
     },
     {
       id: 2,
