@@ -1,0 +1,10 @@
+{
+  "description": "Designed for elderly users, this offline PWA enhances cognitive skills through engaging games, reminders, and personalized dashboards for caregivers.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}

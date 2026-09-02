@@ -1,0 +1,67 @@
+@import 'tailwindcss';
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap');
+
+@theme {
+  --color-lavender: #CDB4DB;
+  --color-soft-pink: #FFC8DD;
+  --color-rose-pink: #FFAFCC;
+  --color-pale-sky: #BDE0FE;
+  --color-sky-blue: #A2D2FF;
+  --color-off-white: #FAF9F6;
+  --color-charcoal: #2D2D2D;
+
+  --color-background: var(--color-off-white);
+  --color-foreground: var(--color-charcoal);
+
+  --color-primary: var(--color-rose-pink);
+  --color-primary-foreground: var(--color-charcoal);
+  --color-secondary: var(--color-lavender);
+  --color-secondary-foreground: var(--color-charcoal);
+  
+  --color-card: #FFFFFF;
+  --color-card-foreground: var(--color-charcoal);
+
+  --radius-xl: 1.25rem;
+  --radius-2xl: 1.5rem;
+  
+  --font-sans: 'Nunito', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+@layer base {
+  :root {
+    --background: var(--color-off-white);
+    --foreground: var(--color-charcoal);
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    font-size: 20px; /* Base 20px for high legibility */
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* Target sizing */
+button, a, [role="button"] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tap-target {
+  min-height: 48px;
+  min-width: 48px;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+/* Hide scrollbar for IE, Edge and Firefox */
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
