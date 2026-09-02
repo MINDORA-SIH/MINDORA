@@ -58,14 +58,13 @@ export function MainGameGrid() {
   return (
     <div className="space-y-6 md:space-y-8 animate-in fade-in duration-300">
       {/* Greeting Header Section */}
-      <div className="pt-2 text-left">
+      <div className="pt-2 text-center w-full">
         <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-[#1E2445] tracking-tight">
           Welcome Savitri
         </h1>
-        <p className="text-sm sm:text-base md:text-lg text-slate-500 font-medium mt-1.5 leading-snug max-w-sm sm:max-w-md md:max-w-xl">
+        <p className="text-sm sm:text-base md:text-lg text-slate-500 font-medium mt-1.5 leading-snug w-full">
           Choose a daily activity to keep your mind active and healthy.
         </p>
-        <div className="w-10 h-1.5 bg-[#FF6584] rounded-full mt-3"></div>
       </div>
 
       {/* 2-Column on Mobile, 3-Column on Laptop */}

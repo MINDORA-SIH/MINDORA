@@ -1,7 +1,7 @@
-import { Outlet, NavLink, useNavigate } from "react-router";
+import { Outlet, NavLink, useNavigate, useLocation } from "react-router";
 import logoUrl from "./assets/logo.png";
 import { User, HelpCircle, Globe, Gamepad2, BarChart2, Bell, Settings as SettingsIcon, PhoneCall, BookOpen, Mail, Mic, MicOff, X, Volume2, Bot, ChevronDown, Check } from "lucide-react";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { clsx } from "clsx";
 
 export interface Language {
@@ -39,6 +39,19 @@ export function Layout() {
   const [transcript, setTranscript] = useState("");
   const [voiceFeedback, setVoiceFeedback] = useState<string | null>(null);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Track navigation direction for slide animations
+  const routeOrder = ["/", "/dashboard", "/reminders", "/settings", "/profile", "/chatbot", "/who-is-this"];
+  const prevPathRef = useRef(location.pathname);
+  const [slideDirection, setSlideDirection] = useState("page-slide-right");
+
+  useEffect(() => {
+    const prevIndex = routeOrder.indexOf(prevPathRef.current);
+    const currIndex = routeOrder.indexOf(location.pathname);
+    setSlideDirection(currIndex >= prevIndex ? "page-slide-right" : "page-slide-left");
+    prevPathRef.current = location.pathname;
+  }, [location.pathname]);
 
   const handleVoiceCommand = (text: string) => {
     setTranscript(text);
@@ -364,17 +377,21 @@ export function Layout() {
         )}
 
         {/* Main Content Area */}
-        <main className="flex-1 overflow-y-auto px-4 sm:px-6 md:px-10 pt-4 md:pt-6 pb-28 max-w-6xl w-full mx-auto">
-          <Outlet />
+        <main className="flex-1 overflow-y-auto px-4 sm:px-6 md:px-10 pt-4 md:pt-6 pb-28 max-w-6xl w-full mx-auto overflow-x-hidden">
+          <div key={location.pathname} className={slideDirection}>
+            <Outlet />
+          </div>
         </main>
 
-        {/* Bottom Navigation */}
-        <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-6xl bg-white border-t border-slate-100 shadow-[0_-4px_20px_rgba(0,0,0,0.04)] z-40 py-2 px-4 md:px-8">
-          <div className="grid grid-cols-4 items-center max-w-md sm:max-w-lg md:max-w-xl mx-auto">
-            <NavItem to="/" icon={<Gamepad2 size={24} />} label="Games" />
-            <NavItem to="/dashboard" icon={<BarChart2 size={24} />} label="Progress" />
-            <NavItem to="/reminders" icon={<Bell size={24} />} label="Reminders" />
-            <NavItem to="/settings" icon={<SettingsIcon size={24} />} label="Settings" />
+        {/* Floating Glass Bottom Navigation */}
+        <nav className="fixed bottom-4 sm:bottom-5 left-1/2 -translate-x-1/2 z-40 w-[92%] max-w-md sm:max-w-lg group">
+          <div className="bg-[rgba(255,228,236,0.75)] backdrop-blur-xl border border-pink-100/60 shadow-[0_8px_40px_rgba(255,101,132,0.12),0_2px_12px_rgba(0,0,0,0.04)] rounded-[28px] px-3 sm:px-5 py-2.5 sm:py-3 transition-all duration-300 ease-out group-hover:bg-[rgba(255,200,215,0.85)] group-hover:shadow-[0_12px_50px_rgba(255,101,132,0.25),0_4px_16px_rgba(0,0,0,0.06)]">
+            <div className="grid grid-cols-4 items-center">
+              <NavItem to="/" icon={<Gamepad2 size={24} />} label="Games" />
+              <NavItem to="/dashboard" icon={<BarChart2 size={24} />} label="Progress" />
+              <NavItem to="/reminders" icon={<Bell size={24} />} label="Reminders" />
+              <NavItem to="/settings" icon={<SettingsIcon size={24} />} label="Settings" />
+            </div>
           </div>
         </nav>
       </div>
@@ -388,7 +405,7 @@ function NavItem({ to, icon, label }: { to: string; icon: React.ReactNode; label
       to={to}
       className={({ isActive }) =>
         clsx(
-          "flex flex-col items-center justify-center py-1 transition-all flex-1 text-center cursor-pointer",
+          "flex flex-col items-center justify-center py-1.5 px-1 rounded-2xl transition-all duration-300 flex-1 text-center cursor-pointer relative hover:scale-110",
           isActive
             ? "text-[#7C3AED] font-extrabold"
             : "text-slate-400 hover:text-slate-600 font-medium"
@@ -397,14 +414,17 @@ function NavItem({ to, icon, label }: { to: string; icon: React.ReactNode; label
     >
       {({ isActive }) => (
         <>
-          {icon}
-          <span className="text-[11px] sm:text-xs mt-0.5 leading-tight">{label}</span>
           <div
             className={clsx(
-              "w-6 h-0.5 rounded-full mt-0.5 transition-all",
-              isActive ? "bg-[#7C3AED]" : "bg-transparent"
+              "flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300",
+              isActive
+                ? "bg-purple-100/80 shadow-[0_0_12px_rgba(124,58,237,0.25)]"
+                : "bg-transparent"
             )}
-          />
+          >
+            {icon}
+          </div>
+          <span className="text-[10px] sm:text-xs mt-0.5 leading-tight">{label}</span>
         </>
       )}
     </NavLink>
