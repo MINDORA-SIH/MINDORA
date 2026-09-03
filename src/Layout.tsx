@@ -447,12 +447,6 @@ export function Layout() {
                   </div>
                   <span className="font-extrabold text-slate-800 text-lg">Mindora AI</span>
                 </div>
-                <button 
-                  onClick={() => setIsChatOpen(false)}
-                  className="text-slate-400 hover:text-slate-600 p-2 rounded-full hover:bg-slate-100 cursor-pointer hidden"
-                >
-                  <X size={20} />
-                </button>
               </div>
               
               <div className="bg-purple-50 p-4 rounded-2xl border border-purple-100 relative">
