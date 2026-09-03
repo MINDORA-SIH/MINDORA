@@ -1,6 +1,6 @@
 import { Outlet, NavLink, useNavigate, useLocation } from "react-router";
 import logoUrl from "./assets/logo.png";
-import { User, HelpCircle, Globe, Gamepad2, BarChart2, Bell, Settings as SettingsIcon, PhoneCall, BookOpen, Mail, Mic, MicOff, X, Volume2, Bot, ChevronDown, Check, Moon, Sun } from "lucide-react";
+import { User, HelpCircle, Globe, Gamepad2, BarChart2, Bell, Settings as SettingsIcon, PhoneCall, BookOpen, Mail, Mic, MicOff, X, Volume2, Bot, ChevronDown, Check, Moon, Sun, ArrowLeft } from "lucide-react";
 import { useState, useRef, useEffect, useCallback } from "react";
 import { clsx } from "clsx";
 
@@ -56,28 +56,6 @@ export function Layout() {
     setIsHelpOpen(false);
     setVoiceFeedback(null);
   }, []);
-
-  // Global click-outside: close any open popup when clicking outside its container
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      const target = e.target as Node;
-      if (isLangOpen && langRef.current && !langRef.current.contains(target)) {
-        setIsLangOpen(false);
-      }
-      if (isListening && micRef.current && !micRef.current.contains(target)) {
-        setIsListening(false);
-        setVoiceFeedback(null);
-      }
-      if (isChatOpen && chatRef.current && !chatRef.current.contains(target)) {
-        setIsChatOpen(false);
-      }
-      if (isHelpOpen && helpRef.current && !helpRef.current.contains(target)) {
-        setIsHelpOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [isLangOpen, isListening, isChatOpen, isHelpOpen]);
 
   // Track navigation direction for slide animations
   const routeOrder = ["/", "/dashboard", "/reminders", "/settings", "/profile", "/chatbot", "/who-is-this"];
@@ -218,8 +196,7 @@ export function Layout() {
                 </span>
               </NavLink>
 
-              {/* Language Selector Dropdown Pill — below the title */}
-              <div className="relative" ref={langRef}>
+              <div className="relative">
                 <button
                   onClick={() => { if (!isLangOpen) closeAllPopups(); setIsLangOpen(!isLangOpen); }}
                   aria-label="Select Language"
@@ -232,51 +209,6 @@ export function Layout() {
                   <span className="sm:hidden font-extrabold text-slate-800 text-[10px]">{currentLang.code.split("-")[0].toUpperCase()}</span>
                   <ChevronDown size={12} className={clsx("text-slate-400 transition-transform duration-200", isLangOpen && "rotate-180")} />
                 </button>
-
-                {isLangOpen && (
-                  <div className="absolute left-0 top-full mt-2 w-72 sm:w-80 bg-white rounded-2xl shadow-2xl border-2 border-purple-100 p-2.5 z-50 animate-in fade-in zoom-in-95 duration-150">
-                    <div className="px-3 py-2 border-b border-slate-100 flex items-center justify-between">
-                      <span className="text-xs font-extrabold text-slate-600 uppercase tracking-wider">
-                        Select Language / भाषा
-                      </span>
-                      <span className="text-xs font-bold px-2 py-0.5 bg-purple-100 text-purple-700 rounded-md">
-                        {currentLang.code}
-                      </span>
-                    </div>
-
-                    <div className="flex flex-col gap-1.5 mt-1.5 max-h-64 overflow-y-auto">
-                      {LANGUAGES.map((lang) => (
-                        <button
-                          key={lang.code}
-                          onClick={() => {
-                            setCurrentLang(lang);
-                            setIsLangOpen(false);
-                            localStorage.setItem("mindora_lang", JSON.stringify(lang));
-                          }}
-                          className={clsx(
-                            "flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-bold transition-all text-left w-full cursor-pointer min-h-[48px]",
-                            currentLang.code === lang.code
-                              ? "bg-purple-600 text-white shadow-sm"
-                              : "hover:bg-purple-50 text-slate-800"
-                          )}
-                        >
-                          <div className="flex items-center gap-3">
-                            <span className="text-lg">{lang.flag}</span>
-                            <div>
-                              <div className="font-extrabold text-sm sm:text-base">{lang.name}</div>
-                              <div className={clsx("text-xs font-medium", currentLang.code === lang.code ? "text-purple-100" : "text-slate-500")}>
-                                {lang.nativeName}
-                              </div>
-                            </div>
-                          </div>
-                          {currentLang.code === lang.code && (
-                            <Check size={20} className="text-white" />
-                          )}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
               </div>
             </div>
           </div>
@@ -284,128 +216,43 @@ export function Layout() {
           {/* Right Side Header Action Icons */}
           <div className="flex items-center gap-2 sm:gap-3 md:gap-4">
             {/* 1. Mic Button */}
-            <div className="relative" ref={micRef}>
-              <button
-                onClick={() => {
-                  if (!isListening) closeAllPopups();
-                  toggleListening();
-                }}
-                title="Voice Assistant"
-                className={clsx(
-                  "h-11 sm:h-12 px-3.5 sm:px-4 rounded-full border-2 flex items-center gap-2 transition-all cursor-pointer active:scale-95 shadow-xs flex-shrink-0 font-bold text-sm",
-                  isListening
-                    ? "bg-[#FF6584] text-white border-[#FF6584] animate-pulse"
-                    : "bg-[#FFF0F3] hover:bg-[#FFE0E6] border-[#FFE0E6] text-[#FF6584]"
-                )}
-              >
-                {isListening ? <MicOff size={22} /> : <Mic size={22} />}
-                <span className="hidden md:inline font-extrabold">
-                  {isListening ? "Listening..." : "Talk"}
-                </span>
-              </button>
-
-              {/* Voice Assistant Dropdown */}
-              {isListening && (
-                <div className="absolute right-0 top-full mt-2 w-80 bg-white rounded-2xl shadow-2xl border-2 border-pink-200 p-5 flex flex-col items-center gap-4 text-center z-50 animate-in fade-in zoom-in-95 duration-200">
-                  <div className="relative">
-                    <div className="w-14 h-14 rounded-full bg-pink-100 flex items-center justify-center animate-bounce shadow-inner">
-                      <Mic size={28} className="text-[#FF6584]" />
-                    </div>
-                    <div className="absolute -bottom-1 -right-1 bg-white p-1 rounded-full shadow border border-pink-200">
-                      <Volume2 size={12} className="text-[#FF6584] animate-pulse" />
-                    </div>
-                  </div>
-
-                  <div>
-                    <h3 className="font-extrabold text-lg text-slate-800">Voice Assistant</h3>
-                    <p className="text-slate-500 text-xs mt-1 font-medium">
-                      {voiceFeedback || "Listening... Speak a command"}
-                    </p>
-                  </div>
-
-                  {transcript && (
-                    <div className="w-full bg-slate-50 p-3 rounded-xl border border-slate-200 text-slate-800 font-bold text-xs italic">
-                      "{transcript}"
-                    </div>
-                  )}
-
-                  <button
-                    onClick={() => { setIsListening(false); setVoiceFeedback(null); }}
-                    className="w-full py-2.5 bg-slate-800 text-white font-bold rounded-xl hover:bg-slate-900 transition-colors text-sm shadow-xs cursor-pointer"
-                  >
-                    Stop Listening
-                  </button>
-                </div>
+            <button
+              onClick={() => {
+                if (!isListening) closeAllPopups();
+                toggleListening();
+              }}
+              title="Voice Assistant"
+              className={clsx(
+                "h-11 sm:h-12 px-3.5 sm:px-4 rounded-full border-2 flex items-center gap-2 transition-all cursor-pointer active:scale-95 shadow-xs flex-shrink-0 font-bold text-sm",
+                isListening
+                  ? "bg-[#FF6584] text-white border-[#FF6584] animate-pulse"
+                  : "bg-[#FFF0F3] hover:bg-[#FFE0E6] border-[#FFE0E6] text-[#FF6584]"
               )}
-            </div>
+            >
+              {isListening ? <MicOff size={22} /> : <Mic size={22} />}
+              <span className="hidden md:inline font-extrabold">
+                {isListening ? "Listening..." : "Talk"}
+              </span>
+            </button>
 
             {/* 2. Chatbot Button */}
-            <div className="relative" ref={chatRef}>
-              <button
-                onClick={() => { if (!isChatOpen) closeAllPopups(); setIsChatOpen(!isChatOpen); }}
-                title="Mindora AI Assistant"
-                className="h-11 sm:h-12 px-3.5 sm:px-4 rounded-full bg-[#F5F0FF] hover:bg-[#EBE0FF] border-2 border-[#EBE0FF] text-[#9333EA] flex items-center gap-2 transition-all cursor-pointer active:scale-95 shadow-xs flex-shrink-0 font-bold text-sm"
-              >
-                <Bot size={22} />
-                <span className="hidden md:inline font-extrabold">Chatbot</span>
-              </button>
-
-              {isChatOpen && (
-                <div className="absolute right-0 top-full mt-2 w-80 bg-white rounded-2xl shadow-2xl border-2 border-purple-100 p-4 flex flex-col gap-3.5 z-50 animate-in fade-in duration-150">
-                  <div className="flex items-center justify-between border-b border-purple-100 pb-2.5">
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-8 h-8 rounded-full bg-purple-600 text-white flex items-center justify-center">
-                        <Bot size={18} />
-                      </div>
-                      <span className="font-extrabold text-slate-800 text-base">Mindora AI Assistant</span>
-                    </div>
-                    <button 
-                      onClick={() => setIsChatOpen(false)}
-                      className="text-slate-400 hover:text-slate-600 p-1.5 rounded-full hover:bg-slate-100 cursor-pointer"
-                    >
-                      <X size={18} />
-                    </button>
-                  </div>
-                  <p className="text-sm font-medium text-slate-600 leading-snug">
-                    Hi Savitri! Ask me anything about your activities, schedule, or brain health tips.
-                  </p>
-                  <button
-                    onClick={() => {
-                      setIsChatOpen(false);
-                      navigate("/chatbot");
-                    }}
-                    className="w-full py-3 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl transition-all shadow-sm text-center flex items-center justify-center gap-2 text-sm cursor-pointer min-h-[48px]"
-                  >
-                    <Bot size={18} /> Open Mindora AI Chatbot
-                  </button>
-                </div>
-              )}
-            </div>
+            <button
+              onClick={() => { if (!isChatOpen) closeAllPopups(); setIsChatOpen(!isChatOpen); }}
+              title="Mindora AI Assistant"
+              className="h-11 sm:h-12 px-3.5 sm:px-4 rounded-full bg-[#F5F0FF] hover:bg-[#EBE0FF] border-2 border-[#EBE0FF] text-[#9333EA] flex items-center gap-2 transition-all cursor-pointer active:scale-95 shadow-xs flex-shrink-0 font-bold text-sm"
+            >
+              <Bot size={22} />
+              <span className="hidden md:inline font-extrabold">Chatbot</span>
+            </button>
 
             {/* 3. Help Button */}
-            <div className="relative" ref={helpRef}>
-              <button
-                onClick={() => { if (!isHelpOpen) closeAllPopups(); setIsHelpOpen(!isHelpOpen); }}
-                title="Help & Support"
-                className="h-11 w-11 sm:h-12 sm:w-12 rounded-full bg-[#F0F7FF] hover:bg-[#E0F0FF] border-2 border-[#E0F0FF] text-[#3B82F6] flex items-center justify-center transition-all cursor-pointer active:scale-95 shadow-xs flex-shrink-0"
-              >
-                <HelpCircle size={22} />
-              </button>
-
-              {isHelpOpen && (
-                <div className="absolute right-0 top-full mt-2 w-64 bg-white rounded-2xl shadow-2xl border-2 border-blue-100 p-2.5 flex flex-col gap-2 z-50">
-                  <button className="flex items-center gap-3 p-3.5 rounded-xl bg-pink-50 hover:bg-pink-100 font-extrabold text-sm text-slate-800 transition-colors w-full text-left cursor-pointer min-h-[48px]">
-                    <PhoneCall size={22} className="text-pink-500 flex-shrink-0" /> Call Caretaker
-                  </button>
-                  <button className="flex items-center gap-3 p-3.5 rounded-xl bg-blue-50 hover:bg-blue-100 font-extrabold text-sm text-slate-800 transition-colors w-full text-left cursor-pointer min-h-[48px]">
-                    <BookOpen size={22} className="text-blue-500 flex-shrink-0" /> Tutorial
-                  </button>
-                  <button className="flex items-center gap-3 p-3.5 rounded-xl bg-purple-50 hover:bg-purple-100 font-extrabold text-sm text-slate-800 transition-colors w-full text-left cursor-pointer min-h-[48px]">
-                    <Mail size={22} className="text-purple-500 flex-shrink-0" /> Contact Support
-                  </button>
-                </div>
-              )}
-            </div>
+            <button
+              onClick={() => { if (!isHelpOpen) closeAllPopups(); setIsHelpOpen(!isHelpOpen); }}
+              title="Help & Support"
+              className="h-11 w-11 sm:h-12 sm:w-12 rounded-full bg-[#F0F7FF] hover:bg-[#E0F0FF] border-2 border-[#E0F0FF] text-[#3B82F6] flex items-center justify-center transition-all cursor-pointer active:scale-95 shadow-xs flex-shrink-0"
+            >
+              <HelpCircle size={22} />
+            </button>
 
             {/* 4. Dark Mode Toggle */}
             {isWide && (
@@ -461,6 +308,220 @@ export function Layout() {
             </div>
           </div>
         </nav>
+
+        {/* Global Root-Level Popups */}
+
+        {/* 1. Language Popup */}
+        {isLangOpen && (
+          <div 
+            className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm transition-all"
+            onClick={() => setIsLangOpen(false)}
+          >
+            <div 
+              className="w-full max-w-sm bg-white rounded-3xl shadow-2xl border-2 border-purple-100 p-4 sm:p-5 animate-in fade-in zoom-in-95 duration-200"
+              onClick={e => e.stopPropagation()}
+            >
+              <div className="flex items-center gap-3 border-b border-slate-100 pb-3 mb-3">
+                <button 
+                  onClick={() => setIsLangOpen(false)}
+                  className="p-2 rounded-full hover:bg-slate-100 text-slate-500 transition-colors cursor-pointer"
+                >
+                  <ArrowLeft size={24} />
+                </button>
+                <div className="flex-1 flex items-center justify-between">
+                  <h3 className="text-lg font-extrabold text-slate-800 tracking-tight">
+                    Select Language / भाषा
+                  </h3>
+                  <span className="text-xs font-bold px-2.5 py-1 bg-purple-100 text-purple-700 rounded-md">
+                    {currentLang.code}
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-2 max-h-[60vh] overflow-y-auto pr-1 custom-scrollbar">
+                {LANGUAGES.map((lang) => (
+                  <button
+                    key={lang.code}
+                    onClick={() => {
+                      setCurrentLang(lang);
+                      setIsLangOpen(false);
+                      localStorage.setItem("mindora_lang", JSON.stringify(lang));
+                    }}
+                    className={clsx(
+                      "flex items-center justify-between px-4 py-3 rounded-2xl text-sm font-bold transition-all text-left w-full cursor-pointer border-2",
+                      currentLang.code === lang.code
+                        ? "bg-purple-600 border-purple-600 text-white shadow-md"
+                        : "bg-slate-50 border-transparent hover:bg-purple-50 hover:border-purple-200 text-slate-800"
+                    )}
+                  >
+                    <div className="flex items-center gap-4">
+                      <span className="text-2xl">{lang.flag}</span>
+                      <div>
+                        <div className="font-extrabold text-base">{lang.name}</div>
+                        <div className={clsx("text-xs font-medium mt-0.5", currentLang.code === lang.code ? "text-purple-200" : "text-slate-500")}>
+                          {lang.nativeName}
+                        </div>
+                      </div>
+                    </div>
+                    {currentLang.code === lang.code && (
+                      <Check size={24} className="text-white" />
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* 2. Voice Assistant Popup */}
+        {isListening && (
+          <div 
+            className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm transition-all"
+            onClick={() => { setIsListening(false); setVoiceFeedback(null); }}
+          >
+            <div 
+              className="w-full max-w-sm bg-white rounded-3xl shadow-2xl border-2 border-pink-200 p-6 flex flex-col items-center gap-5 text-center animate-in fade-in zoom-in-95 duration-200"
+              onClick={e => e.stopPropagation()}
+            >
+              <div className="w-full flex justify-start -mb-2">
+                <button 
+                  onClick={() => { setIsListening(false); setVoiceFeedback(null); }}
+                  className="p-2 -ml-2 rounded-full hover:bg-slate-100 text-slate-500 transition-colors cursor-pointer"
+                >
+                  <ArrowLeft size={24} />
+                </button>
+              </div>
+
+              <div className="relative mt-2">
+                <div className="w-20 h-20 rounded-full bg-pink-100 flex items-center justify-center animate-bounce shadow-inner border-4 border-white">
+                  <Mic size={36} className="text-[#FF6584]" />
+                </div>
+                <div className="absolute -bottom-2 -right-2 bg-white p-2 rounded-full shadow border-2 border-pink-200">
+                  <Volume2 size={16} className="text-[#FF6584] animate-pulse" />
+                </div>
+              </div>
+
+              <div>
+                <h3 className="font-extrabold text-2xl text-slate-800">Voice Assistant</h3>
+                <p className="text-slate-500 text-sm mt-1.5 font-medium">
+                  {voiceFeedback || "Listening... Speak a command"}
+                </p>
+              </div>
+
+              {transcript && (
+                <div className="w-full bg-slate-50 p-4 rounded-2xl border-2 border-slate-100 text-slate-800 font-bold text-sm italic">
+                  "{transcript}"
+                </div>
+              )}
+
+              <button
+                onClick={() => { setIsListening(false); setVoiceFeedback(null); }}
+                className="w-full py-3.5 bg-slate-800 text-white font-extrabold text-base rounded-2xl hover:bg-slate-900 transition-colors shadow-md cursor-pointer mt-2"
+              >
+                Stop Listening
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* 3. Chatbot Popup */}
+        {isChatOpen && (
+          <div 
+            className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm transition-all"
+            onClick={() => setIsChatOpen(false)}
+          >
+            <div 
+              className="w-full max-w-sm bg-white rounded-3xl shadow-2xl border-2 border-purple-200 p-6 flex flex-col gap-5 animate-in fade-in zoom-in-95 duration-200"
+              onClick={e => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between border-b border-purple-100 pb-4">
+                <div className="flex items-center gap-3">
+                  <button 
+                    onClick={() => setIsChatOpen(false)}
+                    className="p-2 -ml-2 rounded-full hover:bg-slate-100 text-slate-500 transition-colors cursor-pointer"
+                  >
+                    <ArrowLeft size={24} />
+                  </button>
+                  <div className="w-10 h-10 rounded-full bg-purple-600 text-white flex items-center justify-center shadow-sm">
+                    <Bot size={22} />
+                  </div>
+                  <span className="font-extrabold text-slate-800 text-lg">Mindora AI</span>
+                </div>
+                <button 
+                  onClick={() => setIsChatOpen(false)}
+                  className="text-slate-400 hover:text-slate-600 p-2 rounded-full hover:bg-slate-100 cursor-pointer hidden"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+              
+              <div className="bg-purple-50 p-4 rounded-2xl border border-purple-100 relative">
+                <div className="absolute -top-2 left-6 w-4 h-4 bg-purple-50 border-t border-l border-purple-100 rotate-45"></div>
+                <p className="text-base font-bold text-purple-900 leading-snug relative z-10">
+                  Hi Savitri! Ask me anything about your activities, schedule, or brain health tips.
+                </p>
+              </div>
+              
+              <button
+                onClick={() => {
+                  setIsChatOpen(false);
+                  navigate("/chatbot");
+                }}
+                className="w-full py-4 bg-purple-600 hover:bg-purple-700 text-white font-extrabold rounded-2xl transition-all shadow-md text-center flex items-center justify-center gap-2 text-base cursor-pointer mt-2"
+              >
+                <Bot size={22} /> Open Chat
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* 4. Help Popup */}
+        {isHelpOpen && (
+          <div 
+            className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm transition-all"
+            onClick={() => setIsHelpOpen(false)}
+          >
+            <div 
+              className="w-full max-w-sm bg-white rounded-3xl shadow-2xl border-2 border-blue-200 p-5 flex flex-col animate-in fade-in zoom-in-95 duration-200"
+              onClick={e => e.stopPropagation()}
+            >
+              <div className="flex items-center gap-3 border-b border-slate-100 pb-3 mb-4">
+                <button 
+                  onClick={() => setIsHelpOpen(false)}
+                  className="p-2 -ml-2 rounded-full hover:bg-slate-100 text-slate-500 transition-colors cursor-pointer"
+                >
+                  <ArrowLeft size={24} />
+                </button>
+                <h3 className="text-lg font-extrabold text-slate-800 tracking-tight flex items-center gap-2">
+                  <HelpCircle size={22} className="text-blue-500" /> Help & Support
+                </h3>
+              </div>
+              
+              <div className="flex flex-col gap-3">
+                <button className="flex items-center gap-4 p-4 rounded-2xl bg-pink-50 hover:bg-pink-100 font-extrabold text-base text-slate-800 transition-all w-full text-left cursor-pointer border border-transparent hover:border-pink-200">
+                  <div className="w-12 h-12 rounded-full bg-pink-100 flex items-center justify-center shrink-0">
+                    <PhoneCall size={24} className="text-pink-600" />
+                  </div>
+                  <span>Call Caretaker</span>
+                </button>
+                
+                <button className="flex items-center gap-4 p-4 rounded-2xl bg-blue-50 hover:bg-blue-100 font-extrabold text-base text-slate-800 transition-all w-full text-left cursor-pointer border border-transparent hover:border-blue-200">
+                  <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center shrink-0">
+                    <BookOpen size={24} className="text-blue-600" />
+                  </div>
+                  <span>App Tutorial</span>
+                </button>
+                
+                <button className="flex items-center gap-4 p-4 rounded-2xl bg-purple-50 hover:bg-purple-100 font-extrabold text-base text-slate-800 transition-all w-full text-left cursor-pointer border border-transparent hover:border-purple-200">
+                  <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center shrink-0">
+                    <Mail size={24} className="text-purple-600" />
+                  </div>
+                  <span>Contact Support</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
   );
 }
