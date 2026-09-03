@@ -259,7 +259,7 @@ export function Layout() {
             >
               {isListening ? <MicOff size={22} /> : <Mic size={22} />}
               <span className="hidden md:inline font-extrabold">
-                {isListening ? "Listening..." : "Mic"}
+                {isListening ? "Listening..." : "Talk"}
               </span>
             </button>
 
@@ -311,10 +311,9 @@ export function Layout() {
               <button
                 onClick={() => setIsHelpOpen(!isHelpOpen)}
                 title="Help & Support"
-                className="h-11 sm:h-12 px-3.5 sm:px-4 rounded-full bg-[#F0F7FF] hover:bg-[#E0F0FF] border-2 border-[#E0F0FF] text-[#3B82F6] flex items-center gap-2 transition-all cursor-pointer active:scale-95 shadow-xs flex-shrink-0 font-bold text-sm"
+                className="h-11 w-11 sm:h-12 sm:w-12 rounded-full bg-[#F0F7FF] hover:bg-[#E0F0FF] border-2 border-[#E0F0FF] text-[#3B82F6] flex items-center justify-center transition-all cursor-pointer active:scale-95 shadow-xs flex-shrink-0"
               >
                 <HelpCircle size={22} />
-                <span className="hidden md:inline font-extrabold">Help</span>
               </button>
 
               {isHelpOpen && (
@@ -338,16 +337,17 @@ export function Layout() {
                 onClick={() => setDarkMode(!darkMode)}
                 title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
                 className={clsx(
-                  "h-11 sm:h-12 px-3.5 sm:px-4 rounded-full border-2 flex items-center gap-2 transition-all cursor-pointer active:scale-95 shadow-xs flex-shrink-0 font-bold text-sm",
+                  "h-11 w-11 sm:h-12 sm:w-12 rounded-full border-2 flex items-center justify-center transition-all cursor-pointer active:scale-95 shadow-xs flex-shrink-0",
                   darkMode
                     ? "bg-slate-700 hover:bg-slate-600 border-slate-600 text-slate-200"
-                    : "bg-slate-100 hover:bg-slate-200 border-slate-200 text-slate-700"
+                    : "bg-slate-100 hover:bg-slate-200 border-slate-200 text-slate-700",
                 )}
               >
-                {darkMode ? <Sun size={22} className="text-amber-500" /> : <Moon size={22} className="text-indigo-500" />}
-                <span className="hidden md:inline font-extrabold">
-                  {darkMode ? "Light" : "Dark"}
-                </span>
+                {darkMode ? (
+                  <Sun size={22} className="text-amber-500" />
+                ) : (
+                  <Moon size={22} className="text-indigo-500" />
+                )}
               </button>
             )}
 
@@ -355,10 +355,9 @@ export function Layout() {
             <NavLink
               to="/profile"
               title="Profile"
-              className="h-11 sm:h-12 px-3 sm:px-4 rounded-full bg-slate-100 hover:bg-slate-200 border-2 border-slate-200 text-slate-700 flex items-center gap-2 transition-all cursor-pointer active:scale-95 shadow-xs flex-shrink-0 font-bold text-sm"
+              className="h-11 w-11 sm:h-12 sm:w-12 rounded-full bg-slate-100 hover:bg-slate-200 border-2 border-slate-200 text-slate-700 flex items-center justify-center transition-all cursor-pointer active:scale-95 shadow-xs flex-shrink-0"
             >
               <User size={22} />
-              <span className="hidden md:inline font-extrabold">Profile</span>
             </NavLink>
           </div>
         </header>
