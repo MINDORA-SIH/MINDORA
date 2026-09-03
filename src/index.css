@@ -1,5 +1,5 @@
-@import 'tailwindcss';
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap');
+@import 'tailwindcss';
 
 @theme {
   --color-lavender: #CDB4DB;
@@ -31,6 +31,25 @@
   :root {
     --background: var(--color-off-white);
     --foreground: var(--color-charcoal);
+    --card-bg: #FFFFFF;
+    --header-bg: #FFFFFF;
+    --header-border: #f1f5f9;
+    --surface: #FFFFFF;
+    --surface-hover: #f8fafc;
+    --muted: #64748b;
+    --border: #e2e8f0;
+  }
+
+  .dark {
+    --background: #0f172a;
+    --foreground: #e2e8f0;
+    --card-bg: #1e293b;
+    --header-bg: #1e293b;
+    --header-border: #334155;
+    --surface: #1e293b;
+    --surface-hover: #334155;
+    --muted: #94a3b8;
+    --border: #334155;
   }
 
   body {
@@ -41,6 +60,7 @@
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
 }
 
@@ -95,4 +115,154 @@ button, a, [role="button"] {
 
 .page-slide-left {
   animation: slide-in-left 0.3s ease-out both;
+}
+
+/* ═══════════════════════════════════════════
+   Dark Mode Global Overrides
+   Targets hardcoded colors across all pages
+   ═══════════════════════════════════════════ */
+
+/* All elements transition smoothly */
+.dark * {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* White backgrounds → dark surface */
+.dark .bg-white {
+  background-color: var(--card-bg) !important;
+}
+
+.dark .bg-\[\#FFF9FA\],
+.dark .bg-\[\#FFF5F7\] {
+  background-color: var(--background) !important;
+}
+
+/* Game grid card backgrounds */
+.dark .bg-\[\#FFF0F3\] { background-color: #3b1f2b !important; }
+.dark .bg-\[\#F0F7FF\] { background-color: #1e2a3b !important; }
+.dark .bg-\[\#F5F0FF\] { background-color: #2a1e3b !important; }
+.dark .bg-\[\#FFF5EE\] { background-color: #3b2e1e !important; }
+.dark .bg-\[\#F0FDF4\] { background-color: #1e3b2a !important; }
+.dark .bg-\[\#F3F0FF\] { background-color: #291e3b !important; }
+
+/* Card hover states */
+.dark .hover\:bg-\[\#FFE4EC\]:hover { background-color: #4a2838 !important; }
+.dark .hover\:bg-\[\#E2F0FF\]:hover { background-color: #263a52 !important; }
+.dark .hover\:bg-\[\#EBE0FF\]:hover { background-color: #382a52 !important; }
+.dark .hover\:bg-\[\#FFEADF\]:hover { background-color: #523a26 !important; }
+.dark .hover\:bg-\[\#DCFCE7\]:hover { background-color: #264a32 !important; }
+.dark .hover\:bg-\[\#E7E0FF\]:hover { background-color: #352a52 !important; }
+
+/* Card borders */
+.dark .border-\[\#FFE0E6\] { border-color: #5c2d3d !important; }
+.dark .border-\[\#E0F0FF\] { border-color: #2d4a5c !important; }
+.dark .border-\[\#EBE0FF\] { border-color: #3d2d5c !important; }
+.dark .border-\[\#FFE5D8\] { border-color: #5c3d2d !important; }
+.dark .border-\[\#DCFCE7\] { border-color: #2d5c3d !important; }
+.dark .border-\[\#E5E0FF\] { border-color: #3a2d5c !important; }
+
+/* Text colors */
+.dark .text-\[\#1E2445\] {
+  color: #e2e8f0 !important;
+}
+
+.dark .text-charcoal {
+  color: #e2e8f0 !important;
+}
+
+.dark .text-slate-500 {
+  color: #94a3b8 !important;
+}
+
+.dark .text-slate-800 {
+  color: #e2e8f0 !important;
+}
+
+.dark .text-slate-700 {
+  color: #cbd5e1 !important;
+}
+
+.dark .text-slate-600 {
+  color: #94a3b8 !important;
+}
+
+/* Off-white backgrounds */
+.dark .bg-off-white {
+  background-color: #1a2332 !important;
+}
+
+/* Slate backgrounds */
+.dark .bg-slate-100 {
+  background-color: #334155 !important;
+}
+
+.dark .bg-slate-50 {
+  background-color: #1e293b !important;
+}
+
+/* Border overrides */
+.dark .border-slate-100,
+.dark .border-slate-200 {
+  border-color: #334155 !important;
+}
+
+.dark .border-pink-100,
+.dark .border-pink-200 {
+  border-color: #5c2d3d !important;
+}
+
+.dark .border-purple-100,
+.dark .border-purple-200 {
+  border-color: #3d2d5c !important;
+}
+
+/* Lavender borders and backgrounds in dark mode */
+.dark .border-lavender\/40 {
+  border-color: rgba(100, 70, 120, 0.4) !important;
+}
+
+.dark .bg-lavender\/20 {
+  background-color: rgba(80, 50, 100, 0.2) !important;
+}
+
+/* Soft-pink and pale-sky overrides */
+.dark .border-soft-pink\/40 {
+  border-color: rgba(120, 60, 80, 0.4) !important;
+}
+
+.dark .border-pale-sky\/40 {
+  border-color: rgba(60, 80, 120, 0.4) !important;
+}
+
+/* Settings page backgrounds */
+.dark .bg-purple-50,
+.dark .bg-purple-50\/50 {
+  background-color: rgba(60, 30, 80, 0.3) !important;
+}
+
+.dark .bg-pink-50 {
+  background-color: rgba(80, 30, 50, 0.3) !important;
+}
+
+.dark .bg-blue-50 {
+  background-color: rgba(30, 50, 80, 0.3) !important;
+}
+
+/* Input and select elements */
+.dark input,
+.dark select,
+.dark textarea {
+  background-color: #1e293b !important;
+  color: #e2e8f0 !important;
+  border-color: #475569 !important;
+}
+
+.dark input::placeholder {
+  color: #64748b !important;
+}
+
+/* Shadow adjustments */
+.dark .shadow-sm,
+.dark .shadow-xs {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3) !important;
 }

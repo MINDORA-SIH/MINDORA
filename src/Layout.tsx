@@ -1,6 +1,6 @@
 import { Outlet, NavLink, useNavigate, useLocation } from "react-router";
 import logoUrl from "./assets/logo.png";
-import { User, HelpCircle, Globe, Gamepad2, BarChart2, Bell, Settings as SettingsIcon, PhoneCall, BookOpen, Mail, Mic, MicOff, X, Volume2, Bot, ChevronDown, Check } from "lucide-react";
+import { User, HelpCircle, Globe, Gamepad2, BarChart2, Bell, Settings as SettingsIcon, PhoneCall, BookOpen, Mail, Mic, MicOff, X, Volume2, Bot, ChevronDown, Check, Moon, Sun } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { clsx } from "clsx";
 
@@ -36,6 +36,7 @@ export function Layout() {
   });
 
   const [isListening, setIsListening] = useState(false);
+  const [darkMode, setDarkMode] = useState(() => localStorage.getItem("mindora_dark") === "true");
   const [transcript, setTranscript] = useState("");
   const [voiceFeedback, setVoiceFeedback] = useState<string | null>(null);
   const navigate = useNavigate();
@@ -45,6 +46,19 @@ export function Layout() {
   const routeOrder = ["/", "/dashboard", "/reminders", "/settings", "/profile", "/chatbot", "/who-is-this"];
   const prevPathRef = useRef(location.pathname);
   const [slideDirection, setSlideDirection] = useState("page-slide-right");
+  const [isWide, setIsWide] = useState(() => window.innerWidth > 600);
+
+  useEffect(() => {
+    const handleResize = () => setIsWide(window.innerWidth > 600);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  // Apply dark mode class to <html> element and persist
+  useEffect(() => {
+    document.documentElement.classList.toggle("dark", darkMode);
+    localStorage.setItem("mindora_dark", String(darkMode));
+  }, [darkMode]);
 
   useEffect(() => {
     const prevIndex = routeOrder.indexOf(prevPathRef.current);
@@ -148,10 +162,10 @@ export function Layout() {
   };
 
   return (
-      <div className="w-full min-h-screen bg-white flex flex-col relative">
+      <div className="w-full min-h-screen flex flex-col relative transition-colors duration-300" style={{ backgroundColor: "var(--card-bg)", color: "var(--foreground)" }}>
         
         {/* Header */}
-        <header className="bg-white border-b border-slate-100 px-4 sm:px-6 md:px-8 py-3.5 flex items-center justify-between sticky top-0 z-50 shadow-xs">
+        <header className="px-4 sm:px-6 md:px-8 py-3.5 flex items-center justify-between sticky top-0 z-50 shadow-xs transition-colors duration-300" style={{ backgroundColor: "var(--header-bg)", borderBottom: "1px solid var(--header-border)" }}>
           {/* Left Side: MINDORA Logo + Brand Title + Language underneath */}
           <div className="flex items-center gap-3 md:gap-4">
             <NavLink to="/" className="flex items-center gap-2.5 hover:opacity-90 transition-opacity flex-shrink-0">
@@ -162,7 +176,7 @@ export function Layout() {
 
             <div className="flex flex-col gap-1">
               <NavLink to="/" className="hover:opacity-90 transition-opacity">
-                <span className="font-extrabold text-xl sm:text-2xl tracking-tight text-[#1E2445] leading-none">
+                <span className="font-extrabold text-xl sm:text-2xl tracking-tight leading-none" style={{ color: "var(--foreground)" }}>
                   MINDORA
                 </span>
               </NavLink>
@@ -318,7 +332,24 @@ export function Layout() {
               )}
             </div>
 
-            {/* 4. Profile Button */}
+            {/* 4. Dark Mode Toggle */}
+            <button
+              onClick={() => setDarkMode(!darkMode)}
+              title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
+              className={clsx(
+                "h-11 sm:h-12 px-3.5 sm:px-4 rounded-full border-2 flex items-center gap-2 transition-all cursor-pointer active:scale-95 shadow-xs flex-shrink-0 font-bold text-sm",
+                darkMode
+                  ? "bg-slate-700 hover:bg-slate-600 border-slate-600 text-slate-200"
+                  : "bg-slate-100 hover:bg-slate-200 border-slate-200 text-slate-700"
+              )}
+            >
+              {darkMode ? <Sun size={22} className="text-amber-500" /> : <Moon size={22} className="text-indigo-500" />}
+              <span className="hidden md:inline font-extrabold">
+                {darkMode ? "Light" : "Dark"}
+              </span>
+            </button>
+
+            {/* 5. Profile Button */}
             <NavLink
               to="/profile"
               title="Profile"
@@ -377,13 +408,18 @@ export function Layout() {
         {/* Main Content Area */}
         <main className="flex-1 overflow-y-auto px-4 sm:px-6 md:px-10 pt-4 md:pt-6 pb-28 max-w-6xl w-full mx-auto overflow-x-hidden">
           <div key={location.pathname} className={slideDirection}>
-            <Outlet />
+            <Outlet context={{ darkMode, setDarkMode }} />
           </div>
         </main>
 
         {/* Floating Glass Bottom Navigation */}
         <nav className="fixed bottom-4 sm:bottom-5 left-1/2 -translate-x-1/2 z-40 w-[92%] max-w-md sm:max-w-lg group">
-          <div className="bg-[rgba(255,228,236,0.75)] backdrop-blur-xl border border-pink-100/60 shadow-[0_8px_40px_rgba(255,101,132,0.12),0_2px_12px_rgba(0,0,0,0.04)] rounded-[28px] px-3 sm:px-5 py-2.5 sm:py-3 transition-all duration-300 ease-out group-hover:bg-[rgba(255,200,215,0.85)] group-hover:shadow-[0_12px_50px_rgba(255,101,132,0.25),0_4px_16px_rgba(0,0,0,0.06)]">
+          <div className={clsx(
+            "backdrop-blur-xl border shadow-[0_8px_40px_rgba(255,101,132,0.12),0_2px_12px_rgba(0,0,0,0.04)] rounded-[28px] px-3 sm:px-5 py-2.5 sm:py-3 transition-all duration-300 ease-out",
+            darkMode
+              ? "bg-[rgba(30,41,59,0.85)] border-slate-700/60 group-hover:bg-[rgba(30,41,59,0.95)]"
+              : "bg-[rgba(255,228,236,0.75)] border-pink-100/60 group-hover:bg-[rgba(255,200,215,0.85)] group-hover:shadow-[0_12px_50px_rgba(255,101,132,0.25),0_4px_16px_rgba(0,0,0,0.06)]"
+          )}>
             <div className="grid grid-cols-4 items-center">
               <NavItem to="/" icon={<Gamepad2 size={24} />} label="Games" />
               <NavItem to="/dashboard" icon={<BarChart2 size={24} />} label="Progress" />

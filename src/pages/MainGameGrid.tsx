@@ -59,10 +59,10 @@ export function MainGameGrid() {
     <div className="space-y-6 md:space-y-8 animate-in fade-in duration-300">
       {/* Greeting Header Section */}
       <div className="pt-2 text-center w-full">
-        <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-[#1E2445] tracking-tight">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight" style={{ color: "var(--foreground)" }}>
           Welcome Savitri
         </h1>
-        <p className="text-sm sm:text-base md:text-lg text-slate-500 font-medium mt-1.5 leading-snug w-full">
+        <p className="text-sm sm:text-base md:text-lg font-medium mt-1.5 leading-snug w-full" style={{ color: "var(--muted)" }}>
           Choose a daily activity to keep your mind active and healthy.
         </p>
       </div>
@@ -78,10 +78,10 @@ export function MainGameGrid() {
             <div className="w-14 h-14 sm:w-18 sm:h-18 md:w-20 md:h-20 bg-white rounded-full flex items-center justify-center shadow-xs mb-3 md:mb-4 transition-transform group-hover:scale-110">
               {game.icon}
             </div>
-            <h2 className="text-sm sm:text-base md:text-xl font-extrabold text-[#1E2445] leading-tight px-1">
+            <h2 className="text-sm sm:text-base md:text-xl font-extrabold leading-tight px-1" style={{ color: "var(--foreground)" }}>
               {game.title}
             </h2>
-            <p className="text-xs md:text-sm text-slate-500 font-medium mt-1 leading-snug hidden md:block px-2">
+            <p className="text-xs md:text-sm font-medium mt-1 leading-snug hidden md:block px-2" style={{ color: "var(--muted)" }}>
               {game.description}
             </p>
           </button>
@@ -91,4 +91,4 @@ export function MainGameGrid() {
   );
 }
 
-
+export default MainGameGrid;

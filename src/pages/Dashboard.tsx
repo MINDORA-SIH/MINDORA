@@ -4,20 +4,20 @@ export function Dashboard() {
   return (
     <div className="space-y-8 max-w-4xl mx-auto animate-in fade-in duration-500">
       <header className="pt-4 pb-2">
-        <h1 className="text-4xl md:text-5xl font-extrabold text-charcoal mb-4">
+        <h1 className="text-4xl md:text-5xl font-extrabold mb-4" style={{ color: "var(--foreground)" }}>
           Your Progress
         </h1>
-        <p className="text-2xl text-charcoal/80 font-medium">
+        <p className="text-2xl font-medium" style={{ color: "var(--muted)" }}>
           See how well you are doing with your daily exercises.
         </p>
       </header>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Cognitive Skill Breakdown */}
-        <div className="bg-white rounded-3xl p-8 border-4 border-pale-sky/40 shadow-sm flex flex-col gap-6">
+        <div className="rounded-3xl p-8 border-4 border-pale-sky/40 shadow-sm flex flex-col gap-6" style={{ backgroundColor: "var(--card-bg)" }}>
           <div className="flex items-center gap-4">
             <BrainCircuit size={40} className="text-sky-blue" />
-            <h2 className="text-3xl font-bold">Skills</h2>
+            <h2 className="text-3xl font-bold" style={{ color: "var(--foreground)" }}>Skills</h2>
           </div>
           
           <div className="space-y-5">
@@ -31,9 +31,9 @@ export function Dashboard() {
         <div className="bg-lavender/10 rounded-3xl p-8 border-4 border-lavender/30 shadow-sm flex flex-col gap-6">
           <div className="flex items-center gap-4">
             <Sparkles size={40} className="text-lavender" />
-            <h2 className="text-3xl font-bold">Great Job!</h2>
+            <h2 className="text-3xl font-bold" style={{ color: "var(--foreground)" }}>Great Job!</h2>
           </div>
-          <p className="text-2xl leading-relaxed text-charcoal/90">
+          <p className="text-2xl leading-relaxed" style={{ color: "var(--foreground)" }}>
             You remembered <strong>3 more family members</strong> today than yesterday. Keep up the excellent work! Your music memory is also exceptionally strong this week.
           </p>
         </div>
@@ -42,7 +42,7 @@ export function Dashboard() {
         <div className="md:col-span-2 bg-soft-pink/10 rounded-3xl p-8 border-4 border-soft-pink/30 shadow-sm flex flex-col gap-6">
           <div className="flex items-center gap-4">
             <TrendingUp size={40} className="text-rose-pink" />
-            <h2 className="text-3xl font-bold">Weekly Activity</h2>
+            <h2 className="text-3xl font-bold" style={{ color: "var(--foreground)" }}>Weekly Activity</h2>
           </div>
           
           <div className="h-48 flex items-end justify-between gap-2 sm:gap-6 pt-6">
@@ -53,7 +53,7 @@ export function Dashboard() {
                   className="w-full bg-soft-pink rounded-t-xl transition-all duration-1000 min-h-[20px]" 
                   style={{ height: `${Math.max(20, [50, 70, 40, 90, 60, 80, 100][i])}%` }}
                 ></div>
-                <span className="text-lg font-bold text-charcoal/60">{day}</span>
+                <span className="text-lg font-bold" style={{ color: "var(--muted)" }}>{day}</span>
               </div>
             ))}
           </div>
@@ -62,7 +62,7 @@ export function Dashboard() {
 
       {/* Caretaker Input */}
       <div className="pt-8">
-        <button className="w-full bg-sky-blue/20 hover:bg-sky-blue/40 border-4 border-sky-blue/40 text-charcoal py-6 px-8 rounded-3xl font-bold text-2xl flex items-center justify-center gap-4 transition-all tap-target">
+        <button className="w-full bg-sky-blue/20 hover:bg-sky-blue/40 border-4 border-sky-blue/40 py-6 px-8 rounded-3xl font-bold text-2xl flex items-center justify-center gap-4 transition-all tap-target" style={{ color: "var(--foreground)" }}>
           <PlusCircle size={36} className="text-sky-blue" />
           <span>Caregiver: Update Story & Photo Data</span>
         </button>
@@ -75,11 +75,13 @@ function SkillBar({ label, percentage, color }: { label: string, percentage: num
   return (
     <div>
       <div className="flex justify-between mb-2">
-        <span className="text-xl font-bold">{label}</span>
+        <span className="text-xl font-bold" style={{ color: "var(--foreground)" }}>{label}</span>
       </div>
-      <div className="w-full bg-off-white rounded-full h-6 border-2 border-charcoal/10 overflow-hidden">
+      <div className="w-full bg-off-white rounded-full h-6 border-2 overflow-hidden" style={{ borderColor: "var(--border)" }}>
         <div className={`h-full rounded-full ${color}`} style={{ width: `${percentage}%` }}></div>
       </div>
     </div>
   );
 }
+
+export default Dashboard;
