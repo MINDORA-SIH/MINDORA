@@ -140,7 +140,7 @@ export function ColorSequence() {
       <div className="space-y-6 animate-in fade-in duration-300">
         <button
           onClick={() => navigate("/")}
-          className="flex items-center gap-2 text-slate-500 hover:text-slate-800 font-bold text-sm transition-colors cursor-pointer"
+          className="flex items-center gap-2 text-slate-500 hover:text-slate-800 font-bold text-[20px] transition-colors cursor-pointer"
         >
           <ChevronLeft size={18} />
           Back to Games
@@ -160,7 +160,7 @@ export function ColorSequence() {
           <h2 className="text-2xl sm:text-3xl font-extrabold text-[#1E2445]">
             {level >= 10 ? "Amazing Memory!" : level >= 5 ? "Great Job!" : "Nice Try!"}
           </h2>
-          <p className="text-slate-500 font-bold text-sm sm:text-base mt-2 max-w-xs">
+          <p className="text-slate-500 font-bold text-[20px] sm:text-base mt-2 max-w-xs">
             You reached{" "}
             <span className="font-extrabold text-[#9333EA]">Level {level}</span> in Color Sequence!
           </p>
@@ -168,12 +168,12 @@ export function ColorSequence() {
           {/* Score Circle */}
           <div className="mt-6 w-32 h-32 md:w-36 md:h-36 rounded-full border-[6px] border-purple-200 flex flex-col items-center justify-center bg-white shadow-md">
             <span className="text-4xl md:text-5xl font-extrabold text-[#9333EA]">{level}</span>
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-wide mt-0.5">Level</span>
+            <span className="text-[18px] font-bold text-slate-400 uppercase tracking-wide mt-0.5">Level</span>
           </div>
 
           {highScore > 0 && (
             <div className="mt-4 bg-amber-50 border border-amber-200 rounded-xl px-4 py-2">
-              <p className="text-sm font-bold text-amber-800">
+              <p className="text-[20px] font-bold text-amber-800">
                 🏆 Best Score: Level {highScore}
               </p>
             </div>
@@ -204,7 +204,7 @@ export function ColorSequence() {
       {/* Back Button */}
       <button
         onClick={() => navigate("/")}
-        className="flex items-center gap-2 text-slate-500 hover:text-slate-800 font-bold text-sm transition-colors cursor-pointer"
+        className="flex items-center gap-2 text-slate-500 hover:text-slate-800 font-bold text-[20px] transition-colors cursor-pointer"
       >
         <ChevronLeft size={18} />
         Back to Games
@@ -218,7 +218,7 @@ export function ColorSequence() {
           </div>
           <div>
             <h1 className="text-xl sm:text-2xl font-extrabold text-[#1E2445] leading-tight">Color Sequence</h1>
-            <p className="text-xs sm:text-sm text-slate-500 font-bold">Remember & repeat the pattern</p>
+            <p className="text-[18px] sm:text-[20px] text-slate-500 font-bold">Remember & repeat the pattern</p>
           </div>
         </div>
 
@@ -227,12 +227,12 @@ export function ColorSequence() {
           {highScore > 0 && (
             <div className="bg-amber-50 border border-amber-200 rounded-full px-3 py-1.5 hidden sm:flex items-center gap-1.5">
               <Trophy size={14} className="text-amber-500" />
-              <span className="font-extrabold text-xs text-amber-700">{highScore}</span>
+              <span className="font-extrabold text-[18px] text-amber-700">{highScore}</span>
             </div>
           )}
           <div className="bg-[#F5F0FF] border-2 border-[#EBE0FF] rounded-full px-4 py-1.5 flex items-center gap-1.5">
             <Star size={16} className="text-[#9333EA]" />
-            <span className="font-extrabold text-sm text-[#1E2445]">
+            <span className="font-extrabold text-[20px] text-[#1E2445]">
               Lvl {level}
             </span>
           </div>
@@ -250,7 +250,7 @@ export function ColorSequence() {
                 <Volume2 size={20} className="text-[#9333EA] animate-pulse" />
                 <h3 className="text-lg font-extrabold text-[#9333EA]">Watch carefully!</h3>
               </div>
-              <p className="text-sm text-slate-500 font-bold">
+              <p className="text-[20px] text-slate-500 font-bold">
                 Showing color {showingIndex + 1} of {gameSeq.length}
               </p>
             </div>
@@ -258,7 +258,7 @@ export function ColorSequence() {
           {gameState === "input" && (
             <div className="space-y-1">
               <h3 className="text-lg font-extrabold text-[#1E2445]">Your turn!</h3>
-              <p className="text-sm text-slate-500 font-bold">
+              <p className="text-[20px] text-slate-500 font-bold">
                 Tap the colors in the right order ({userSeq.length}/{gameSeq.length})
               </p>
             </div>
@@ -266,7 +266,7 @@ export function ColorSequence() {
           {gameState === "correct" && (
             <div className="space-y-1 animate-in fade-in duration-200">
               <h3 className="text-lg font-extrabold text-emerald-600">✅ Correct!</h3>
-              <p className="text-sm text-slate-500 font-bold">
+              <p className="text-[20px] text-slate-500 font-bold">
                 Get ready for the next level...
               </p>
             </div>
@@ -274,7 +274,7 @@ export function ColorSequence() {
           {gameState === "gameover" && (
             <div className="space-y-2 animate-in fade-in duration-200">
               <h3 className="text-lg font-extrabold text-red-500">❌ Wrong Color!</h3>
-              <p className="text-sm text-slate-500 font-bold">
+              <p className="text-[20px] text-slate-500 font-bold">
                 You reached <span className="font-extrabold text-[#9333EA]">Level {level}</span>
               </p>
             </div>

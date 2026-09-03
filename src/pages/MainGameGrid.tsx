@@ -9,48 +9,54 @@ export function MainGameGrid() {
       id: 1,
       title: "Who is this?",
       description: "Identify family members & memory photos",
-      icon: <Users className="w-8 h-8 sm:w-10 sm:h-10 md:w-11 md:h-11 text-[#FF6584]" />,
-      bg: "bg-[#FFF0F3] border-[#FFE0E6] hover:bg-[#FFE4EC]",
+      icon: <Users className="w-8 h-8 sm:w-10 sm:h-10 md:w-11 md:h-11 text-[#993C1D]" />,
+      bg: "bg-[#FAECE7] border-[#993C1D]/20 hover:bg-[#993C1D]/10",
+      textColor: "text-[#993C1D]",
       path: "/who-is-this",
     },
     {
       id: 2,
       title: "Story Quiz",
       description: "Answer fun questions from stories",
-      icon: <FileText className="w-8 h-8 sm:w-10 sm:h-10 md:w-11 md:h-11 text-[#3B82F6]" />,
-      bg: "bg-[#F0F7FF] border-[#E0F0FF] hover:bg-[#E2F0FF]",
+      icon: <FileText className="w-8 h-8 sm:w-10 sm:h-10 md:w-11 md:h-11 text-[#185FA5]" />,
+      bg: "bg-[#E6F1FB] border-[#185FA5]/20 hover:bg-[#185FA5]/10",
+      textColor: "text-[#185FA5]",
       path: "/story-quiz",
     },
     {
       id: 3,
       title: "Color Sequence",
       description: "Remember and repeat color patterns",
-      icon: <Palette className="w-8 h-8 sm:w-10 sm:h-10 md:w-11 md:h-11 text-[#9333EA]" />,
-      bg: "bg-[#F5F0FF] border-[#EBE0FF] hover:bg-[#EBE0FF]",
+      icon: <Palette className="w-8 h-8 sm:w-10 sm:h-10 md:w-11 md:h-11 text-[#534AB7]" />,
+      bg: "bg-[#EEEDFE] border-[#534AB7]/20 hover:bg-[#534AB7]/10",
+      textColor: "text-[#534AB7]",
       path: "/color-sequence",
     },
     {
       id: 4,
       title: "Pattern Recognition",
       description: "Match visual patterns & shapes",
-      icon: <LayoutGrid className="w-8 h-8 sm:w-10 sm:h-10 md:w-11 md:h-11 text-[#FF7A00]" />,
-      bg: "bg-[#FFF5EE] border-[#FFE5D8] hover:bg-[#FFEADF]",
+      icon: <LayoutGrid className="w-8 h-8 sm:w-10 sm:h-10 md:w-11 md:h-11 text-[#854F0B]" />,
+      bg: "bg-[#FAEEDA] border-[#854F0B]/20 hover:bg-[#854F0B]/10",
+      textColor: "text-[#854F0B]",
       path: "/pattern-recognition",
     },
     {
       id: 5,
       title: "Word-Sound Memory",
       description: "Listen to melodies and recall words",
-      icon: <Music className="w-8 h-8 sm:w-10 sm:h-10 md:w-11 md:h-11 text-[#10B981]" />,
-      bg: "bg-[#F0FDF4] border-[#DCFCE7] hover:bg-[#DCFCE7]",
+      icon: <Music className="w-8 h-8 sm:w-10 sm:h-10 md:w-11 md:h-11 text-[#3B6D11]" />,
+      bg: "bg-[#EAF3DE] border-[#3B6D11]/20 hover:bg-[#3B6D11]/10",
+      textColor: "text-[#3B6D11]",
       path: "/word-sound-memory",
     },
     {
       id: 6,
       title: "Daily Routine",
       description: "Plan and organize daily schedule",
-      icon: <ListCheck className="w-8 h-8 sm:w-10 sm:h-10 md:w-11 md:h-11 text-[#7C3AED]" />,
-      bg: "bg-[#F3F0FF] border-[#E5E0FF] hover:bg-[#E7E0FF]",
+      icon: <ListCheck className="w-8 h-8 sm:w-10 sm:h-10 md:w-11 md:h-11 text-[#0F6E56]" />,
+      bg: "bg-[#E1F5EE] border-[#0F6E56]/20 hover:bg-[#0F6E56]/10",
+      textColor: "text-[#0F6E56]",
       path: "/reminders",
     },
   ];
@@ -59,7 +65,7 @@ export function MainGameGrid() {
     <div className="space-y-6 md:space-y-8 animate-in fade-in duration-300">
       {/* Greeting Header Section */}
       <div className="pt-2 text-center w-full">
-        <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight" style={{ color: "var(--foreground)" }}>
+        <h1 className="text-[26px] md:text-[28px] font-bold tracking-tight" style={{ color: "var(--foreground)" }}>
           Welcome Savitri
         </h1>
       </div>
@@ -75,7 +81,7 @@ export function MainGameGrid() {
             <div className="w-14 h-14 sm:w-18 sm:h-18 md:w-20 md:h-20 bg-white rounded-full flex items-center justify-center shadow-xs mb-3 md:mb-4 transition-transform group-hover:scale-110">
               {game.icon}
             </div>
-            <h2 className="text-sm sm:text-base md:text-xl font-extrabold leading-tight px-1" style={{ color: "var(--foreground)" }}>
+            <h2 className={`text-[20px] md:text-[22px] font-semibold leading-tight px-1 ${game.textColor} dark:text-[var(--foreground)]`}>
               {game.title}
             </h2>
           </button>

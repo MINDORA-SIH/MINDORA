@@ -41,7 +41,7 @@ function FreqBadge({ freq }: { freq: Frequency }) {
   const s = FREQ_STYLES[freq];
   return (
     <span
-      className="inline-flex items-center gap-1 text-xs font-bold px-2 py-0.5 rounded-full mt-1"
+      className="inline-flex items-center gap-1 text-[18px] font-bold px-2 py-0.5 rounded-full mt-1"
       style={{ backgroundColor: s.bg, color: s.text }}
     >
       <RefreshCw size={11} />
@@ -177,7 +177,7 @@ export function Reminders() {
 
             {/* ① Reminder name */}
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-bold text-charcoal/70 uppercase tracking-widest">
+              <label className="text-[20px] font-bold text-charcoal/70 tracking-widest">
                 Reminder Name
               </label>
               <input
@@ -193,7 +193,7 @@ export function Reminders() {
 
             {/* ② Time */}
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-bold text-charcoal/70 uppercase tracking-widest flex items-center gap-1">
+              <label className="text-[20px] font-bold text-charcoal/70 tracking-widest flex items-center gap-1">
                 <Clock size={14} /> Time
               </label>
               <input
@@ -206,7 +206,7 @@ export function Reminders() {
 
             {/* ③ Frequency */}
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-bold text-charcoal/70 uppercase tracking-widest flex items-center gap-1">
+              <label className="text-[20px] font-bold text-charcoal/70 tracking-widest flex items-center gap-1">
                 <RefreshCw size={14} /> Repeat
               </label>
               <div className="grid grid-cols-3 gap-3">

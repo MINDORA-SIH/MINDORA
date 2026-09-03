@@ -117,7 +117,7 @@ export function WhoIsThis() {
         {/* Back Button */}
         <button
           onClick={() => navigate("/")}
-          className="flex items-center gap-2 text-slate-500 hover:text-slate-800 font-bold text-sm transition-colors cursor-pointer"
+          className="flex items-center gap-2 text-slate-500 hover:text-slate-800 font-bold text-[20px] transition-colors cursor-pointer"
         >
           <ChevronLeft size={18} />
           Back to Games
@@ -141,7 +141,7 @@ export function WhoIsThis() {
                 ? "Great Effort!"
                 : "Keep Practicing!"}
           </h2>
-          <p className="text-slate-500 font-medium text-sm sm:text-base mt-2 max-w-xs">
+          <p className="text-slate-500 font-medium text-[20px] sm:text-base mt-2 max-w-xs">
             You recognized{" "}
             <span className="font-extrabold text-[#FF6584]">
               {score} out of {totalCards}
@@ -152,7 +152,7 @@ export function WhoIsThis() {
           {/* Score Circle */}
           <div className="mt-6 w-32 h-32 md:w-36 md:h-36 rounded-full border-[6px] border-pink-200 flex flex-col items-center justify-center bg-white shadow-md">
             <span className="text-4xl md:text-5xl font-extrabold text-[#FF6584]">{percentage}%</span>
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-wide mt-0.5">Score</span>
+            <span className="text-[18px] font-bold text-slate-400 uppercase tracking-wide mt-0.5">Score</span>
           </div>
 
           <div className="flex gap-3 mt-8">
@@ -180,7 +180,7 @@ export function WhoIsThis() {
       {/* Back Button */}
       <button
         onClick={() => navigate("/")}
-        className="flex items-center gap-2 text-slate-500 hover:text-slate-800 font-bold text-sm transition-colors cursor-pointer"
+        className="flex items-center gap-2 text-slate-500 hover:text-slate-800 font-bold text-[20px] transition-colors cursor-pointer"
       >
         <ChevronLeft size={18} />
         Back to Games
@@ -194,14 +194,14 @@ export function WhoIsThis() {
           </div>
           <div>
             <h1 className="text-xl sm:text-2xl font-extrabold text-[#1E2445] leading-tight">Who is this?</h1>
-            <p className="text-xs sm:text-sm text-slate-500 font-medium">Identify your family members</p>
+            <p className="text-[18px] sm:text-[20px] text-slate-500 font-medium">Identify your family members</p>
           </div>
         </div>
 
         {/* Score Badge */}
         <div className="bg-[#FFF0F3] border-2 border-[#FFE0E6] rounded-full px-4 py-1.5 flex items-center gap-1.5">
           <Star size={16} className="text-amber-500" />
-          <span className="font-extrabold text-sm text-[#1E2445]">
+          <span className="font-extrabold text-[20px] text-[#1E2445]">
             {score}/{totalCards}
           </span>
         </div>
@@ -214,7 +214,7 @@ export function WhoIsThis() {
           style={{ width: `${((currentIndex + 1) / totalCards) * 100}%` }}
         />
       </div>
-      <p className="text-xs font-bold text-slate-400 text-right -mt-3">
+      <p className="text-[18px] font-bold text-slate-400 text-right -mt-3">
         Card {currentIndex + 1} of {totalCards}
       </p>
 
@@ -226,7 +226,7 @@ export function WhoIsThis() {
             <span className="text-5xl sm:text-6xl md:text-7xl">{currentMember.emoji}</span>
           </div>
           <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 max-w-sm">
-            <p className="text-sm sm:text-base font-bold text-amber-800 leading-snug">
+            <p className="text-[20px] sm:text-base font-bold text-amber-800 leading-snug">
               💡 <span className="italic">{currentMember.hint}</span>
             </p>
           </div>
@@ -257,7 +257,7 @@ export function WhoIsThis() {
                 key={option}
                 onClick={() => handleAnswer(option)}
                 disabled={!!selectedAnswer}
-                className={`flex items-center gap-3 p-4 rounded-xl border-2 font-bold text-sm sm:text-base transition-all cursor-pointer min-h-[56px] ${optionStyle} ${!selectedAnswer ? "active:scale-[0.98]" : ""}`}
+                className={`flex items-center gap-3 p-4 rounded-xl border-2 font-bold text-[20px] sm:text-base transition-all cursor-pointer min-h-[56px] ${optionStyle} ${!selectedAnswer ? "active:scale-[0.98]" : ""}`}
               >
                 {selectedAnswer && isCorrectOption && <CheckCircle size={20} className="text-emerald-500 flex-shrink-0" />}
                 {selectedAnswer && isSelected && !isCorrect && <XCircle size={20} className="text-red-500 flex-shrink-0" />}
@@ -270,7 +270,7 @@ export function WhoIsThis() {
         {/* Feedback */}
         {selectedAnswer && (
           <div
-            className={`text-center py-3 px-4 rounded-xl font-bold text-sm sm:text-base animate-in fade-in duration-200 ${
+            className={`text-center py-3 px-4 rounded-xl font-bold text-[20px] sm:text-base animate-in fade-in duration-200 ${
               isCorrect ? "bg-emerald-50 text-emerald-700 border border-emerald-200" : "bg-red-50 text-red-700 border border-red-200"
             }`}
           >
@@ -286,7 +286,7 @@ export function WhoIsThis() {
         <button
           onClick={handlePrev}
           disabled={currentIndex === 0}
-          className="flex items-center gap-2 px-5 py-3 rounded-xl font-bold text-sm bg-slate-100 text-slate-700 hover:bg-slate-200 transition-all cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed min-h-[48px]"
+          className="flex items-center gap-2 px-5 py-3 rounded-xl font-bold text-[20px] bg-slate-100 text-slate-700 hover:bg-slate-200 transition-all cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed min-h-[48px]"
         >
           <ChevronLeft size={18} />
           Previous
@@ -294,7 +294,7 @@ export function WhoIsThis() {
         <button
           onClick={handleNext}
           disabled={!selectedAnswer}
-          className="flex items-center gap-2 px-5 py-3 rounded-xl font-bold text-sm bg-[#FF6584] text-white hover:bg-[#e8506e] transition-all cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed min-h-[48px] shadow-sm"
+          className="flex items-center gap-2 px-5 py-3 rounded-xl font-bold text-[20px] bg-[#FF6584] text-white hover:bg-[#e8506e] transition-all cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed min-h-[48px] shadow-sm"
         >
           {currentIndex < totalCards - 1 ? "Next Card" : "See Results"}
           <ChevronRight size={18} />

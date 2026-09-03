@@ -101,7 +101,7 @@ export function Chatbot() {
             <h2 className="text-xl sm:text-2xl font-black tracking-wide flex items-center gap-2">
               Mindora Assistant <Sparkles size={20} className="text-amber-300" />
             </h2>
-            <p className="text-xs sm:text-sm text-purple-100 font-medium">Your 24/7 Cognitive Companion</p>
+            <p className="text-[18px] sm:text-[20px] text-purple-100 font-medium">Your 24/7 Cognitive Companion</p>
           </div>
         </div>
 
@@ -113,7 +113,7 @@ export function Chatbot() {
             timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
           }])}
           title="Reset Conversation"
-          className="p-2.5 rounded-xl bg-white/15 hover:bg-white/25 transition-colors text-white text-sm font-semibold flex items-center gap-1.5"
+          className="p-2.5 rounded-xl bg-white/15 hover:bg-white/25 transition-colors text-white text-[20px] font-semibold flex items-center gap-1.5"
         >
           <RefreshCw size={18} />
           <span className="hidden sm:inline">Reset</span>
@@ -185,7 +185,7 @@ export function Chatbot() {
 
       {/* Suggested Quick Prompts */}
       <div className="p-3 border-t border-purple-100" style={{ backgroundColor: "var(--card-bg)" }}>
-        <p className="text-xs font-bold uppercase tracking-wider mb-2 px-1" style={{ color: "var(--muted)" }}>
+        <p className="text-[18px] font-bold tracking-wider mb-2 px-1" style={{ color: "var(--muted)" }}>
           Suggested Questions:
         </p>
         <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
@@ -193,7 +193,7 @@ export function Chatbot() {
             <button
               key={idx}
               onClick={() => handleSend(prompt.query)}
-              className="px-3.5 py-2 rounded-2xl bg-purple-50 hover:bg-purple-100 text-purple-800 dark:text-purple-200 text-sm font-bold whitespace-nowrap transition-colors border border-purple-200 flex-shrink-0"
+              className="px-3.5 py-2 rounded-2xl bg-purple-50 hover:bg-purple-100 text-purple-800 dark:text-purple-200 text-[20px] font-bold whitespace-nowrap transition-colors border border-purple-200 flex-shrink-0"
             >
               {prompt.label}
             </button>

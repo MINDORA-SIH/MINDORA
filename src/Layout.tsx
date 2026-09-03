@@ -201,11 +201,11 @@ export function Layout() {
                   onClick={() => { if (!isLangOpen) closeAllPopups(); setIsLangOpen(!isLangOpen); }}
                   aria-label="Select Language"
                   title="Language Settings"
-                  className="bg-purple-50 hover:bg-purple-100 border border-purple-200 rounded-full px-2.5 py-0.5 flex items-center gap-1.5 text-xs font-bold text-slate-700 transition-all cursor-pointer shadow-xs"
+                  className="bg-purple-50 hover:bg-purple-100 border border-purple-200 rounded-full px-2.5 py-0.5 flex items-center gap-1.5 text-[18px] font-bold text-slate-700 transition-all cursor-pointer shadow-xs"
                 >
                   <Globe size={13} className="text-purple-600 flex-shrink-0" />
-                  <span className="text-sm">{currentLang.flag}</span>
-                  <span className="hidden sm:inline font-bold text-slate-800 text-xs">{currentLang.name}</span>
+                  <span className="text-[20px]">{currentLang.flag}</span>
+                  <span className="hidden sm:inline font-bold text-slate-800 text-[18px]">{currentLang.name}</span>
                   <span className="sm:hidden font-extrabold text-slate-800 text-[10px]">{currentLang.code.split("-")[0].toUpperCase()}</span>
                   <ChevronDown size={12} className={clsx("text-slate-400 transition-transform duration-200", isLangOpen && "rotate-180")} />
                 </button>
@@ -223,7 +223,7 @@ export function Layout() {
               }}
               title="Voice Assistant"
               className={clsx(
-                "h-11 sm:h-12 px-3.5 sm:px-4 rounded-full border-2 flex items-center gap-2 transition-all cursor-pointer active:scale-95 shadow-xs flex-shrink-0 font-bold text-sm",
+                "h-11 sm:h-12 px-3.5 sm:px-4 rounded-full border-2 flex items-center gap-2 transition-all cursor-pointer active:scale-95 shadow-xs flex-shrink-0 font-bold text-[20px]",
                 isListening
                   ? "bg-[#FF6584] text-white border-[#FF6584] animate-pulse"
                   : "bg-[#FFF0F3] hover:bg-[#FFE0E6] border-[#FFE0E6] text-[#FF6584]"
@@ -239,7 +239,7 @@ export function Layout() {
             <button
               onClick={() => { if (!isChatOpen) closeAllPopups(); setIsChatOpen(!isChatOpen); }}
               title="Mindora AI Assistant"
-              className="h-11 sm:h-12 px-3.5 sm:px-4 rounded-full bg-[#F5F0FF] hover:bg-[#EBE0FF] border-2 border-[#EBE0FF] text-[#9333EA] flex items-center gap-2 transition-all cursor-pointer active:scale-95 shadow-xs flex-shrink-0 font-bold text-sm"
+              className="h-11 sm:h-12 px-3.5 sm:px-4 rounded-full bg-[#F5F0FF] hover:bg-[#EBE0FF] border-2 border-[#EBE0FF] text-[#9333EA] flex items-center gap-2 transition-all cursor-pointer active:scale-95 shadow-xs flex-shrink-0 font-bold text-[20px]"
             >
               <Bot size={22} />
               <span className="hidden md:inline font-extrabold">Chatbot</span>
@@ -332,7 +332,7 @@ export function Layout() {
                   <h3 className="text-lg font-extrabold text-slate-800 tracking-tight">
                     Select Language / भाषा
                   </h3>
-                  <span className="text-xs font-bold px-2.5 py-1 bg-purple-100 text-purple-700 rounded-md">
+                  <span className="text-[18px] font-bold px-2.5 py-1 bg-purple-100 text-purple-700 rounded-md">
                     {currentLang.code}
                   </span>
                 </div>
@@ -348,7 +348,7 @@ export function Layout() {
                       localStorage.setItem("mindora_lang", JSON.stringify(lang));
                     }}
                     className={clsx(
-                      "flex items-center justify-between px-4 py-3 rounded-2xl text-sm font-bold transition-all text-left w-full cursor-pointer border-2",
+                      "flex items-center justify-between px-4 py-3 rounded-2xl text-[20px] font-bold transition-all text-left w-full cursor-pointer border-2",
                       currentLang.code === lang.code
                         ? "bg-purple-600 border-purple-600 text-white shadow-md"
                         : "bg-slate-50 border-transparent hover:bg-purple-50 hover:border-purple-200 text-slate-800"
@@ -358,7 +358,7 @@ export function Layout() {
                       <span className="text-2xl">{lang.flag}</span>
                       <div>
                         <div className="font-extrabold text-base">{lang.name}</div>
-                        <div className={clsx("text-xs font-bold mt-0.5", currentLang.code === lang.code ? "text-purple-200" : "text-slate-500")}>
+                        <div className={clsx("text-[18px] font-bold mt-0.5", currentLang.code === lang.code ? "text-purple-200" : "text-slate-500")}>
                           {lang.nativeName}
                         </div>
                       </div>
@@ -403,13 +403,13 @@ export function Layout() {
 
               <div>
                 <h3 className="font-extrabold text-2xl text-slate-800">Voice Assistant</h3>
-                <p className="text-slate-500 text-sm mt-1.5 font-bold">
+                <p className="text-slate-500 text-[20px] mt-1.5 font-bold">
                   {voiceFeedback || "Listening... Speak a command"}
                 </p>
               </div>
 
               {transcript && (
-                <div className="w-full bg-slate-50 p-4 rounded-2xl border-2 border-slate-100 text-slate-800 font-bold text-sm italic">
+                <div className="w-full bg-slate-50 p-4 rounded-2xl border-2 border-slate-100 text-slate-800 font-bold text-[20px] italic">
                   "{transcript}"
                 </div>
               )}
@@ -545,7 +545,7 @@ function NavItem({ to, icon, label }: { to: string; icon: React.ReactNode; label
           >
             {icon}
           </div>
-          <span className="text-[10px] sm:text-xs mt-0.5 leading-tight">{label}</span>
+          <span className="text-[15px] sm:text-[16px] mt-1 leading-tight">{label}</span>
         </>
       )}
     </NavLink>

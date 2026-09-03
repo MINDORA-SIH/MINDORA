@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 @import 'tailwindcss';
 
 @theme {
@@ -24,7 +24,7 @@
   --radius-xl: 1.25rem;
   --radius-2xl: 1.5rem;
   
-  --font-sans: 'Nunito', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
 @layer base {
@@ -138,30 +138,12 @@ button, a, [role="button"] {
 }
 
 /* Game grid card backgrounds */
-.dark .bg-\[\#FFF0F3\] { background-color: #3b1f2b !important; }
-.dark .bg-\[\#F0F7FF\] { background-color: #1e2a3b !important; }
-.dark .bg-\[\#F5F0FF\] { background-color: #2a1e3b !important; }
-.dark .bg-\[\#FFF5EE\] { background-color: #3b2e1e !important; }
-.dark .bg-\[\#F0FDF4\] { background-color: #1e3b2a !important; }
-.dark .bg-\[\#F3F0FF\] { background-color: #291e3b !important; }
-
-/* Card hover states */
-.dark .hover\:bg-\[\#FFE4EC\]:hover { background-color: #4a2838 !important; }
-.dark .hover\:bg-\[\#E2F0FF\]:hover { background-color: #263a52 !important; }
-.dark .hover\:bg-\[\#EBE0FF\]:hover { background-color: #382a52 !important; }
-.dark .hover\:bg-\[\#FFEADF\]:hover { background-color: #523a26 !important; }
-.dark .hover\:bg-\[\#DCFCE7\]:hover { background-color: #264a32 !important; }
-.dark .hover\:bg-\[\#E7E0FF\]:hover { background-color: #352a52 !important; }
-
-/* Card borders */
-.dark .border-\[\#FFE0E6\] { border-color: #5c2d3d !important; }
-.dark .border-\[\#E0F0FF\] { border-color: #2d4a5c !important; }
-.dark .border-\[\#EBE0FF\] { border-color: #3d2d5c !important; }
-.dark .border-\[\#FFE5D8\] { border-color: #5c3d2d !important; }
-.dark .border-\[\#DCFCE7\] { border-color: #2d5c3d !important; }
-.dark .border-\[\#E5E0FF\] { border-color: #3a2d5c !important; }
-
-/* Text colors */
+.dark .bg-\[\#FAECE7\] { background-color: #3b1f2b !important; }
+.dark .bg-\[\#E6F1FB\] { background-color: #1e2a3b !important; }
+.dark .bg-\[\#EEEDFE\] { background-color: #2a1e3b !important; }
+.dark .bg-\[\#FAEEDA\] { background-color: #3b2e1e !important; }
+.dark .bg-\[\#EAF3DE\] { background-color: #1e3b2a !important; }
+.dark .bg-\[\#E1F5EE\] { background-color: #1e3b33 !important; }
 .dark .text-\[\#1E2445\] {
   color: #F8FAFC !important;
 }
@@ -170,9 +152,6 @@ button, a, [role="button"] {
   color: #F8FAFC !important;
 }
 
-.dark .text-slate-500 {
-  color: #94a3b8 !important;
-}
 
 .dark .text-slate-800 {
   color: #F8FAFC !important;

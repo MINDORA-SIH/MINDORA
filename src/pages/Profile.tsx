@@ -25,7 +25,7 @@ export function Profile() {
             <div className="flex items-center gap-4 bg-off-white p-4 rounded-2xl">
               <Calendar className="text-rose-pink" size={28} />
               <div>
-                <p className="text-sm font-bold uppercase tracking-wider" style={{ color: "var(--muted)" }}>Age</p>
+                <p className="text-[20px] font-bold tracking-wider" style={{ color: "var(--muted)" }}>Age</p>
                 <p className="text-xl font-bold" style={{ color: "var(--foreground)" }}>72 Years</p>
               </div>
             </div>
@@ -33,7 +33,7 @@ export function Profile() {
             <div className="flex items-center gap-4 bg-off-white p-4 rounded-2xl">
               <Droplet className="text-rose-pink" size={28} />
               <div>
-                <p className="text-sm font-bold uppercase tracking-wider" style={{ color: "var(--muted)" }}>Blood Group</p>
+                <p className="text-[20px] font-bold tracking-wider" style={{ color: "var(--muted)" }}>Blood Group</p>
                 <p className="text-xl font-bold" style={{ color: "var(--foreground)" }}>B+</p>
               </div>
             </div>
@@ -41,7 +41,7 @@ export function Profile() {
             <div className="flex items-center gap-4 bg-off-white p-4 rounded-2xl">
               <MapPin className="text-sky-blue" size={28} />
               <div>
-                <p className="text-sm font-bold uppercase tracking-wider" style={{ color: "var(--muted)" }}>Location</p>
+                <p className="text-[20px] font-bold tracking-wider" style={{ color: "var(--muted)" }}>Location</p>
                 <p className="text-xl font-bold" style={{ color: "var(--foreground)" }}>Guwahati, Assam</p>
               </div>
             </div>
@@ -49,7 +49,7 @@ export function Profile() {
             <div className="flex items-center gap-4 bg-off-white p-4 rounded-2xl">
               <Mail className="text-lavender" size={28} />
               <div>
-                <p className="text-sm font-bold uppercase tracking-wider" style={{ color: "var(--muted)" }}>Email</p>
+                <p className="text-[20px] font-bold tracking-wider" style={{ color: "var(--muted)" }}>Email</p>
                 <p className="text-xl font-bold" style={{ color: "var(--foreground)" }}>xyz@email.com</p>
               </div>
             </div>
@@ -65,19 +65,19 @@ export function Profile() {
           
           <div className="space-y-4">
             <div className="bg-rose-pink/10 p-4 rounded-2xl">
-              <p className="text-sm font-bold uppercase tracking-wider mb-1" style={{ color: "var(--muted)" }}>Diagnosis</p>
+              <p className="text-[20px] font-bold tracking-wider mb-1" style={{ color: "var(--muted)" }}>Diagnosis</p>
               <p className="text-xl font-bold" style={{ color: "var(--foreground)" }}>Mild Dementia (Early Stage)</p>
             </div>
             
             <div className="bg-lavender/20 p-4 rounded-2xl">
-              <p className="text-sm font-bold uppercase tracking-wider mb-1" style={{ color: "var(--muted)" }}>MMSE Score</p>
+              <p className="text-[20px] font-bold tracking-wider mb-1" style={{ color: "var(--muted)" }}>MMSE Score</p>
               <p className="text-xl font-bold" style={{ color: "var(--foreground)" }}>23/30</p>
             </div>
             
             <div className="bg-sky-blue/10 p-4 rounded-2xl flex items-center gap-4">
               <Activity className="text-sky-blue" size={28} />
               <div>
-                <p className="text-sm font-bold uppercase tracking-wider" style={{ color: "var(--muted)" }}>Mobility</p>
+                <p className="text-[20px] font-bold tracking-wider" style={{ color: "var(--muted)" }}>Mobility</p>
                 <p className="text-lg font-bold" style={{ color: "var(--foreground)" }}>Walks independently</p>
               </div>
             </div>
@@ -85,7 +85,7 @@ export function Profile() {
             <div className="bg-soft-pink/20 p-4 rounded-2xl flex items-center gap-4">
               <Ear className="text-rose-pink" size={28} />
               <div>
-                <p className="text-sm font-bold uppercase tracking-wider" style={{ color: "var(--muted)" }}>Hearing</p>
+                <p className="text-[20px] font-bold tracking-wider" style={{ color: "var(--muted)" }}>Hearing</p>
                 <p className="text-lg font-bold" style={{ color: "var(--foreground)" }}>Mild hearing loss</p>
               </div>
             </div>
