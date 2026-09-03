@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { Palette, ChevronLeft, RotateCcw, Star, Trophy, Heart, Play, Volume2 } from "lucide-react";
+import { Palette, ChevronLeft, RotateCcw, Star, Trophy, Heart, Volume2 } from "lucide-react";
 import { useNavigate } from "react-router";
 
 const COLORS = [
@@ -28,6 +28,14 @@ export function ColorSequence() {
     return () => {
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };
+  }, []);
+
+  // Auto-start game on mount
+  useEffect(() => {
+    if (gameState === "idle") {
+      startGame();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const playSequence = useCallback((sequence: string[]) => {
@@ -235,26 +243,7 @@ export function ColorSequence() {
       <div className="bg-white border-2 border-slate-100 rounded-3xl shadow-md p-5 sm:p-6 md:p-8">
         {/* Status Message */}
         <div className="text-center mb-6">
-          {gameState === "idle" && (
-            <div className="space-y-4">
-              <div className="w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-purple-100 to-violet-200 flex items-center justify-center shadow-inner">
-                <Palette size={36} className="text-[#9333EA]" />
-              </div>
-              <div>
-                <h3 className="text-lg sm:text-xl font-extrabold text-[#1E2445]">Ready to Play?</h3>
-                <p className="text-sm text-slate-500 font-medium mt-1 max-w-sm mx-auto">
-                  Watch the colors light up, then repeat the sequence by tapping them in the same order.
-                </p>
-              </div>
-              <button
-                onClick={startGame}
-                className="mx-auto px-8 py-3.5 bg-[#9333EA] text-white font-bold rounded-xl hover:bg-[#7928CA] transition-all shadow-md cursor-pointer flex items-center gap-2 min-h-[48px] text-base"
-              >
-                <Play size={20} />
-                Start Game
-              </button>
-            </div>
-          )}
+
           {gameState === "showing" && (
             <div className="space-y-2">
               <div className="flex items-center justify-center gap-2">
