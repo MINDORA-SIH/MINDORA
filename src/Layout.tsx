@@ -1,7 +1,7 @@
 import { Outlet, NavLink, useNavigate, useLocation } from "react-router";
 import logoUrl from "./assets/logo.png";
 import { User, HelpCircle, Globe, Gamepad2, BarChart2, Bell, Settings as SettingsIcon, PhoneCall, BookOpen, Mail, Mic, MicOff, X, Volume2, Bot, ChevronDown, Check, Moon, Sun, ArrowLeft } from "lucide-react";
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, cloneElement } from "react";
 import { clsx } from "clsx";
 
 export interface Language {
@@ -292,15 +292,13 @@ export function Layout() {
           </div>
         </main>
 
-        {/* Floating Glass Bottom Navigation */}
-        <nav className="fixed bottom-4 sm:bottom-5 left-1/2 -translate-x-1/2 z-40 w-[92%] max-w-md sm:max-w-lg group">
-          <div className={clsx(
-            "backdrop-blur-xl border shadow-[0_8px_40px_rgba(255,101,132,0.12),0_2px_12px_rgba(0,0,0,0.04)] rounded-[28px] px-3 sm:px-5 py-2.5 sm:py-3 transition-all duration-300 ease-out",
-            darkMode
-              ? "bg-[rgba(30,41,59,0.85)] border-slate-700/60 group-hover:bg-[rgba(30,41,59,0.95)]"
-              : "bg-[rgba(255,228,236,0.75)] border-pink-100/60 group-hover:bg-[rgba(255,200,215,0.85)] group-hover:shadow-[0_12px_50px_rgba(255,101,132,0.25),0_4px_16px_rgba(0,0,0,0.06)]"
-          )}>
-            <div className="grid grid-cols-4 items-center">
+        {/* Bottom Navigation Dock */}
+        <nav 
+          className="fixed bottom-0 left-0 w-full z-40 transition-colors duration-300" 
+          style={{ backgroundColor: "var(--background)", borderTop: "1px solid var(--border)" }}
+        >
+          <div className="max-w-md sm:max-w-lg mx-auto px-4 py-2">
+            <div className="grid grid-cols-4 items-center gap-2">
               <NavItem to="/" icon={<Gamepad2 size={24} />} label="Games" />
               <NavItem to="/dashboard" icon={<BarChart2 size={24} />} label="Progress" />
               <NavItem to="/reminders" icon={<Bell size={24} />} label="Reminders" />
@@ -526,10 +524,10 @@ function NavItem({ to, icon, label }: { to: string; icon: React.ReactNode; label
       to={to}
       className={({ isActive }) =>
         clsx(
-          "flex flex-col items-center justify-center py-1.5 px-1 rounded-2xl transition-all duration-300 flex-1 text-center cursor-pointer relative hover:scale-110",
+          "flex flex-col items-center justify-center py-1 rounded-2xl transition-all duration-300 flex-1 text-center cursor-pointer relative",
           isActive
-            ? "text-[#7C3AED] font-extrabold"
-            : "text-slate-400 hover:text-slate-600 font-bold"
+            ? "text-[#993556] dark:text-[#FFB5CC] font-bold"
+            : "text-[#5F5E5A] dark:text-[#94A3B8] font-bold"
         )
       }
     >
@@ -537,15 +535,15 @@ function NavItem({ to, icon, label }: { to: string; icon: React.ReactNode; label
         <>
           <div
             className={clsx(
-              "flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300",
-              isActive
-                ? "bg-purple-100/80 shadow-[0_0_12px_rgba(124,58,237,0.25)]"
-                : "bg-transparent"
+              "flex items-center justify-center w-12 h-8 rounded-full transition-all duration-300 mb-1 bg-transparent"
             )}
           >
-            {icon}
+            {cloneElement(icon as React.ReactElement, { 
+              fill: isActive ? "currentColor" : "none",
+              strokeWidth: 2.5
+            })}
           </div>
-          <span className="text-[15px] sm:text-[16px] mt-1 leading-tight">{label}</span>
+          <span className="text-[16px] leading-tight">{label}</span>
         </>
       )}
     </NavLink>
