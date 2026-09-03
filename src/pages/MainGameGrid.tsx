@@ -1,4 +1,4 @@
-import { Users, FileText, Hash, LayoutGrid, Music, ListCheck } from "lucide-react";
+import { Users, FileText, Palette, LayoutGrid, Music, ListCheck } from "lucide-react";
 import { useNavigate } from "react-router";
 
 export function MainGameGrid() {
@@ -23,11 +23,11 @@ export function MainGameGrid() {
     },
     {
       id: 3,
-      title: "Number Sequence",
-      description: "Simple & engaging counting games",
-      icon: <Hash className="w-8 h-8 sm:w-10 sm:h-10 md:w-11 md:h-11 text-[#9333EA]" />,
+      title: "Color Sequence",
+      description: "Remember and repeat color patterns",
+      icon: <Palette className="w-8 h-8 sm:w-10 sm:h-10 md:w-11 md:h-11 text-[#9333EA]" />,
       bg: "bg-[#F5F0FF] border-[#EBE0FF] hover:bg-[#EBE0FF]",
-      path: "/number-sequence",
+      path: "/color-sequence",
     },
     {
       id: 4,

@@ -6,6 +6,7 @@ import { Reminders } from "./pages/Reminders";
 import { Settings } from "./pages/Settings";
 import { Profile } from "./pages/Profile";
 import { Chatbot } from "./pages/Chatbot";
+import { ColorSequence } from "./pages/ColorSequence";
 
 const EmptyPage = () => <div />;
 
@@ -20,6 +21,7 @@ export const router = createBrowserRouter([
       { path: "settings", Component: Settings },
       { path: "profile", Component: Profile },
       { path: "chatbot", Component: Chatbot },
+      { path: "color-sequence", Component: ColorSequence },
       { path: "who-is-this", Component: EmptyPage },
     ],
   },
