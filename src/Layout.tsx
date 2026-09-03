@@ -358,7 +358,7 @@ export function Layout() {
                       <span className="text-2xl">{lang.flag}</span>
                       <div>
                         <div className="font-extrabold text-base">{lang.name}</div>
-                        <div className={clsx("text-xs font-medium mt-0.5", currentLang.code === lang.code ? "text-purple-200" : "text-slate-500")}>
+                        <div className={clsx("text-xs font-bold mt-0.5", currentLang.code === lang.code ? "text-purple-200" : "text-slate-500")}>
                           {lang.nativeName}
                         </div>
                       </div>
@@ -403,7 +403,7 @@ export function Layout() {
 
               <div>
                 <h3 className="font-extrabold text-2xl text-slate-800">Voice Assistant</h3>
-                <p className="text-slate-500 text-sm mt-1.5 font-medium">
+                <p className="text-slate-500 text-sm mt-1.5 font-bold">
                   {voiceFeedback || "Listening... Speak a command"}
                 </p>
               </div>
@@ -529,7 +529,7 @@ function NavItem({ to, icon, label }: { to: string; icon: React.ReactNode; label
           "flex flex-col items-center justify-center py-1.5 px-1 rounded-2xl transition-all duration-300 flex-1 text-center cursor-pointer relative hover:scale-110",
           isActive
             ? "text-[#7C3AED] font-extrabold"
-            : "text-slate-400 hover:text-slate-600 font-medium"
+            : "text-slate-400 hover:text-slate-600 font-bold"
         )
       }
     >

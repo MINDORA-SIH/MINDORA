@@ -62,9 +62,6 @@ export function MainGameGrid() {
         <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight" style={{ color: "var(--foreground)" }}>
           Welcome Savitri
         </h1>
-        <p className="text-sm sm:text-base md:text-lg font-medium mt-1.5 leading-snug w-full" style={{ color: "var(--muted)" }}>
-          Choose a daily activity to keep your mind active and healthy.
-        </p>
       </div>
 
       {/* 2-Column on Mobile, 3-Column on Laptop */}
@@ -81,9 +78,6 @@ export function MainGameGrid() {
             <h2 className="text-sm sm:text-base md:text-xl font-extrabold leading-tight px-1" style={{ color: "var(--foreground)" }}>
               {game.title}
             </h2>
-            <p className="text-xs md:text-sm font-medium mt-1 leading-snug hidden md:block px-2" style={{ color: "var(--muted)" }}>
-              {game.description}
-            </p>
           </button>
         ))}
       </div>

@@ -160,7 +160,7 @@ export function ColorSequence() {
           <h2 className="text-2xl sm:text-3xl font-extrabold text-[#1E2445]">
             {level >= 10 ? "Amazing Memory!" : level >= 5 ? "Great Job!" : "Nice Try!"}
           </h2>
-          <p className="text-slate-500 font-medium text-sm sm:text-base mt-2 max-w-xs">
+          <p className="text-slate-500 font-bold text-sm sm:text-base mt-2 max-w-xs">
             You reached{" "}
             <span className="font-extrabold text-[#9333EA]">Level {level}</span> in Color Sequence!
           </p>
@@ -218,7 +218,7 @@ export function ColorSequence() {
           </div>
           <div>
             <h1 className="text-xl sm:text-2xl font-extrabold text-[#1E2445] leading-tight">Color Sequence</h1>
-            <p className="text-xs sm:text-sm text-slate-500 font-medium">Remember & repeat the pattern</p>
+            <p className="text-xs sm:text-sm text-slate-500 font-bold">Remember & repeat the pattern</p>
           </div>
         </div>
 
@@ -250,7 +250,7 @@ export function ColorSequence() {
                 <Volume2 size={20} className="text-[#9333EA] animate-pulse" />
                 <h3 className="text-lg font-extrabold text-[#9333EA]">Watch carefully!</h3>
               </div>
-              <p className="text-sm text-slate-500 font-medium">
+              <p className="text-sm text-slate-500 font-bold">
                 Showing color {showingIndex + 1} of {gameSeq.length}
               </p>
             </div>
@@ -258,7 +258,7 @@ export function ColorSequence() {
           {gameState === "input" && (
             <div className="space-y-1">
               <h3 className="text-lg font-extrabold text-[#1E2445]">Your turn!</h3>
-              <p className="text-sm text-slate-500 font-medium">
+              <p className="text-sm text-slate-500 font-bold">
                 Tap the colors in the right order ({userSeq.length}/{gameSeq.length})
               </p>
             </div>
@@ -266,7 +266,7 @@ export function ColorSequence() {
           {gameState === "correct" && (
             <div className="space-y-1 animate-in fade-in duration-200">
               <h3 className="text-lg font-extrabold text-emerald-600">✅ Correct!</h3>
-              <p className="text-sm text-slate-500 font-medium">
+              <p className="text-sm text-slate-500 font-bold">
                 Get ready for the next level...
               </p>
             </div>
@@ -274,7 +274,7 @@ export function ColorSequence() {
           {gameState === "gameover" && (
             <div className="space-y-2 animate-in fade-in duration-200">
               <h3 className="text-lg font-extrabold text-red-500">❌ Wrong Color!</h3>
-              <p className="text-sm text-slate-500 font-medium">
+              <p className="text-sm text-slate-500 font-bold">
                 You reached <span className="font-extrabold text-[#9333EA]">Level {level}</span>
               </p>
             </div>
