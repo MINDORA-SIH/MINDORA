@@ -1,7 +1,7 @@
 import { Outlet, NavLink, useNavigate, useLocation } from "react-router";
 import logoUrl from "./assets/logo.png";
 import { User, HelpCircle, Globe, Gamepad2, BarChart2, Bell, Settings as SettingsIcon, PhoneCall, BookOpen, Mail, Mic, MicOff, X, Volume2, Bot, ChevronDown, Check, Moon, Sun } from "lucide-react";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { clsx } from "clsx";
 
 export interface Language {
@@ -41,6 +41,43 @@ export function Layout() {
   const [voiceFeedback, setVoiceFeedback] = useState<string | null>(null);
   const navigate = useNavigate();
   const location = useLocation();
+
+  // Refs for click-outside detection on every popup
+  const langRef = useRef<HTMLDivElement>(null);
+  const micRef = useRef<HTMLDivElement>(null);
+  const chatRef = useRef<HTMLDivElement>(null);
+  const helpRef = useRef<HTMLDivElement>(null);
+
+  // Close all popups — called before opening any new one
+  const closeAllPopups = useCallback(() => {
+    setIsLangOpen(false);
+    setIsListening(false);
+    setIsChatOpen(false);
+    setIsHelpOpen(false);
+    setVoiceFeedback(null);
+  }, []);
+
+  // Global click-outside: close any open popup when clicking outside its container
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as Node;
+      if (isLangOpen && langRef.current && !langRef.current.contains(target)) {
+        setIsLangOpen(false);
+      }
+      if (isListening && micRef.current && !micRef.current.contains(target)) {
+        setIsListening(false);
+        setVoiceFeedback(null);
+      }
+      if (isChatOpen && chatRef.current && !chatRef.current.contains(target)) {
+        setIsChatOpen(false);
+      }
+      if (isHelpOpen && helpRef.current && !helpRef.current.contains(target)) {
+        setIsHelpOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isLangOpen, isListening, isChatOpen, isHelpOpen]);
 
   // Track navigation direction for slide animations
   const routeOrder = ["/", "/dashboard", "/reminders", "/settings", "/profile", "/chatbot", "/who-is-this"];
@@ -182,9 +219,9 @@ export function Layout() {
               </NavLink>
 
               {/* Language Selector Dropdown Pill — below the title */}
-              <div className="relative">
+              <div className="relative" ref={langRef}>
                 <button
-                  onClick={() => setIsLangOpen(!isLangOpen)}
+                  onClick={() => { if (!isLangOpen) closeAllPopups(); setIsLangOpen(!isLangOpen); }}
                   aria-label="Select Language"
                   title="Language Settings"
                   className="bg-purple-50 hover:bg-purple-100 border border-purple-200 rounded-full px-2.5 py-0.5 flex items-center gap-1.5 text-xs font-bold text-slate-700 transition-all cursor-pointer shadow-xs"
@@ -247,26 +284,65 @@ export function Layout() {
           {/* Right Side Header Action Icons */}
           <div className="flex items-center gap-2 sm:gap-3 md:gap-4">
             {/* 1. Mic Button */}
-            <button
-              onClick={toggleListening}
-              title="Voice Assistant"
-              className={clsx(
-                "h-11 sm:h-12 px-3.5 sm:px-4 rounded-full border-2 flex items-center gap-2 transition-all cursor-pointer active:scale-95 shadow-xs flex-shrink-0 font-bold text-sm",
-                isListening
-                  ? "bg-[#FF6584] text-white border-[#FF6584] animate-pulse"
-                  : "bg-[#FFF0F3] hover:bg-[#FFE0E6] border-[#FFE0E6] text-[#FF6584]"
+            <div className="relative" ref={micRef}>
+              <button
+                onClick={() => {
+                  if (!isListening) closeAllPopups();
+                  toggleListening();
+                }}
+                title="Voice Assistant"
+                className={clsx(
+                  "h-11 sm:h-12 px-3.5 sm:px-4 rounded-full border-2 flex items-center gap-2 transition-all cursor-pointer active:scale-95 shadow-xs flex-shrink-0 font-bold text-sm",
+                  isListening
+                    ? "bg-[#FF6584] text-white border-[#FF6584] animate-pulse"
+                    : "bg-[#FFF0F3] hover:bg-[#FFE0E6] border-[#FFE0E6] text-[#FF6584]"
+                )}
+              >
+                {isListening ? <MicOff size={22} /> : <Mic size={22} />}
+                <span className="hidden md:inline font-extrabold">
+                  {isListening ? "Listening..." : "Talk"}
+                </span>
+              </button>
+
+              {/* Voice Assistant Dropdown */}
+              {isListening && (
+                <div className="absolute right-0 top-full mt-2 w-80 bg-white rounded-2xl shadow-2xl border-2 border-pink-200 p-5 flex flex-col items-center gap-4 text-center z-50 animate-in fade-in zoom-in-95 duration-200">
+                  <div className="relative">
+                    <div className="w-14 h-14 rounded-full bg-pink-100 flex items-center justify-center animate-bounce shadow-inner">
+                      <Mic size={28} className="text-[#FF6584]" />
+                    </div>
+                    <div className="absolute -bottom-1 -right-1 bg-white p-1 rounded-full shadow border border-pink-200">
+                      <Volume2 size={12} className="text-[#FF6584] animate-pulse" />
+                    </div>
+                  </div>
+
+                  <div>
+                    <h3 className="font-extrabold text-lg text-slate-800">Voice Assistant</h3>
+                    <p className="text-slate-500 text-xs mt-1 font-medium">
+                      {voiceFeedback || "Listening... Speak a command"}
+                    </p>
+                  </div>
+
+                  {transcript && (
+                    <div className="w-full bg-slate-50 p-3 rounded-xl border border-slate-200 text-slate-800 font-bold text-xs italic">
+                      "{transcript}"
+                    </div>
+                  )}
+
+                  <button
+                    onClick={() => { setIsListening(false); setVoiceFeedback(null); }}
+                    className="w-full py-2.5 bg-slate-800 text-white font-bold rounded-xl hover:bg-slate-900 transition-colors text-sm shadow-xs cursor-pointer"
+                  >
+                    Stop Listening
+                  </button>
+                </div>
               )}
-            >
-              {isListening ? <MicOff size={22} /> : <Mic size={22} />}
-              <span className="hidden md:inline font-extrabold">
-                {isListening ? "Listening..." : "Talk"}
-              </span>
-            </button>
+            </div>
 
             {/* 2. Chatbot Button */}
-            <div className="relative">
+            <div className="relative" ref={chatRef}>
               <button
-                onClick={() => setIsChatOpen(!isChatOpen)}
+                onClick={() => { if (!isChatOpen) closeAllPopups(); setIsChatOpen(!isChatOpen); }}
                 title="Mindora AI Assistant"
                 className="h-11 sm:h-12 px-3.5 sm:px-4 rounded-full bg-[#F5F0FF] hover:bg-[#EBE0FF] border-2 border-[#EBE0FF] text-[#9333EA] flex items-center gap-2 transition-all cursor-pointer active:scale-95 shadow-xs flex-shrink-0 font-bold text-sm"
               >
@@ -307,9 +383,9 @@ export function Layout() {
             </div>
 
             {/* 3. Help Button */}
-            <div className="relative">
+            <div className="relative" ref={helpRef}>
               <button
-                onClick={() => setIsHelpOpen(!isHelpOpen)}
+                onClick={() => { if (!isHelpOpen) closeAllPopups(); setIsHelpOpen(!isHelpOpen); }}
                 title="Help & Support"
                 className="h-11 w-11 sm:h-12 sm:w-12 rounded-full bg-[#F0F7FF] hover:bg-[#E0F0FF] border-2 border-[#E0F0FF] text-[#3B82F6] flex items-center justify-center transition-all cursor-pointer active:scale-95 shadow-xs flex-shrink-0"
               >
@@ -361,50 +437,6 @@ export function Layout() {
             </NavLink>
           </div>
         </header>
-
-        {/* Voice Assistant Overlay Modal */}
-        {isListening && (
-          <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4">
-            <div className="bg-white rounded-3xl p-6 max-w-sm sm:max-w-md w-full shadow-2xl border border-pink-200 flex flex-col items-center gap-4 text-center relative animate-in fade-in zoom-in-95 duration-200">
-              <button
-                onClick={() => setIsListening(false)}
-                className="absolute top-3 right-3 text-slate-400 hover:text-slate-600 p-1.5 rounded-full hover:bg-slate-100 transition-colors cursor-pointer"
-                aria-label="Close voice assistant"
-              >
-                <X size={20} />
-              </button>
-
-              <div className="relative mt-2">
-                <div className="w-16 h-16 rounded-full bg-pink-100 flex items-center justify-center animate-bounce shadow-inner">
-                  <Mic size={32} className="text-[#FF6584]" />
-                </div>
-                <div className="absolute -bottom-1 -right-1 bg-white p-1 rounded-full shadow border border-pink-200">
-                  <Volume2 size={14} className="text-[#FF6584] animate-pulse" />
-                </div>
-              </div>
-
-              <div>
-                <h3 className="font-extrabold text-xl sm:text-2xl text-slate-800">Voice Assistant</h3>
-                <p className="text-slate-500 text-xs sm:text-sm mt-1 font-medium">
-                  {voiceFeedback || "Listening... Speak a command"}
-                </p>
-              </div>
-
-              {transcript && (
-                <div className="w-full bg-slate-50 p-3 rounded-xl border border-slate-200 text-slate-800 font-bold text-xs sm:text-sm italic">
-                  "{transcript}"
-                </div>
-              )}
-
-              <button
-                onClick={() => setIsListening(false)}
-                className="w-full py-3 bg-slate-800 text-white font-bold rounded-xl hover:bg-slate-900 transition-colors text-sm shadow-xs cursor-pointer mt-1"
-              >
-                Stop Listening
-              </button>
-            </div>
-          </div>
-        )}
 
         {/* Main Content Area */}
         <main className="flex-1 overflow-y-auto px-4 sm:px-6 md:px-10 pt-4 md:pt-6 pb-28 max-w-6xl w-full mx-auto overflow-x-hidden">
