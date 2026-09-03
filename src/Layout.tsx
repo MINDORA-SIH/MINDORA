@@ -148,9 +148,7 @@ export function Layout() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-100 flex justify-center text-[#1E2445]">
-      {/* Laptop & Mobile Responsive App Container */}
-      <div className="w-full max-w-6xl min-h-screen bg-white shadow-xl flex flex-col relative border-x border-slate-200/60">
+      <div className="w-full min-h-screen bg-white flex flex-col relative">
         
         {/* Header */}
         <header className="bg-white border-b border-slate-100 px-4 sm:px-6 md:px-8 py-3.5 flex items-center justify-between sticky top-0 z-50 shadow-xs">
@@ -395,7 +393,6 @@ export function Layout() {
           </div>
         </nav>
       </div>
-    </div>
   );
 }
 
