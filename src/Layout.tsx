@@ -333,21 +333,23 @@ export function Layout() {
             </div>
 
             {/* 4. Dark Mode Toggle */}
-            <button
-              onClick={() => setDarkMode(!darkMode)}
-              title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
-              className={clsx(
-                "h-11 sm:h-12 px-3.5 sm:px-4 rounded-full border-2 flex items-center gap-2 transition-all cursor-pointer active:scale-95 shadow-xs flex-shrink-0 font-bold text-sm",
-                darkMode
-                  ? "bg-slate-700 hover:bg-slate-600 border-slate-600 text-slate-200"
-                  : "bg-slate-100 hover:bg-slate-200 border-slate-200 text-slate-700"
-              )}
-            >
-              {darkMode ? <Sun size={22} className="text-amber-500" /> : <Moon size={22} className="text-indigo-500" />}
-              <span className="hidden md:inline font-extrabold">
-                {darkMode ? "Light" : "Dark"}
-              </span>
-            </button>
+            {isWide && (
+              <button
+                onClick={() => setDarkMode(!darkMode)}
+                title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
+                className={clsx(
+                  "h-11 sm:h-12 px-3.5 sm:px-4 rounded-full border-2 flex items-center gap-2 transition-all cursor-pointer active:scale-95 shadow-xs flex-shrink-0 font-bold text-sm",
+                  darkMode
+                    ? "bg-slate-700 hover:bg-slate-600 border-slate-600 text-slate-200"
+                    : "bg-slate-100 hover:bg-slate-200 border-slate-200 text-slate-700"
+                )}
+              >
+                {darkMode ? <Sun size={22} className="text-amber-500" /> : <Moon size={22} className="text-indigo-500" />}
+                <span className="hidden md:inline font-extrabold">
+                  {darkMode ? "Light" : "Dark"}
+                </span>
+              </button>
+            )}
 
             {/* 5. Profile Button */}
             <NavLink

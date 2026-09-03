@@ -41,12 +41,12 @@
   }
 
   .dark {
-    --background: #0f172a;
-    --foreground: #e2e8f0;
-    --card-bg: #1e293b;
-    --header-bg: #1e293b;
+    --background: #121212;
+    --foreground: #F8FAFC;
+    --card-bg: #1E293B;
+    --header-bg: #1E293B;
     --header-border: #334155;
-    --surface: #1e293b;
+    --surface: #1E293B;
     --surface-hover: #334155;
     --muted: #94a3b8;
     --border: #334155;
@@ -163,11 +163,11 @@ button, a, [role="button"] {
 
 /* Text colors */
 .dark .text-\[\#1E2445\] {
-  color: #e2e8f0 !important;
+  color: #F8FAFC !important;
 }
 
 .dark .text-charcoal {
-  color: #e2e8f0 !important;
+  color: #F8FAFC !important;
 }
 
 .dark .text-slate-500 {
@@ -175,7 +175,7 @@ button, a, [role="button"] {
 }
 
 .dark .text-slate-800 {
-  color: #e2e8f0 !important;
+  color: #F8FAFC !important;
 }
 
 .dark .text-slate-700 {
@@ -265,4 +265,54 @@ button, a, [role="button"] {
 .dark .shadow-sm,
 .dark .shadow-xs {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Primary Action Buttons */
+.dark button.bg-\[\#FF6584\],
+.dark button.bg-purple-600,
+.dark button.bg-sky-blue,
+.dark button.bg-rose-pink {
+  background-color: #60A5FA !important;
+  border-color: #60A5FA !important;
+  color: #121212 !important;
+}
+.dark .text-\[\#FF6584\],
+.dark .text-\[\#9333EA\],
+.dark .text-\[\#3B82F6\] {
+  color: #60A5FA !important;
+}
+
+/* Alerts / Emergency */
+.dark .text-red-500,
+.dark .text-red-600,
+.dark .text-red-700 {
+  color: #F87171 !important;
+}
+.dark .bg-red-50 {
+  background-color: rgba(248, 113, 113, 0.15) !important;
+}
+.dark .bg-red-500 {
+  background-color: #F87171 !important;
+}
+.dark .border-red-100,
+.dark .border-red-200 {
+  border-color: rgba(248, 113, 113, 0.3) !important;
+}
+
+/* Success / Status */
+.dark .text-emerald-500,
+.dark .text-emerald-600,
+.dark .text-emerald-700,
+.dark .text-emerald-800 {
+  color: #34D399 !important;
+}
+.dark .bg-emerald-50 {
+  background-color: rgba(52, 211, 153, 0.15) !important;
+}
+.dark .bg-emerald-500 {
+  background-color: #34D399 !important;
+}
+.dark .border-emerald-200,
+.dark .border-emerald-400 {
+  border-color: rgba(52, 211, 153, 0.3) !important;
 }
