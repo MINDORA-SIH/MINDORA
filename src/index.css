@@ -38,6 +38,17 @@
     --surface-hover: #f8fafc;
     --muted: #64748b;
     --border: #e2e8f0;
+
+    /* Bottom navigation dock — high contrast against the white content area */
+    --dock-bg: #F2DEE6;
+    --dock-border: #A8496B;
+    --dock-shadow: 0 -4px 20px rgba(153, 53, 86, 0.18);
+    --dock-indicator: #FFB5CC;
+    --dock-indicator-border: #993556;
+    --dock-indicator-shadow: 0 2px 6px rgba(122, 36, 64, 0.28);
+    --dock-on-indicator: #7A2440;
+    --dock-active: #7A2440;
+    --dock-inactive: #4F4A48;
   }
 
   .dark {
@@ -50,6 +61,17 @@
     --surface-hover: #334155;
     --muted: #94a3b8;
     --border: #334155;
+
+    /* Bottom navigation dock — darker than the #1E293B page surface, lit border */
+    --dock-bg: #0D1424;
+    --dock-border: #6B7C96;
+    --dock-shadow: 0 -4px 20px rgba(0, 0, 0, 0.55);
+    --dock-indicator: #FFB5CC;
+    --dock-indicator-border: #FFB5CC;
+    --dock-indicator-shadow: 0 2px 8px rgba(255, 181, 204, 0.25);
+    --dock-on-indicator: #3F0F1F;
+    --dock-active: #FFC9D9;
+    --dock-inactive: #BCC7D6;
   }
 
   body {

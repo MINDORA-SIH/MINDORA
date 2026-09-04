@@ -293,9 +293,13 @@ export function Layout() {
         </main>
 
         {/* Bottom Navigation Dock */}
-        <nav 
-          className="fixed bottom-0 left-0 w-full z-40 transition-colors duration-300" 
-          style={{ backgroundColor: "var(--background)", borderTop: "1px solid var(--border)" }}
+        <nav
+          className="fixed bottom-0 left-0 w-full z-40 transition-colors duration-300"
+          style={{
+            backgroundColor: "var(--dock-bg)",
+            borderTop: "2px solid var(--dock-border)",
+            boxShadow: "var(--dock-shadow)",
+          }}
         >
           <div className="max-w-md sm:max-w-lg mx-auto px-4 py-2">
             <div className="grid grid-cols-4 items-center gap-2">
@@ -525,9 +529,7 @@ function NavItem({ to, icon, label }: { to: string; icon: React.ReactNode; label
       className={({ isActive }) =>
         clsx(
           "flex flex-col items-center justify-center py-1 rounded-2xl transition-all duration-300 flex-1 text-center cursor-pointer relative",
-          isActive
-            ? "text-[#993556] dark:text-[#FFB5CC] font-bold"
-            : "text-[#5F5E5A] dark:text-[#94A3B8] font-bold"
+          isActive ? "font-extrabold" : "font-bold"
         )
       }
     >
@@ -535,15 +537,25 @@ function NavItem({ to, icon, label }: { to: string; icon: React.ReactNode; label
         <>
           <div
             className={clsx(
-              "flex items-center justify-center w-12 h-8 rounded-full transition-all duration-300 mb-1 bg-transparent"
+              "flex items-center justify-center w-14 h-9 rounded-full border-2 transition-all duration-300 mb-1",
+              isActive
+                ? "bg-[var(--dock-indicator)] border-[var(--dock-indicator-border)] text-[var(--dock-on-indicator)] shadow-[shadow:var(--dock-indicator-shadow)]"
+                : "bg-transparent border-transparent text-[var(--dock-inactive)]"
             )}
           >
-            {cloneElement(icon as React.ReactElement, { 
-              fill: isActive ? "currentColor" : "none",
-              strokeWidth: 2.5
+            {cloneElement(icon as React.ReactElement<React.SVGProps<SVGSVGElement>>, {
+              fill: "none",
+              strokeWidth: isActive ? 2.75 : 2.5
             })}
           </div>
-          <span className="text-[16px] leading-tight">{label}</span>
+          <span
+            className={clsx(
+              "text-[16px] leading-tight",
+              isActive ? "text-[var(--dock-active)]" : "text-[var(--dock-inactive)]"
+            )}
+          >
+            {label}
+          </span>
         </>
       )}
     </NavLink>
