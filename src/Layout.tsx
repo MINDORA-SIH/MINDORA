@@ -138,7 +138,7 @@ export function Layout() {
         setVoiceFeedback(null);
       }, 1000);
     } else if (lower.includes("progress") || lower.includes("dashboard") || lower.includes("stat")) {
-      setVoiceFeedback("Navigating to Progress Dashboard...");
+      setVoiceFeedback("Navigating to Dashboard...");
       setTimeout(() => {
         navigate("/dashboard");
         setIsListening(false);
@@ -318,7 +318,7 @@ export function Layout() {
           <div className="max-w-md sm:max-w-lg mx-auto px-4 py-2">
             <div className="grid grid-cols-4 items-center gap-2">
               <NavItem to="/" icon={<Gamepad2 size={24} />} label="Games" />
-              <NavItem to="/dashboard" icon={<BarChart2 size={24} />} label="Progress" />
+              <NavItem to="/dashboard" icon={<BarChart2 size={24} />} label="Dashboard" />
               <NavItem to="/reminders" icon={<Bell size={24} />} label="Reminders" />
               <NavItem to="/settings" icon={<SettingsIcon size={24} />} label="Settings" />
             </div>
