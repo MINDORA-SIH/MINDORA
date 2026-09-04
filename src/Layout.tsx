@@ -180,18 +180,25 @@ export function Layout() {
       <div className="w-full min-h-screen flex flex-col relative transition-colors duration-300" style={{ backgroundColor: "var(--card-bg)", color: "var(--foreground)" }}>
         
         {/* Header */}
-        <header className="px-4 sm:px-6 md:px-8 py-3.5 flex items-center justify-between sticky top-0 z-50 shadow-xs transition-colors duration-300" style={{ backgroundColor: "var(--header-bg)", borderBottom: "1px solid var(--header-border)" }}>
+        <header
+          className="px-3 sm:px-5 md:px-8 py-2.5 sm:py-3 flex items-center justify-between sticky top-0 z-50 transition-colors duration-300"
+          style={{
+            backgroundColor: "var(--header-bg)",
+            borderBottom: "2px solid var(--header-border)",
+            boxShadow: "var(--header-shadow)",
+          }}
+        >
           {/* Left Side: MINDORA Logo + Brand Title + Language underneath */}
-          <div className="flex items-center gap-3 md:gap-4">
-            <NavLink to="/" className="flex items-center gap-2.5 hover:opacity-90 transition-opacity flex-shrink-0">
-              <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-full border-2 border-amber-300 shadow-xs flex items-center justify-center overflow-hidden bg-white flex-shrink-0">
-                <img src={logoUrl} alt="Mindora Logo" className="w-full h-full object-cover" />
+          <div className="flex items-center gap-2 sm:gap-3 md:gap-4 min-w-0">
+            <NavLink to="/" className="flex items-center gap-2 hover:opacity-90 transition-opacity flex-shrink-0">
+              <div className="w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-full border-2 border-amber-400 shadow-md flex items-center justify-center overflow-hidden bg-white flex-shrink-0">
+                <img src={logoUrl} alt="Mindora Logo" className="w-[85%] h-[85%] object-contain" />
               </div>
             </NavLink>
 
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col gap-0.5 sm:gap-1 min-w-0">
               <NavLink to="/" className="hover:opacity-90 transition-opacity">
-                <span className="font-extrabold text-xl sm:text-2xl tracking-tight leading-none" style={{ color: "var(--foreground)" }}>
+                <span className="font-extrabold text-lg sm:text-xl md:text-2xl tracking-tight leading-none" style={{ color: "var(--foreground)" }}>
                   MINDORA
                 </span>
               </NavLink>
@@ -201,20 +208,20 @@ export function Layout() {
                   onClick={() => { if (!isLangOpen) closeAllPopups(); setIsLangOpen(!isLangOpen); }}
                   aria-label="Select Language"
                   title="Language Settings"
-                  className="bg-purple-50 hover:bg-purple-100 border border-purple-200 rounded-full px-2.5 py-0.5 flex items-center gap-1.5 text-[18px] font-bold text-slate-700 transition-all cursor-pointer shadow-xs"
+                  className="bg-white/60 hover:bg-white/80 border border-purple-300 rounded-full px-2 py-0.5 flex items-center gap-1 text-xs sm:text-sm font-bold text-slate-700 transition-all cursor-pointer shadow-xs"
                 >
-                  <Globe size={13} className="text-purple-600 flex-shrink-0" />
-                  <span className="text-[20px]">{currentLang.flag}</span>
-                  <span className="hidden sm:inline font-bold text-slate-800 text-[18px]">{currentLang.name}</span>
+                  <Globe size={11} className="text-purple-600 flex-shrink-0" />
+                  <span className="text-sm sm:text-base">{currentLang.flag}</span>
+                  <span className="hidden sm:inline font-bold text-slate-800 text-xs sm:text-sm">{currentLang.name}</span>
                   <span className="sm:hidden font-extrabold text-slate-800 text-[10px]">{currentLang.code.split("-")[0].toUpperCase()}</span>
-                  <ChevronDown size={12} className={clsx("text-slate-400 transition-transform duration-200", isLangOpen && "rotate-180")} />
+                  <ChevronDown size={10} className={clsx("text-slate-400 transition-transform duration-200", isLangOpen && "rotate-180")} />
                 </button>
               </div>
             </div>
           </div>
 
           {/* Right Side Header Action Icons */}
-          <div className="flex items-center gap-2 sm:gap-3 md:gap-4">
+          <div className="flex items-center gap-1.5 sm:gap-2 md:gap-3">
             {/* 1. Mic Button */}
             <button
               onClick={() => {
@@ -223,14 +230,14 @@ export function Layout() {
               }}
               title="Voice Assistant"
               className={clsx(
-                "h-11 sm:h-12 px-3.5 sm:px-4 rounded-full border-2 flex items-center gap-2 transition-all cursor-pointer active:scale-95 shadow-xs flex-shrink-0 font-bold text-[20px]",
+                "h-9 sm:h-10 md:h-11 px-2.5 sm:px-3 md:px-4 rounded-full border-2 flex items-center gap-1.5 transition-all cursor-pointer active:scale-95 shadow-xs flex-shrink-0 font-bold text-sm sm:text-base",
                 isListening
                   ? "bg-[#FF6584] text-white border-[#FF6584] animate-pulse"
-                  : "bg-[#FFF0F3] hover:bg-[#FFE0E6] border-[#FFE0E6] text-[#FF6584]"
+                  : "bg-white/70 hover:bg-white border-[#FFE0E6] text-[#FF6584]"
               )}
             >
-              {isListening ? <MicOff size={22} /> : <Mic size={22} />}
-              <span className="hidden md:inline font-extrabold">
+              {isListening ? <MicOff size={18} /> : <Mic size={18} />}
+              <span className="hidden lg:inline font-extrabold">
                 {isListening ? "Listening..." : "Talk"}
               </span>
             </button>
@@ -239,19 +246,19 @@ export function Layout() {
             <button
               onClick={() => { if (!isChatOpen) closeAllPopups(); setIsChatOpen(!isChatOpen); }}
               title="Mindora AI Assistant"
-              className="h-11 sm:h-12 px-3.5 sm:px-4 rounded-full bg-[#F5F0FF] hover:bg-[#EBE0FF] border-2 border-[#EBE0FF] text-[#9333EA] flex items-center gap-2 transition-all cursor-pointer active:scale-95 shadow-xs flex-shrink-0 font-bold text-[20px]"
+              className="h-9 sm:h-10 md:h-11 px-2.5 sm:px-3 md:px-4 rounded-full bg-white/70 hover:bg-white border-2 border-[#EBE0FF] text-[#9333EA] flex items-center gap-1.5 transition-all cursor-pointer active:scale-95 shadow-xs flex-shrink-0 font-bold text-sm sm:text-base"
             >
-              <Bot size={22} />
-              <span className="hidden md:inline font-extrabold">Chatbot</span>
+              <Bot size={18} />
+              <span className="hidden lg:inline font-extrabold">Chatbot</span>
             </button>
 
             {/* 3. Help Button */}
             <button
               onClick={() => { if (!isHelpOpen) closeAllPopups(); setIsHelpOpen(!isHelpOpen); }}
               title="Help & Support"
-              className="h-11 w-11 sm:h-12 sm:w-12 rounded-full bg-[#F0F7FF] hover:bg-[#E0F0FF] border-2 border-[#E0F0FF] text-[#3B82F6] flex items-center justify-center transition-all cursor-pointer active:scale-95 shadow-xs flex-shrink-0"
+              className="h-9 w-9 sm:h-10 sm:w-10 md:h-11 md:w-11 rounded-full bg-white/70 hover:bg-white border-2 border-[#E0F0FF] text-[#3B82F6] flex items-center justify-center transition-all cursor-pointer active:scale-95 shadow-xs flex-shrink-0"
             >
-              <HelpCircle size={22} />
+              <HelpCircle size={18} />
             </button>
 
             {/* 4. Dark Mode Toggle */}
@@ -260,16 +267,16 @@ export function Layout() {
                 onClick={() => setDarkMode(!darkMode)}
                 title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
                 className={clsx(
-                  "h-11 w-11 sm:h-12 sm:w-12 rounded-full border-2 flex items-center justify-center transition-all cursor-pointer active:scale-95 shadow-xs flex-shrink-0",
+                  "h-9 w-9 sm:h-10 sm:w-10 md:h-11 md:w-11 rounded-full border-2 flex items-center justify-center transition-all cursor-pointer active:scale-95 shadow-xs flex-shrink-0",
                   darkMode
                     ? "bg-slate-700 hover:bg-slate-600 border-slate-600 text-slate-200"
-                    : "bg-slate-100 hover:bg-slate-200 border-slate-200 text-slate-700",
+                    : "bg-white/70 hover:bg-white border-slate-200 text-slate-700",
                 )}
               >
                 {darkMode ? (
-                  <Sun size={22} className="text-amber-500" />
+                  <Sun size={18} className="text-amber-500" />
                 ) : (
-                  <Moon size={22} className="text-indigo-500" />
+                  <Moon size={18} className="text-indigo-500" />
                 )}
               </button>
             )}
@@ -278,15 +285,15 @@ export function Layout() {
             <NavLink
               to="/profile"
               title="Profile"
-              className="h-11 w-11 sm:h-12 sm:w-12 rounded-full bg-slate-100 hover:bg-slate-200 border-2 border-slate-200 text-slate-700 flex items-center justify-center transition-all cursor-pointer active:scale-95 shadow-xs flex-shrink-0"
+              className="h-9 w-9 sm:h-10 sm:w-10 md:h-11 md:w-11 rounded-full bg-white/70 hover:bg-white border-2 border-slate-200 text-slate-700 flex items-center justify-center transition-all cursor-pointer active:scale-95 shadow-xs flex-shrink-0"
             >
-              <User size={22} />
+              <User size={18} />
             </NavLink>
           </div>
         </header>
 
         {/* Main Content Area */}
-        <main className="flex-1 overflow-y-auto px-4 sm:px-6 md:px-10 pt-4 md:pt-6 pb-28 max-w-6xl w-full mx-auto overflow-x-hidden">
+        <main className="flex-1 overflow-y-auto px-3 sm:px-5 md:px-8 lg:px-10 pt-3 sm:pt-4 md:pt-6 pb-24 sm:pb-28 max-w-6xl w-full mx-auto overflow-x-hidden">
           <div key={location.pathname} className={slideDirection}>
             <Outlet context={{ darkMode, setDarkMode }} />
           </div>

@@ -32,8 +32,9 @@
     --background: var(--color-off-white);
     --foreground: var(--color-charcoal);
     --card-bg: #FFFFFF;
-    --header-bg: #FFFFFF;
-    --header-border: #f1f5f9;
+    --header-bg: #F2DEE6;
+    --header-border: #A8496B;
+    --header-shadow: 0 4px 20px rgba(153, 53, 86, 0.12);
     --surface: #FFFFFF;
     --surface-hover: #f8fafc;
     --muted: #64748b;
@@ -55,8 +56,9 @@
     --background: #121212;
     --foreground: #F8FAFC;
     --card-bg: #1E293B;
-    --header-bg: #1E293B;
-    --header-border: #334155;
+    --header-bg: #0D1424;
+    --header-border: #6B7C96;
+    --header-shadow: 0 4px 20px rgba(0, 0, 0, 0.45);
     --surface: #1E293B;
     --surface-hover: #334155;
     --muted: #94a3b8;
@@ -96,6 +98,14 @@ button, a, [role="button"] {
 .tap-target {
   min-height: 48px;
   min-width: 48px;
+}
+
+/* Toggle switch: override the global button centering */
+.toggle-track {
+  display: block !important;
+  align-items: stretch !important;
+  justify-content: flex-start !important;
+  cursor: pointer;
 }
 
 /* Hide scrollbar for Chrome, Safari and Opera */
