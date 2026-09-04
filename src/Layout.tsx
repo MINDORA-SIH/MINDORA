@@ -1,6 +1,6 @@
 import { Outlet, NavLink, useNavigate, useLocation } from "react-router";
 import logoUrl from "./assets/logo.png";
-import { User, HelpCircle, Globe, Gamepad2, BarChart2, Bell, Settings as SettingsIcon, PhoneCall, BookOpen, Mail, Mic, MicOff, X, Volume2, Bot, ChevronDown, Check, Moon, Sun, ArrowLeft } from "lucide-react";
+import { User, Globe, Gamepad2, BarChart2, Bell, Settings as SettingsIcon, Mic, MicOff, ChevronDown, Check, Moon, Sun, ArrowLeft, X } from "lucide-react";
 import { useState, useRef, useEffect, useCallback, cloneElement } from "react";
 import { clsx } from "clsx";
 
@@ -24,36 +24,33 @@ export const LANGUAGES: Language[] = [
 ];
 
 export function Layout() {
-  const [isHelpOpen, setIsHelpOpen] = useState(false);
-  const [isChatOpen, setIsChatOpen] = useState(false);
   const [isLangOpen, setIsLangOpen] = useState(false);
   const [currentLang, setCurrentLang] = useState<Language>(() => {
     const saved = localStorage.getItem("mindora_lang");
     if (saved) {
       try { return JSON.parse(saved); } catch (e) {}
     }
-    return LANGUAGES[0]; // Hindi default matching screenshot
+    return LANGUAGES[0];
   });
 
   const [isListening, setIsListening] = useState(false);
   const [darkMode, setDarkMode] = useState(() => localStorage.getItem("mindora_dark") === "true");
   const [transcript, setTranscript] = useState("");
   const [voiceFeedback, setVoiceFeedback] = useState<string | null>(null);
+
+  // Emergency SOS state
+  const [sosActive, setSosActive] = useState(false);
+  const [sosCountdown, setSosCountdown] = useState(5);
+  const [sosSent, setSosSent] = useState(false);
+  const sosIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
   const navigate = useNavigate();
   const location = useLocation();
-
-  // Refs for click-outside detection on every popup
-  const langRef = useRef<HTMLDivElement>(null);
-  const micRef = useRef<HTMLDivElement>(null);
-  const chatRef = useRef<HTMLDivElement>(null);
-  const helpRef = useRef<HTMLDivElement>(null);
 
   // Close all popups — called before opening any new one
   const closeAllPopups = useCallback(() => {
     setIsLangOpen(false);
     setIsListening(false);
-    setIsChatOpen(false);
-    setIsHelpOpen(false);
     setVoiceFeedback(null);
   }, []);
 
@@ -81,6 +78,46 @@ export function Layout() {
     setSlideDirection(currIndex >= prevIndex ? "page-slide-right" : "page-slide-left");
     prevPathRef.current = location.pathname;
   }, [location.pathname]);
+
+  // Emergency SOS countdown logic
+  const triggerSos = useCallback(() => {
+    setSosActive(true);
+    setSosCountdown(5);
+    setSosSent(false);
+  }, []);
+
+  const cancelSos = useCallback(() => {
+    setSosActive(false);
+    setSosCountdown(5);
+    setSosSent(false);
+    if (sosIntervalRef.current) {
+      clearInterval(sosIntervalRef.current);
+      sosIntervalRef.current = null;
+    }
+  }, []);
+
+  useEffect(() => {
+    if (sosActive && !sosSent) {
+      sosIntervalRef.current = setInterval(() => {
+        setSosCountdown((prev) => {
+          if (prev <= 1) {
+            // Timer reached 0 — send alert
+            setSosSent(true);
+            if (sosIntervalRef.current) clearInterval(sosIntervalRef.current);
+            sosIntervalRef.current = null;
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+    return () => {
+      if (sosIntervalRef.current) {
+        clearInterval(sosIntervalRef.current);
+        sosIntervalRef.current = null;
+      }
+    };
+  }, [sosActive, sosSent]);
 
   const handleVoiceCommand = (text: string) => {
     setTranscript(text);
@@ -128,9 +165,9 @@ export function Layout() {
         setIsListening(false);
         setVoiceFeedback(null);
       }, 1000);
-    } else if (lower.includes("help") || lower.includes("caretaker") || lower.includes("support")) {
-      setVoiceFeedback("Opening Help Menu...");
-      setIsHelpOpen(true);
+    } else if (lower.includes("help") || lower.includes("emergency") || lower.includes("sos")) {
+      setVoiceFeedback("Triggering Emergency Alert...");
+      triggerSos();
       setTimeout(() => {
         setIsListening(false);
         setVoiceFeedback(null);
@@ -222,46 +259,16 @@ export function Layout() {
 
           {/* Right Side Header Action Icons */}
           <div className="flex items-center gap-1.5 sm:gap-2 md:gap-3">
-            {/* 1. Mic Button */}
+            {/* 1. Emergency SOS Button */}
             <button
-              onClick={() => {
-                if (!isListening) closeAllPopups();
-                toggleListening();
-              }}
-              title="Voice Assistant"
-              className={clsx(
-                "h-9 sm:h-10 md:h-11 px-2.5 sm:px-3 md:px-4 rounded-full border-2 flex items-center gap-1.5 transition-all cursor-pointer active:scale-95 shadow-xs flex-shrink-0 font-bold text-sm sm:text-base",
-                isListening
-                  ? "bg-[#FF6584] text-white border-[#FF6584] animate-pulse"
-                  : "bg-white/70 hover:bg-white border-[#FFE0E6] text-[#FF6584]"
-              )}
+              onClick={triggerSos}
+              title="Emergency Alert"
+              className="h-9 sm:h-10 md:h-11 px-3 sm:px-4 md:px-5 rounded-full bg-red-600 hover:bg-red-700 border-2 border-red-700 text-white flex items-center transition-all cursor-pointer active:scale-95 shadow-md flex-shrink-0 font-black text-sm sm:text-base tracking-wide"
             >
-              {isListening ? <MicOff size={18} /> : <Mic size={18} />}
-              <span className="hidden lg:inline font-extrabold">
-                {isListening ? "Listening..." : "Talk"}
-              </span>
+              SOS
             </button>
 
-            {/* 2. Chatbot Button */}
-            <button
-              onClick={() => { if (!isChatOpen) closeAllPopups(); setIsChatOpen(!isChatOpen); }}
-              title="Mindora AI Assistant"
-              className="h-9 sm:h-10 md:h-11 px-2.5 sm:px-3 md:px-4 rounded-full bg-white/70 hover:bg-white border-2 border-[#EBE0FF] text-[#9333EA] flex items-center gap-1.5 transition-all cursor-pointer active:scale-95 shadow-xs flex-shrink-0 font-bold text-sm sm:text-base"
-            >
-              <Bot size={18} />
-              <span className="hidden lg:inline font-extrabold">Chatbot</span>
-            </button>
-
-            {/* 3. Help Button */}
-            <button
-              onClick={() => { if (!isHelpOpen) closeAllPopups(); setIsHelpOpen(!isHelpOpen); }}
-              title="Help & Support"
-              className="h-9 w-9 sm:h-10 sm:w-10 md:h-11 md:w-11 rounded-full bg-white/70 hover:bg-white border-2 border-[#E0F0FF] text-[#3B82F6] flex items-center justify-center transition-all cursor-pointer active:scale-95 shadow-xs flex-shrink-0"
-            >
-              <HelpCircle size={18} />
-            </button>
-
-            {/* 4. Dark Mode Toggle */}
+            {/* 2. Dark Mode Toggle */}
             {isWide && (
               <button
                 onClick={() => setDarkMode(!darkMode)}
@@ -281,7 +288,7 @@ export function Layout() {
               </button>
             )}
 
-            {/* 5. Profile Button */}
+            {/* 3. Profile Button */}
             <NavLink
               to="/profile"
               title="Profile"
@@ -317,6 +324,23 @@ export function Layout() {
             </div>
           </div>
         </nav>
+
+        {/* Fixed Mic FAB — bottom right, above dock */}
+        <button
+          onClick={() => {
+            if (!isListening) closeAllPopups();
+            toggleListening();
+          }}
+          title="Voice Assistant"
+          className={clsx(
+            "fixed z-50 right-4 sm:right-6 bottom-[5.5rem] sm:bottom-[6rem] w-14 h-14 sm:w-16 sm:h-16 rounded-full border-3 flex items-center justify-center transition-all cursor-pointer active:scale-90 shadow-lg",
+            isListening
+              ? "bg-[#FF6584] text-white border-[#FF6584] animate-pulse shadow-[0_0_20px_rgba(255,101,132,0.5)]"
+              : "bg-white hover:bg-[#FFF0F3] border-[#FF6584] text-[#FF6584] shadow-[0_4px_15px_rgba(255,101,132,0.3)]"
+          )}
+        >
+          {isListening ? <MicOff size={24} /> : <Mic size={24} />}
+        </button>
 
         {/* Global Root-Level Popups */}
 
@@ -401,12 +425,13 @@ export function Layout() {
                 </button>
               </div>
 
-              <div className="relative mt-2">
-                <div className="w-20 h-20 rounded-full bg-pink-100 flex items-center justify-center animate-bounce shadow-inner border-4 border-white">
+              <div className="relative mt-2 flex items-center justify-center">
+                {/* Pulsing wave rings */}
+                <div className="absolute w-28 h-28 rounded-full bg-pink-200/40 mic-wave-ring mic-wave-ring-1" />
+                <div className="absolute w-36 h-36 rounded-full bg-pink-200/25 mic-wave-ring mic-wave-ring-2" />
+                <div className="absolute w-44 h-44 rounded-full bg-pink-100/15 mic-wave-ring mic-wave-ring-3" />
+                <div className="relative w-20 h-20 rounded-full bg-gradient-to-br from-pink-100 to-pink-200 flex items-center justify-center shadow-lg border-4 border-white z-10">
                   <Mic size={36} className="text-[#FF6584]" />
-                </div>
-                <div className="absolute -bottom-2 -right-2 bg-white p-2 rounded-full shadow border-2 border-pink-200">
-                  <Volume2 size={16} className="text-[#FF6584] animate-pulse" />
                 </div>
               </div>
 
@@ -433,95 +458,84 @@ export function Layout() {
           </div>
         )}
 
-        {/* 3. Chatbot Popup */}
-        {isChatOpen && (
+        {/* 3. Emergency SOS Overlay */}
+        {sosActive && (
           <div 
-            className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm transition-all"
-            onClick={() => setIsChatOpen(false)}
+            className="fixed inset-0 z-[200] flex items-center justify-center p-4 transition-all bg-black/30 backdrop-blur-md"
           >
             <div 
-              className="w-full max-w-sm bg-white rounded-3xl shadow-2xl border-2 border-purple-200 p-6 flex flex-col gap-5 animate-in fade-in zoom-in-95 duration-200"
+              className={clsx(
+                "w-full max-w-sm rounded-3xl shadow-2xl border-4 p-6 sm:p-8 flex flex-col items-center gap-5 text-center animate-in fade-in zoom-in-95 duration-200",
+                sosSent
+                  ? "bg-slate-50 border-slate-300"
+                  : "bg-white border-red-400"
+              )}
               onClick={e => e.stopPropagation()}
             >
-              <div className="flex items-center justify-between border-b border-purple-100 pb-4">
-                <div className="flex items-center gap-3">
-                  <button 
-                    onClick={() => setIsChatOpen(false)}
-                    className="p-2 -ml-2 rounded-full hover:bg-slate-100 text-slate-500 transition-colors cursor-pointer"
-                  >
-                    <ArrowLeft size={24} />
-                  </button>
-                  <div className="w-10 h-10 rounded-full bg-purple-600 text-white flex items-center justify-center shadow-sm">
-                    <Bot size={22} />
+              {!sosSent ? (
+                <>
+                  {/* Countdown state */}
+                  <div className="relative">
+                    {/* Animated ring */}
+                    <svg className="w-28 h-28 sm:w-32 sm:h-32" viewBox="0 0 120 120">
+                      <circle cx="60" cy="60" r="52" fill="none" stroke="#FEE2E2" strokeWidth="8" />
+                      <circle
+                        cx="60" cy="60" r="52"
+                        fill="none"
+                        stroke="#DC2626"
+                        strokeWidth="8"
+                        strokeLinecap="round"
+                        strokeDasharray={`${2 * Math.PI * 52}`}
+                        strokeDashoffset={`${2 * Math.PI * 52 * (1 - sosCountdown / 5)}`}
+                        className="transition-all duration-1000 ease-linear"
+                        transform="rotate(-90 60 60)"
+                      />
+                    </svg>
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <span className="text-5xl sm:text-6xl font-black text-red-600">{sosCountdown}</span>
+                    </div>
                   </div>
-                  <span className="font-extrabold text-slate-800 text-lg">Mindora AI</span>
-                </div>
-              </div>
-              
-              <div className="bg-purple-50 p-4 rounded-2xl border border-purple-100 relative">
-                <div className="absolute -top-2 left-6 w-4 h-4 bg-purple-50 border-t border-l border-purple-100 rotate-45"></div>
-                <p className="text-base font-bold text-purple-900 leading-snug relative z-10">
-                  Hi Savitri! Ask me anything about your activities, schedule, or brain health tips.
-                </p>
-              </div>
-              
-              <button
-                onClick={() => {
-                  setIsChatOpen(false);
-                  navigate("/chatbot");
-                }}
-                className="w-full py-4 bg-purple-600 hover:bg-purple-700 text-white font-extrabold rounded-2xl transition-all shadow-md text-center flex items-center justify-center gap-2 text-base cursor-pointer mt-2"
-              >
-                <Bot size={22} /> Open Chat
-              </button>
-            </div>
-          </div>
-        )}
 
-        {/* 4. Help Popup */}
-        {isHelpOpen && (
-          <div 
-            className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm transition-all"
-            onClick={() => setIsHelpOpen(false)}
-          >
-            <div 
-              className="w-full max-w-sm bg-white rounded-3xl shadow-2xl border-2 border-blue-200 p-5 flex flex-col animate-in fade-in zoom-in-95 duration-200"
-              onClick={e => e.stopPropagation()}
-            >
-              <div className="flex items-center gap-3 border-b border-slate-100 pb-3 mb-4">
-                <button 
-                  onClick={() => setIsHelpOpen(false)}
-                  className="p-2 -ml-2 rounded-full hover:bg-slate-100 text-slate-500 transition-colors cursor-pointer"
-                >
-                  <ArrowLeft size={24} />
-                </button>
-                <h3 className="text-lg font-extrabold text-slate-800 tracking-tight flex items-center gap-2">
-                  <HelpCircle size={22} className="text-blue-500" /> Help & Support
-                </h3>
-              </div>
-              
-              <div className="flex flex-col gap-3">
-                <button className="flex items-center gap-4 p-4 rounded-2xl bg-pink-50 hover:bg-pink-100 font-extrabold text-base text-slate-800 transition-all w-full text-left cursor-pointer border border-transparent hover:border-pink-200">
-                  <div className="w-12 h-12 rounded-full bg-pink-100 flex items-center justify-center shrink-0">
-                    <PhoneCall size={24} className="text-pink-600" />
+                  <div>
+                    <h3 className="font-extrabold text-xl sm:text-2xl text-red-700">🚨 Emergency Alert</h3>
+                    <p className="text-slate-600 text-sm sm:text-base font-bold mt-2 leading-relaxed">
+                      Sending SMS to your caregiver in <span className="text-red-600 font-black">{sosCountdown}s</span>
+                    </p>
+                    <p className="text-slate-400 text-xs sm:text-sm font-medium mt-1">
+                      Press cancel to stop the alert
+                    </p>
                   </div>
-                  <span>Call Caretaker</span>
-                </button>
-                
-                <button className="flex items-center gap-4 p-4 rounded-2xl bg-blue-50 hover:bg-blue-100 font-extrabold text-base text-slate-800 transition-all w-full text-left cursor-pointer border border-transparent hover:border-blue-200">
-                  <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center shrink-0">
-                    <BookOpen size={24} className="text-blue-600" />
+
+                  <button
+                    onClick={cancelSos}
+                    className="w-full py-4 bg-slate-800 hover:bg-slate-900 text-white font-extrabold text-base sm:text-lg rounded-2xl transition-all shadow-lg cursor-pointer flex items-center justify-center gap-2"
+                  >
+                    <X size={22} />
+                    Cancel Alert
+                  </button>
+                </>
+              ) : (
+                <>
+                  {/* Sent confirmation — grey theme */}
+                  <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-slate-200 flex items-center justify-center border-4 border-slate-300">
+                    <Check size={48} className="text-slate-600" />
                   </div>
-                  <span>App Tutorial</span>
-                </button>
-                
-                <button className="flex items-center gap-4 p-4 rounded-2xl bg-purple-50 hover:bg-purple-100 font-extrabold text-base text-slate-800 transition-all w-full text-left cursor-pointer border border-transparent hover:border-purple-200">
-                  <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center shrink-0">
-                    <Mail size={24} className="text-purple-600" />
+
+                  <div>
+                    <h3 className="font-extrabold text-xl sm:text-2xl text-slate-700">Alert Sent</h3>
+                    <p className="text-slate-500 text-sm sm:text-base font-bold mt-2 leading-relaxed">
+                      Your caregiver has been notified via SMS. Help is on the way.
+                    </p>
                   </div>
-                  <span>Contact Support</span>
-                </button>
-              </div>
+
+                  <button
+                    onClick={cancelSos}
+                    className="w-full py-4 bg-slate-700 hover:bg-slate-800 text-white font-extrabold text-base sm:text-lg rounded-2xl transition-all shadow-lg cursor-pointer"
+                  >
+                    Close
+                  </button>
+                </>
+              )}
             </div>
           </div>
         )}
