@@ -167,6 +167,23 @@ button, a, [role="button"] {
   animation: slide-in-left 0.3s ease-out both;
 }
 
+/* Popover pop-in (language dropdown) */
+@keyframes dropdown-pop {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.dropdown-pop {
+  animation: dropdown-pop 0.15s ease-out both;
+  transform-origin: top center;
+}
+
 /* ═══════════════════════════════════════════
    Dark Mode Global Overrides
    Targets hardcoded colors across all pages
