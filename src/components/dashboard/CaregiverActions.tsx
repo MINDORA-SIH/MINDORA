@@ -1,5 +1,5 @@
 import { clsx } from "clsx";
-import { ArrowRight, BellRing, LayoutGrid, MessageCircle, Stethoscope, UserRound } from "lucide-react";
+import { ArrowRight, BellRing, Database, LayoutGrid, MessageCircle, Stethoscope, UserRound } from "lucide-react";
 import { Link } from "react-router";
 import { type IconComponent, type SemanticTone, TONES } from "./tokens";
 import { SectionCard } from "./ui";
@@ -20,6 +20,13 @@ const ACTIONS: ActionLink[] = [
     description: "Personal and medical details on record",
     icon: UserRound,
     tone: "brand",
+  },
+  {
+    to: "/manage-data",
+    label: "Manage Data",
+    description: "People, photos and relationships the activities use",
+    icon: Database,
+    tone: "info",
   },
   {
     to: "/reminders",

@@ -37,7 +37,7 @@ export function Layout() {
   }, []);
 
   // Track navigation direction for slide animations
-  const routeOrder = ["/", "/dashboard", "/reminders", "/settings", "/profile", "/chatbot", "/who-is-this"];
+  const routeOrder = ["/", "/dashboard", "/manage-data", "/reminders", "/settings", "/profile", "/chatbot", "/who-is-this"];
   const prevPathRef = useRef(location.pathname);
   const [slideDirection, setSlideDirection] = useState("page-slide-right");
   const [isWide, setIsWide] = useState(() => window.innerWidth > 600);

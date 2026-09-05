@@ -2,13 +2,13 @@ import { createBrowserRouter } from "react-router";
 import { Layout } from "./Layout";
 import { MainGameGrid } from "./pages/MainGameGrid";
 import { Dashboard } from "./pages/Dashboard";
+import { ManageData } from "./pages/ManageData";
 import { Reminders } from "./pages/Reminders";
 import { Settings } from "./pages/Settings";
 import { Profile } from "./pages/Profile";
 import { Chatbot } from "./pages/Chatbot";
 import { SpotTheDifference } from "./pages/SpotTheDifference";
-
-const EmptyPage = () => <div />;
+import { WhoIsThisGame } from "./pages/WhoIsThis";
 
 export const router = createBrowserRouter([
   {
@@ -17,12 +17,13 @@ export const router = createBrowserRouter([
     children: [
       { index: true, Component: MainGameGrid },
       { path: "dashboard", Component: Dashboard },
+      { path: "manage-data", Component: ManageData },
       { path: "reminders", Component: Reminders },
       { path: "settings", Component: Settings },
       { path: "profile", Component: Profile },
       { path: "chatbot", Component: Chatbot },
       { path: "spot-the-difference", Component: SpotTheDifference },
-      { path: "who-is-this", Component: EmptyPage },
+      { path: "who-is-this", Component: WhoIsThisGame },
     ],
   },
 ]);
