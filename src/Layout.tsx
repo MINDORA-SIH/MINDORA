@@ -1,37 +1,19 @@
 import { Outlet, NavLink, useNavigate, useLocation } from "react-router";
 import logoUrl from "./assets/logo.png";
-import { User, Globe, Gamepad2, BarChart2, Bell, Settings as SettingsIcon, Mic, MicOff, ChevronDown, Check, Moon, Sun, ArrowLeft, X } from "lucide-react";
+import { User, Gamepad2, BarChart2, Bell, Settings as SettingsIcon, Mic, MicOff, Check, Moon, Sun, ArrowLeft, X } from "lucide-react";
 import { useState, useRef, useEffect, useCallback, cloneElement } from "react";
 import { clsx } from "clsx";
+import { LanguageDropdown, DEFAULT_LANGUAGE, type Language } from "./components/LanguageDropdown";
 
-export interface Language {
-  code: string;
-  name: string;
-  nativeName: string;
-  flag: string;
-}
-
-export const LANGUAGES: Language[] = [
-  { code: "hi-IN", name: "Hindi", nativeName: "हिन्दी", flag: "🇮🇳" },
-  { code: "en-US", name: "English (US)", nativeName: "English", flag: "🇺🇸" },
-  { code: "ta-IN", name: "Tamil", nativeName: "தமிழ்", flag: "🇮🇳" },
-  { code: "te-IN", name: "Telugu", nativeName: "తెలుగు", flag: "🇮🇳" },
-  { code: "bn-IN", name: "Bengali", nativeName: "বাংলা", flag: "🇮🇳" },
-  { code: "mr-IN", name: "Marathi", nativeName: "मराठी", flag: "🇮🇳" },
-  { code: "gu-IN", name: "Gujarati", nativeName: "ગુજરાતી", flag: "🇮🇳" },
-  { code: "kn-IN", name: "Kannada", nativeName: "ಕನ್ನಡ", flag: "🇮🇳" },
-  { code: "es-ES", name: "Spanish", nativeName: "Español", flag: "🇪🇸" },
-];
+/**
+ * Speech recognition stays pinned to one locale. The language dropdown is a
+ * display-only control, so switching it must not retarget the microphone.
+ */
+const SPEECH_RECOGNITION_LANG = "hi-IN";
 
 export function Layout() {
   const [isLangOpen, setIsLangOpen] = useState(false);
-  const [currentLang, setCurrentLang] = useState<Language>(() => {
-    const saved = localStorage.getItem("mindora_lang");
-    if (saved) {
-      try { return JSON.parse(saved); } catch (e) {}
-    }
-    return LANGUAGES[0];
-  });
+  const [language, setLanguage] = useState<Language>(DEFAULT_LANGUAGE);
 
   const [isListening, setIsListening] = useState(false);
   const [darkMode, setDarkMode] = useState(() => localStorage.getItem("mindora_dark") === "true");
@@ -173,7 +155,7 @@ export function Layout() {
         setVoiceFeedback(null);
       }, 1000);
     } else {
-      setVoiceFeedback(`Heard: "${text}" [Voice Lang: ${currentLang.code}]`);
+      setVoiceFeedback(`Heard: "${text}" [Voice Lang: ${SPEECH_RECOGNITION_LANG}]`);
     }
   };
 
@@ -198,7 +180,7 @@ export function Layout() {
           const recognition = new SpeechRecognitionClass();
           recognition.continuous = false;
           recognition.interimResults = false;
-          recognition.lang = currentLang.code;
+          recognition.lang = SPEECH_RECOGNITION_LANG;
           recognition.onresult = (event: any) => {
             const speechResult = event.results[0][0].transcript;
             handleVoiceCommand(speechResult);
@@ -240,20 +222,17 @@ export function Layout() {
                 </span>
               </NavLink>
 
-              <div className="relative">
-                <button
-                  onClick={() => { if (!isLangOpen) closeAllPopups(); setIsLangOpen(!isLangOpen); }}
-                  aria-label="Select Language"
-                  title="Language Settings"
-                  className="bg-white/60 hover:bg-white/80 border border-purple-300 rounded-full px-2 py-0.5 flex items-center gap-1 text-xs sm:text-sm font-bold text-slate-700 transition-all cursor-pointer shadow-xs"
-                >
-                  <Globe size={11} className="text-purple-600 flex-shrink-0" />
-                  <span className="text-sm sm:text-base">{currentLang.flag}</span>
-                  <span className="hidden sm:inline font-bold text-slate-800 text-xs sm:text-sm">{currentLang.name}</span>
-                  <span className="sm:hidden font-extrabold text-slate-800 text-[10px]">{currentLang.code.split("-")[0].toUpperCase()}</span>
-                  <ChevronDown size={10} className={clsx("text-slate-400 transition-transform duration-200", isLangOpen && "rotate-180")} />
-                </button>
-              </div>
+              <LanguageDropdown
+                value={language}
+                onChange={setLanguage}
+                open={isLangOpen}
+                onOpenChange={(next) => {
+                  if (next) closeAllPopups();
+                  setIsLangOpen(next);
+                }}
+                size="sm"
+                align="start"
+              />
             </div>
           </div>
 
@@ -302,7 +281,7 @@ export function Layout() {
         {/* Main Content Area */}
         <main className="flex-1 overflow-y-auto px-3 sm:px-5 md:px-8 lg:px-10 pt-3 sm:pt-4 md:pt-6 pb-24 sm:pb-28 max-w-7xl w-full mx-auto overflow-x-hidden">
           <div key={location.pathname} className={slideDirection}>
-            <Outlet context={{ darkMode, setDarkMode }} />
+            <Outlet context={{ darkMode, setDarkMode, language, setLanguage }} />
           </div>
         </main>
 
@@ -344,69 +323,7 @@ export function Layout() {
 
         {/* Global Root-Level Popups */}
 
-        {/* 1. Language Popup */}
-        {isLangOpen && (
-          <div 
-            className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm transition-all"
-            onClick={() => setIsLangOpen(false)}
-          >
-            <div 
-              className="w-full max-w-sm bg-white rounded-3xl shadow-2xl border-2 border-purple-100 p-4 sm:p-5 animate-in fade-in zoom-in-95 duration-200"
-              onClick={e => e.stopPropagation()}
-            >
-              <div className="flex items-center gap-3 border-b border-slate-100 pb-3 mb-3">
-                <button 
-                  onClick={() => setIsLangOpen(false)}
-                  className="p-2 rounded-full hover:bg-slate-100 text-slate-500 transition-colors cursor-pointer"
-                >
-                  <ArrowLeft size={24} />
-                </button>
-                <div className="flex-1 flex items-center justify-between">
-                  <h3 className="text-lg font-extrabold text-slate-800 tracking-tight">
-                    Select Language / भाषा
-                  </h3>
-                  <span className="text-[18px] font-bold px-2.5 py-1 bg-purple-100 text-purple-700 rounded-md">
-                    {currentLang.code}
-                  </span>
-                </div>
-              </div>
-
-              <div className="flex flex-col gap-2 max-h-[60vh] overflow-y-auto pr-1 custom-scrollbar">
-                {LANGUAGES.map((lang) => (
-                  <button
-                    key={lang.code}
-                    onClick={() => {
-                      setCurrentLang(lang);
-                      setIsLangOpen(false);
-                      localStorage.setItem("mindora_lang", JSON.stringify(lang));
-                    }}
-                    className={clsx(
-                      "flex items-center justify-between px-4 py-3 rounded-2xl text-[20px] font-bold transition-all text-left w-full cursor-pointer border-2",
-                      currentLang.code === lang.code
-                        ? "bg-purple-600 border-purple-600 text-white shadow-md"
-                        : "bg-slate-50 border-transparent hover:bg-purple-50 hover:border-purple-200 text-slate-800"
-                    )}
-                  >
-                    <div className="flex items-center gap-4">
-                      <span className="text-2xl">{lang.flag}</span>
-                      <div>
-                        <div className="font-extrabold text-base">{lang.name}</div>
-                        <div className={clsx("text-[18px] font-bold mt-0.5", currentLang.code === lang.code ? "text-purple-200" : "text-slate-500")}>
-                          {lang.nativeName}
-                        </div>
-                      </div>
-                    </div>
-                    {currentLang.code === lang.code && (
-                      <Check size={24} className="text-white" />
-                    )}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* 2. Voice Assistant Popup */}
+        {/* 1. Voice Assistant Popup */}
         {isListening && (
           <div 
             className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm transition-all"
@@ -458,7 +375,7 @@ export function Layout() {
           </div>
         )}
 
-        {/* 3. Emergency SOS Overlay */}
+        {/* 2. Emergency SOS Overlay */}
         {sosActive && (
           <div 
             className="fixed inset-0 z-[200] flex items-center justify-center p-4 transition-all bg-black/30 backdrop-blur-md"

@@ -1,6 +1,14 @@
 import { Moon, Sun, Globe, BellRing } from "lucide-react";
 import { useState } from "react";
 import { useOutletContext } from "react-router";
+import { LanguageDropdown, type Language } from "../components/LanguageDropdown";
+
+interface LayoutContext {
+  darkMode: boolean;
+  setDarkMode: (val: boolean) => void;
+  language: Language;
+  setLanguage: (language: Language) => void;
+}
 
 function ToggleSwitch({ enabled, onToggle, activeColor }: { enabled: boolean; onToggle: () => void; activeColor: string }) {
   return (
@@ -16,8 +24,9 @@ function ToggleSwitch({ enabled, onToggle, activeColor }: { enabled: boolean; on
 }
 
 export function Settings() {
-  const { darkMode, setDarkMode } = useOutletContext<{ darkMode: boolean; setDarkMode: (val: boolean) => void }>();
+  const { darkMode, setDarkMode, language, setLanguage } = useOutletContext<LayoutContext>();
   const [alertsEnabled, setAlertsEnabled] = useState(true);
+  const [isLangOpen, setIsLangOpen] = useState(false);
 
   return (
     <div className="space-y-6 sm:space-y-8 max-w-3xl mx-auto animate-in fade-in duration-500">
@@ -57,16 +66,18 @@ export function Settings() {
               <Globe size={24} className="text-lavender sm:w-8 sm:h-8 md:w-10 md:h-10" />
             </div>
             <div className="min-w-0">
-              <h2 className="text-lg sm:text-xl md:text-2xl font-bold truncate" style={{ color: "var(--foreground)" }}>Language</h2>
-              <p className="text-sm sm:text-base md:text-xl truncate" style={{ color: "var(--muted)" }}>Change app language</p>
+              <h2 className="text-lg sm:text-xl md:text-2xl font-bold" style={{ color: "var(--foreground)" }}>Language</h2>
+              <p className="text-sm sm:text-base md:text-xl" style={{ color: "var(--muted)" }}>Choose your preferred language</p>
             </div>
           </div>
-          <select className="bg-off-white border-2 sm:border-4 border-lavender/40 text-base sm:text-lg md:text-2xl font-bold rounded-xl sm:rounded-2xl px-3 sm:px-4 md:px-6 py-2 sm:py-3 md:py-4 tap-target outline-none focus:border-lavender">
-            <option value="en">English</option>
-            <option value="es">Español</option>
-            <option value="hi">हिंदी</option>
-            <option value="bn">বাংলা</option>
-          </select>
+          <LanguageDropdown
+            value={language}
+            onChange={setLanguage}
+            open={isLangOpen}
+            onOpenChange={setIsLangOpen}
+            size="lg"
+            align="end"
+          />
         </div>
 
         {/* Notifications Toggle */}
