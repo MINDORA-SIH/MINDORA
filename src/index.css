@@ -1,6 +1,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 @import 'tailwindcss';
 
+/*
+ * Dark mode is driven by the `.dark` class that Layout toggles on <html> (and
+ * persists in localStorage), not by the operating system. Without this variant
+ * Tailwind v4 would wire every `dark:` utility to `prefers-color-scheme`, so a
+ * device in dark mode would get dark surfaces while the app is still light.
+ */
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* Dashboard components rely on Tailwind's responsive utility generation. */
 
 @theme {
@@ -40,6 +48,13 @@
     --surface: #FFFFFF;
     --surface-hover: #f8fafc;
     --muted: #64748b;
+    /*
+     * Secondary text that sits on a tinted surface (amber alert panels, green
+     * insight rows, violet stat tiles). `--muted` clears 4.5:1 on white but
+     * lands at 4.3–4.5:1 once the background is tinted, so labels and hints
+     * inside those surfaces use this darker step instead.
+     */
+    --muted-strong: #4A5568;
     --border: #e2e8f0;
 
     /* Bottom navigation dock — high contrast against the white content area */
@@ -64,6 +79,7 @@
     --surface: #1E293B;
     --surface-hover: #334155;
     --muted: #94a3b8;
+    --muted-strong: #B6C2D4;
     --border: #334155;
 
     /* Bottom navigation dock — darker than the #1E293B page surface, lit border */

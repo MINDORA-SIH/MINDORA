@@ -300,7 +300,7 @@ export function Layout() {
         </header>
 
         {/* Main Content Area */}
-        <main className="flex-1 overflow-y-auto px-3 sm:px-5 md:px-8 lg:px-10 pt-3 sm:pt-4 md:pt-6 pb-24 sm:pb-28 max-w-6xl w-full mx-auto overflow-x-hidden">
+        <main className="flex-1 overflow-y-auto px-3 sm:px-5 md:px-8 lg:px-10 pt-3 sm:pt-4 md:pt-6 pb-24 sm:pb-28 max-w-7xl w-full mx-auto overflow-x-hidden">
           <div key={location.pathname} className={slideDirection}>
             <Outlet context={{ darkMode, setDarkMode }} />
           </div>

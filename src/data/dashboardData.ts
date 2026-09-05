@@ -1,140 +1,417 @@
-export type CalendarDayStatus = "completed" | "missed" | "today";
+import type {
+  CalendarMonth,
+  CognitiveParameter,
+  DayRecord,
+  DaySession,
+  GameScore,
+  IndexPoint,
+  Patient,
+  SessionRecord,
+} from "./dashboardTypes";
 
-export interface CalendarSession {
-  gamesCompleted: number;
-  performanceIndex: number;
-  bestArea: string;
-  sessionMinutes: number;
+/**
+ * Mock data source for the caregiver dashboard.
+ *
+ * Every number the dashboard renders originates here; `dashboardSelectors.ts`
+ * turns it into derived values and caregiver-facing copy. Replacing this file
+ * with an API response is the only change needed to go live.
+ */
+
+/** The mock "today". Becomes `new Date()` once real session data is wired in. */
+export const TODAY_ISO = "2026-09-05";
+
+export const MONTH_NAMES = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
+export const MONTH_ABBR = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+export const WEEKDAY_ABBR = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+export const WEEKDAY_INITIALS = ["S", "M", "T", "W", "T", "F", "S"];
+
+const DAY_MS = 86_400_000;
+
+export function isoOf(year: number, monthIndex: number, day: number): string {
+  return `${year}-${String(monthIndex + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
 }
 
-export interface CalendarDay {
-  day: number;
-  status: CalendarDayStatus;
-  session?: CalendarSession;
+export function weekdayOf(year: number, monthIndex: number, day: number): number {
+  return new Date(Date.UTC(year, monthIndex, day)).getUTCDay();
 }
 
-export interface CognitiveScore {
-  id: "memory" | "recognition" | "reasoning" | "attention" | "processing-speed" | "executive-function" | "language";
-  name: string;
-  score: number;
-}
+/* ── Recorded sessions per day ─────────────────────────────────────────── */
 
-export interface GameScore {
-  id: "who-is-this" | "story-quiz" | "spot-the-difference" | "pattern-recognition" | "word-sound-memory" | "daily-routine";
-  name: string;
-  score: number;
-  icon: "users" | "file-text" | "eye" | "grid" | "music" | "list-check";
-  accent: "rose" | "sky" | "violet" | "amber" | "green" | "teal";
-}
-
-const completedDays = new Set([1, 2, 4, 6, 8, 9, 10, 11, 13, 14, 16, 17, 18, 20, 22, 23, 24, 26, 27, 28, 29, 30]);
-
-const sessionByDay: Record<number, CalendarSession> = {
-  1: { gamesCompleted: 2, performanceIndex: 72, bestArea: "Memory", sessionMinutes: 9 },
-  2: { gamesCompleted: 3, performanceIndex: 74, bestArea: "Recognition", sessionMinutes: 11 },
-  4: { gamesCompleted: 3, performanceIndex: 78, bestArea: "Memory", sessionMinutes: 12 },
-  5: { gamesCompleted: 2, performanceIndex: 78, bestArea: "Memory", sessionMinutes: 10 },
-  6: { gamesCompleted: 4, performanceIndex: 77, bestArea: "Recognition", sessionMinutes: 14 },
-  8: { gamesCompleted: 2, performanceIndex: 75, bestArea: "Reasoning", sessionMinutes: 8 },
-  9: { gamesCompleted: 3, performanceIndex: 78, bestArea: "Memory", sessionMinutes: 12 },
-  10: { gamesCompleted: 2, performanceIndex: 76, bestArea: "Language", sessionMinutes: 10 },
-  11: { gamesCompleted: 3, performanceIndex: 80, bestArea: "Recognition", sessionMinutes: 13 },
-  13: { gamesCompleted: 2, performanceIndex: 77, bestArea: "Memory", sessionMinutes: 9 },
-  14: { gamesCompleted: 3, performanceIndex: 78, bestArea: "Memory", sessionMinutes: 12 },
-  16: { gamesCompleted: 2, performanceIndex: 76, bestArea: "Reasoning", sessionMinutes: 10 },
-  17: { gamesCompleted: 4, performanceIndex: 79, bestArea: "Recognition", sessionMinutes: 15 },
-  18: { gamesCompleted: 3, performanceIndex: 78, bestArea: "Memory", sessionMinutes: 12 },
-  20: { gamesCompleted: 2, performanceIndex: 77, bestArea: "Language", sessionMinutes: 9 },
-  22: { gamesCompleted: 3, performanceIndex: 80, bestArea: "Recognition", sessionMinutes: 13 },
-  23: { gamesCompleted: 2, performanceIndex: 79, bestArea: "Memory", sessionMinutes: 10 },
-  24: { gamesCompleted: 3, performanceIndex: 78, bestArea: "Memory", sessionMinutes: 11 },
-  26: { gamesCompleted: 2, performanceIndex: 76, bestArea: "Reasoning", sessionMinutes: 8 },
-  27: { gamesCompleted: 3, performanceIndex: 79, bestArea: "Recognition", sessionMinutes: 12 },
-  28: { gamesCompleted: 2, performanceIndex: 78, bestArea: "Memory", sessionMinutes: 10 },
-  29: { gamesCompleted: 4, performanceIndex: 81, bestArea: "Recognition", sessionMinutes: 14 },
-  30: { gamesCompleted: 3, performanceIndex: 80, bestArea: "Memory", sessionMinutes: 12 },
+const septemberSessions: Record<number, DaySession> = {
+  1: {
+    gamesCompleted: 2,
+    sessionMinutes: 11,
+    performanceIndex: 74,
+    strongestArea: "Memory",
+    areaToMonitor: "Attention",
+  },
+  2: {
+    gamesCompleted: 3,
+    sessionMinutes: 13,
+    performanceIndex: 76,
+    strongestArea: "Recognition",
+    areaToMonitor: "Processing Speed",
+  },
+  3: {
+    gamesCompleted: 1,
+    sessionMinutes: 5,
+    performanceIndex: 71,
+    strongestArea: "Memory",
+    areaToMonitor: "Processing Speed",
+    partial: true,
+  },
+  4: {
+    gamesCompleted: 3,
+    sessionMinutes: 14,
+    performanceIndex: 78,
+    strongestArea: "Memory",
+    areaToMonitor: "Processing Speed",
+  },
+  5: {
+    gamesCompleted: 2,
+    sessionMinutes: 12,
+    performanceIndex: 78,
+    strongestArea: "Recognition",
+    areaToMonitor: "Processing Speed",
+  },
 };
 
-const calendarDays: CalendarDay[] = Array.from({ length: 30 }, (_, index) => {
-  const day = index + 1;
-  const isToday = day === 5;
+/**
+ * August 2026 history, generated from a fixed weekly rhythm: rest on Sundays
+ * and on 31 August, a short single activity on Thursdays, full sessions
+ * otherwise.
+ */
+function augustSession(day: number): DaySession | undefined {
+  const weekday = weekdayOf(2026, 7, day);
+  if (weekday === 0 || day === 31) return undefined;
+  const base = 73 + Math.floor((day - 1) / 10);
+  if (weekday === 4) {
+    return {
+      gamesCompleted: 1,
+      sessionMinutes: 5,
+      performanceIndex: base - 2,
+      strongestArea: "Memory",
+      areaToMonitor: "Processing Speed",
+      partial: true,
+    };
+  }
+  const gamesCompleted = day % 4 === 0 ? 3 : 2;
+  return {
+    gamesCompleted,
+    sessionMinutes: gamesCompleted === 3 ? 13 : 10,
+    performanceIndex: base + (day % 3 === 0 ? 1 : 0),
+    strongestArea: day % 2 === 0 ? "Recognition" : "Memory",
+    areaToMonitor: day % 5 === 0 ? "Attention" : "Processing Speed",
+  };
+}
+
+/* ── Participation calendar ────────────────────────────────────────────── */
+
+function buildMonth(
+  year: number,
+  monthIndex: number,
+  dayCount: number,
+  sessionFor: (day: number) => DaySession | undefined,
+): CalendarMonth {
+  const days: DayRecord[] = Array.from({ length: dayCount }, (_, index) => {
+    const day = index + 1;
+    const isoDate = isoOf(year, monthIndex, day);
+    const isFuture = isoDate > TODAY_ISO;
+    const session = isFuture ? undefined : sessionFor(day);
+    const status = isFuture ? "future" : !session ? "none" : session.partial ? "partial" : "completed";
+    return {
+      isoDate,
+      year,
+      monthIndex,
+      day,
+      weekday: weekdayOf(year, monthIndex, day),
+      status,
+      isToday: isoDate === TODAY_ISO,
+      session,
+    };
+  });
 
   return {
-    day,
-    status: isToday ? "today" : completedDays.has(day) ? "completed" : "missed",
-    session: sessionByDay[day],
+    id: `${year}-${monthIndex}`,
+    label: `${MONTH_NAMES[monthIndex]} ${year}`,
+    year,
+    monthIndex,
+    firstWeekday: weekdayOf(year, monthIndex, 1),
+    days,
   };
-});
+}
+
+export const calendarMonths: CalendarMonth[] = [
+  buildMonth(2026, 7, 31, augustSession),
+  buildMonth(2026, 8, 30, (day) => septemberSessions[day]),
+];
+
+/** Every held day, oldest first, across month boundaries. */
+export const allDays: DayRecord[] = calendarMonths.flatMap((month) => month.days);
+
+/* ── Performance Index history ──────────────────────────────────────────── */
+
+/** Six months, so the 3-month view still has a comparison window behind it. */
+const HISTORY_DAYS = 182;
+
+/**
+ * Daily Performance Index, oldest first, ending today.
+ *
+ * Days covered by the calendar use their recorded session index (carried
+ * forward across rest days). Earlier days come from a gentle upward baseline
+ * so trend comparisons have history to compare against.
+ */
+function buildIndexHistory(): IndexPoint[] {
+  const recorded = allDays.filter((day) => day.isoDate <= TODAY_ISO);
+  const generatedCount = Math.max(HISTORY_DAYS - recorded.length, 0);
+  const firstRecordedMs = Date.UTC(2026, 7, 1);
+  const history: IndexPoint[] = [];
+
+  for (let index = 0; index < generatedCount; index++) {
+    const isoDate = new Date(firstRecordedMs - (generatedCount - index) * DAY_MS).toISOString().slice(0, 10);
+    const progress = index / (HISTORY_DAYS - 1);
+    const score = Math.round(68 + progress * 8 + Math.sin(index / 3.3) * 1.6 + Math.cos(index / 7.1) * 1.2);
+    history.push({ isoDate, score });
+  }
+
+  let carried = history.length ? history[history.length - 1].score : 73;
+  for (const day of recorded) {
+    if (day.session) carried = day.session.performanceIndex;
+    history.push({ isoDate: day.isoDate, score: carried });
+  }
+
+  return history;
+}
+
+/* ── Cognitive parameters ───────────────────────────────────────────────── */
+
+const cognitiveParameters: CognitiveParameter[] = [
+  {
+    id: "memory",
+    name: "Memory",
+    shortName: "Memory",
+    score: 80,
+    previousScore: 77,
+    relatedActivity: "Who Is This?",
+    relatedActivityIso: "2026-09-05",
+  },
+  {
+    id: "recognition",
+    name: "Recognition",
+    shortName: "Recognition",
+    score: 80,
+    previousScore: 80,
+    relatedActivity: "Spot the Difference",
+    relatedActivityIso: "2026-09-05",
+  },
+  {
+    id: "reasoning",
+    name: "Reasoning",
+    shortName: "Reasoning",
+    score: 70,
+    previousScore: 66,
+    relatedActivity: "Pattern Recognition",
+    relatedActivityIso: "2026-09-04",
+  },
+  {
+    id: "language",
+    name: "Language",
+    shortName: "Language",
+    score: 70,
+    previousScore: 69,
+    relatedActivity: "Story Quiz",
+    relatedActivityIso: "2026-09-04",
+  },
+  {
+    id: "executive-function",
+    name: "Executive Function",
+    shortName: "Executive",
+    score: 62,
+    previousScore: 60,
+    relatedActivity: "Daily Routine",
+    relatedActivityIso: "2026-09-02",
+  },
+  {
+    id: "attention",
+    name: "Attention",
+    shortName: "Attention",
+    score: 60,
+    previousScore: 61,
+    relatedActivity: "Spot the Difference",
+    relatedActivityIso: "2026-09-05",
+  },
+  {
+    id: "processing-speed",
+    name: "Processing Speed",
+    shortName: "Speed",
+    score: 50,
+    previousScore: 57,
+    relatedActivity: "Spot the Difference",
+    relatedActivityIso: "2026-09-04",
+  },
+];
+
+/* ── Activity performance ───────────────────────────────────────────────── */
+
+const gameScores: GameScore[] = [
+  {
+    id: "who-is-this",
+    name: "Who Is This?",
+    focus: "Memory",
+    score: 82,
+    previousScore: 79,
+    icon: "users",
+    accent: "rose",
+  },
+  {
+    id: "word-sound-memory",
+    name: "Word-Sound Memory",
+    focus: "Listening",
+    score: 80,
+    previousScore: 78,
+    icon: "music",
+    accent: "green",
+  },
+  {
+    id: "story-quiz",
+    name: "Story Quiz",
+    focus: "Recall",
+    score: 76,
+    previousScore: 74,
+    icon: "file-text",
+    accent: "sky",
+  },
+  {
+    id: "daily-routine",
+    name: "Daily Routine",
+    focus: "Sequencing",
+    score: 74,
+    previousScore: 73,
+    icon: "list-check",
+    accent: "teal",
+  },
+  {
+    id: "pattern-recognition",
+    name: "Pattern Recognition",
+    focus: "Reasoning",
+    score: 70,
+    previousScore: 66,
+    icon: "grid",
+    accent: "amber",
+  },
+  {
+    id: "spot-the-difference",
+    name: "Spot the Difference",
+    focus: "Focus",
+    score: 68,
+    previousScore: 74,
+    icon: "eye",
+    accent: "violet",
+  },
+];
+
+/* ── Session history ────────────────────────────────────────────────────── */
+
+const recentSessions: SessionRecord[] = [
+  {
+    id: "s-1",
+    gameName: "Spot the Difference",
+    icon: "eye",
+    accent: "violet",
+    isoDate: "2026-09-05",
+    timeLabel: "10:42 AM",
+    minutes: 8,
+    score: 68,
+  },
+  {
+    id: "s-2",
+    gameName: "Who Is This?",
+    icon: "users",
+    accent: "rose",
+    isoDate: "2026-09-05",
+    timeLabel: "9:15 AM",
+    minutes: 4,
+    score: 82,
+  },
+  {
+    id: "s-3",
+    gameName: "Story Quiz",
+    icon: "file-text",
+    accent: "sky",
+    isoDate: "2026-09-04",
+    timeLabel: "4:15 PM",
+    minutes: 6,
+    score: 76,
+  },
+  {
+    id: "s-4",
+    gameName: "Pattern Recognition",
+    icon: "grid",
+    accent: "amber",
+    isoDate: "2026-09-04",
+    timeLabel: "11:30 AM",
+    minutes: 5,
+    score: 70,
+  },
+  {
+    id: "s-5",
+    gameName: "Word-Sound Memory",
+    icon: "music",
+    accent: "green",
+    isoDate: "2026-09-04",
+    timeLabel: "9:40 AM",
+    minutes: 3,
+    score: 80,
+  },
+  {
+    id: "s-6",
+    gameName: "Who Is This?",
+    icon: "users",
+    accent: "rose",
+    isoDate: "2026-09-03",
+    timeLabel: "11:20 AM",
+    minutes: 5,
+    score: 82,
+  },
+];
+
+/* ── The dataset the dashboard consumes ─────────────────────────────────── */
+
+const patient: Patient = {
+  name: "Savitri Devi",
+  initials: "SD",
+  age: 72,
+  carePlan: "Active",
+  careSummary: "Home care · Daily cognitive activities",
+};
 
 export const dashboardData = {
-  userName: "Savitri",
-  greeting: "Good Evening",
-  summary: {
-    streak: 7,
-    longestStreak: 12,
-    performanceIndex: 78,
-    weeklyChange: 6,
-    gamesCompleted: 48,
-  },
-  calendar: {
-    month: "September",
-    year: 2026,
-    firstWeekday: 2,
-    days: calendarDays,
-  },
-  cognitiveScores: [
-    { id: "memory", name: "Memory", score: 80 },
-    { id: "recognition", name: "Recognition", score: 80 },
-    { id: "reasoning", name: "Reasoning", score: 70 },
-    { id: "attention", name: "Attention", score: 60 },
-    { id: "processing-speed", name: "Processing Speed", score: 50 },
-    { id: "executive-function", name: "Executive Function", score: 62 },
-    { id: "language", name: "Language", score: 70 },
-  ] satisfies CognitiveScore[],
-  weeklyPerformance: [
-    { day: "Mon", score: 68 },
-    { day: "Tue", score: 71 },
-    { day: "Wed", score: 73 },
-    { day: "Thu", score: 75 },
-    { day: "Fri", score: 78 },
-    { day: "Sat", score: 76 },
-    { day: "Sun", score: 80 },
-  ],
-  attentionChange: 8,
-  gameScores: [
-    { id: "who-is-this", name: "Who is this?", score: 82, icon: "users", accent: "rose" },
-    { id: "story-quiz", name: "Story Quiz", score: 76, icon: "file-text", accent: "sky" },
-    { id: "spot-the-difference", name: "Spot the Difference", score: 68, icon: "eye", accent: "violet" },
-    { id: "pattern-recognition", name: "Pattern Recognition", score: 70, icon: "grid", accent: "amber" },
-    { id: "word-sound-memory", name: "Word-Sound Memory", score: 80, icon: "music", accent: "green" },
-    { id: "daily-routine", name: "Daily Routine", score: 74, icon: "list-check", accent: "teal" },
-  ] satisfies GameScore[],
+  patient,
+  /** Longest participation streak on record, for context next to the current one. */
+  streakRecord: { longest: 12 },
+  disclaimer:
+    "Performance indicators are based on in-app activity data and are not a clinical diagnosis.",
+  cognitiveParameters,
+  gameScores,
+  recentSessions,
+  calendarMonths,
+  allDays,
+  indexHistory: buildIndexHistory(),
+  todayIso: TODAY_ISO,
 };
 
-const practiceRecommendation = {
-  memory: { gameName: "Who Is This?", path: "/" },
-  recognition: { gameName: "Spot the Difference", path: "/spot-the-difference" },
-  reasoning: { gameName: "Spot the Difference", path: "/spot-the-difference" },
-  attention: { gameName: "Spot the Difference", path: "/spot-the-difference" },
-  "processing-speed": { gameName: "Spot the Difference", path: "/spot-the-difference" },
-  "executive-function": { gameName: "Daily Routine", path: "/reminders" },
-  language: { gameName: "Story Quiz", path: "/" },
-} satisfies Record<CognitiveScore["id"], { gameName: string; path: string }>;
+export type DashboardData = typeof dashboardData;
 
-export function getDashboardInsights(data = dashboardData) {
-  const strongestScore = Math.max(...data.cognitiveScores.map((item) => item.score));
-  const weakestScore = Math.min(...data.cognitiveScores.map((item) => item.score));
-  const strongest = data.cognitiveScores.find((item) => item.score === strongestScore) ?? data.cognitiveScores[0];
-  const weakest = data.cognitiveScores.find((item) => item.score === weakestScore) ?? data.cognitiveScores[0];
-  const bestGame = data.gameScores.reduce((best, game) => game.score > best.score ? game : best, data.gameScores[0]);
-
-  return {
-    strongest,
-    weakest,
-    bestGame,
-    recommendation: practiceRecommendation[weakest.id],
-    weeklyTrendText: data.summary.weeklyChange >= 0
-      ? `Up ${data.summary.weeklyChange}% from last week`
-      : `${Math.abs(data.summary.weeklyChange)}% lower than last week`,
-  };
-}
