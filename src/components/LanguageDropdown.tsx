@@ -24,8 +24,8 @@ export interface Language {
  * presentational and is deliberately not wired to speech recognition.
  */
 export const LANGUAGES: Language[] = [
-  { code: "hi", name: "Hindi", nativeName: "हिन्दी" },
   { code: "en", name: "English", nativeName: "English" },
+  { code: "hin", name: "Hindi", nativeName: "हिन्दी" },
   { code: "as", name: "Assamese", nativeName: "অসমীয়া" },
   { code: "ne", name: "Nepali", nativeName: "नेपाली" },
   { code: "brx", name: "Bodo", nativeName: "बड़ो" },
