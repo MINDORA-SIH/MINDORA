@@ -10,6 +10,8 @@ import { Chatbot } from "./pages/Chatbot";
 import { SpotTheDifference } from "./pages/SpotTheDifference";
 import { WhoIsThisGame } from "./pages/WhoIsThis";
 
+const EmptyPage = () => <div />;
+
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -22,6 +24,7 @@ export const router = createBrowserRouter([
       { path: "settings", Component: Settings },
       { path: "profile", Component: Profile },
       { path: "chatbot", Component: Chatbot },
+      { path: "daily-routine", Component: EmptyPage },
       { path: "spot-the-difference", Component: SpotTheDifference },
       { path: "who-is-this", Component: WhoIsThisGame },
     ],

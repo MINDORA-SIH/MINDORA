@@ -33,7 +33,7 @@ export function MainGameGrid() {
       icon: <ListCheck className="w-8 h-8 sm:w-10 sm:h-10 md:w-11 md:h-11 text-[#0F6E56]" />,
       bg: "bg-[#E1F5EE] border-[#0F6E56]/20 hover:bg-[#0F6E56]/10",
       textColor: "text-[#0F6E56]",
-      path: "/reminders",
+      path: "/daily-routine",
     },
     {
       id: 4,
