@@ -2,6 +2,7 @@ import { createBrowserRouter } from "react-router";
 import { Layout } from "./Layout";
 import { MainGameGrid } from "./pages/MainGameGrid";
 import { Dashboard } from "./pages/Dashboard";
+import { ManageData } from "./pages/ManageData";
 import { Reminders } from "./pages/Reminders";
 import { Settings } from "./pages/Settings";
 import { Profile } from "./pages/Profile";
@@ -16,6 +17,7 @@ export const router = createBrowserRouter([
     children: [
       { index: true, Component: MainGameGrid },
       { path: "dashboard", Component: Dashboard },
+      { path: "manage-data", Component: ManageData },
       { path: "reminders", Component: Reminders },
       { path: "settings", Component: Settings },
       { path: "profile", Component: Profile },

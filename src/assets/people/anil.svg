@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <title>Placeholder portrait</title>
+  <rect width="200" height="200" fill="#EAF6EC" />
+  <path d="M24 200c0-40 34-62 76-62s76 22 76 62Z" fill="#3E9A6B" />
+  <rect x="86" y="112" width="28" height="34" rx="14" fill="#D89A6E" />
+  <circle cx="100" cy="76" r="41" fill="#2B2523" />
+  <circle cx="100" cy="90" r="34" fill="#E8B489" />
+  <circle cx="88" cy="88" r="4.5" fill="#332A26" />
+  <circle cx="112" cy="88" r="4.5" fill="#332A26" />
+  <path d="M88 105q12 10 24 0" stroke="#B06E42" stroke-width="4.5" stroke-linecap="round" fill="none" />
+</svg>

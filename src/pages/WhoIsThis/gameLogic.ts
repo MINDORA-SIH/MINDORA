@@ -1,10 +1,14 @@
-// ─── Question generation and game logic ───
+// ─── Question generation ───
+//
+// A round shows one person's photo and four names. The photo is the question,
+// the names are the answers: the patient's task stays image recognition → name
+// identification. Relationship is never used to build the options.
+
+import { MIN_ACTIVE_PEOPLE, OPTIONS_PER_QUESTION } from "./gameConfig";
 import type { Difficulty, GameQuestion, Person } from "./types";
 
-/**
- * Fisher-Yates shuffle — returns a new shuffled array.
- */
-export function shuffleArray<T>(array: T[]): T[] {
+/** Fisher-Yates shuffle — returns a new shuffled array. */
+export function shuffleArray<T>(array: readonly T[]): T[] {
   const shuffled = [...array];
   for (let i = shuffled.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -13,79 +17,85 @@ export function shuffleArray<T>(array: T[]): T[] {
   return shuffled;
 }
 
-/**
- * How many answer options to show based on difficulty.
- * If fewer people are available, the count is clamped automatically.
- */
-export function getOptionsCount(
-  difficulty: Difficulty,
-  availablePeopleCount: number,
-): number {
-  let target: number;
-  switch (difficulty) {
-    case "easy":
-      target = 3;
-      break;
-    case "medium":
-      // randomly 4 or 5
-      target = Math.random() < 0.5 ? 4 : 5;
-      break;
-    case "hard":
-      target = 6;
-      break;
-  }
-  return Math.min(target, availablePeopleCount);
+/** One entry per person: the same record can never fill two options. */
+function dedupeById(people: readonly Person[]): Person[] {
+  const seen = new Set<string>();
+  return people.filter((person) => {
+    if (seen.has(person.id)) return false;
+    seen.add(person.id);
+    return true;
+  });
+}
+
+function nameKey(person: Person): string {
+  return person.name.trim().toLowerCase();
 }
 
 /**
- * Generate a single game question.
- *
- * @param people        — The full pool of people available.
- * @param difficulty    — Current difficulty level.
- * @param recentPersonIds — IDs of people shown recently, to reduce repetition.
+ * Draws distractors, preferring names that read differently from the ones
+ * already on screen. Two people are allowed to share a name, and in that case
+ * showing four options matters more than making every label unique.
  */
-export function generateQuestion(
-  people: Person[],
-  difficulty: Difficulty,
-  recentPersonIds: string[] = [],
-): GameQuestion {
-  if (people.length < 2) {
-    throw new Error("Need at least 2 people to generate a question.");
+function pickDistractors(pool: readonly Person[], correct: Person, count: number): Person[] {
+  const shuffled = shuffleArray(pool);
+  const chosen: Person[] = [];
+  const usedNames = new Set<string>([nameKey(correct)]);
+
+  for (const person of shuffled) {
+    if (chosen.length === count) break;
+    const key = nameKey(person);
+    if (usedNames.has(key)) continue;
+    usedNames.add(key);
+    chosen.push(person);
   }
 
-  const optionsCount = getOptionsCount(difficulty, people.length);
+  if (chosen.length < count) {
+    const taken = new Set(chosen.map((person) => person.id));
+    for (const person of shuffled) {
+      if (chosen.length === count) break;
+      if (taken.has(person.id)) continue;
+      chosen.push(person);
+    }
+  }
 
-  // ── Pick the correct person ──
-  // Prefer people who haven't been shown recently.
-  const notRecentlyShown = people.filter(
-    (p) => !recentPersonIds.includes(p.id),
+  return chosen;
+}
+
+/**
+ * Builds one round from the caregiver's active people.
+ *
+ * @param people          — Candidates. Inactive records are filtered out here too.
+ * @param difficulty      — Recorded on the round for session tracking.
+ * @param recentPersonIds — Recently asked people, avoided while alternatives exist.
+ */
+export function generateQuestion(
+  people: readonly Person[],
+  difficulty: Difficulty,
+  recentPersonIds: readonly string[] = [],
+): GameQuestion {
+  const pool = dedupeById(people.filter((person) => person.active));
+
+  if (pool.length < MIN_ACTIVE_PEOPLE) {
+    throw new Error(
+      `Need at least ${MIN_ACTIVE_PEOPLE} active people to generate a question.`,
+    );
+  }
+
+  const notRecentlyShown = pool.filter((person) => !recentPersonIds.includes(person.id));
+  const candidates = notRecentlyShown.length > 0 ? notRecentlyShown : pool;
+  const correctPerson = candidates[Math.floor(Math.random() * candidates.length)];
+
+  const distractors = pickDistractors(
+    pool.filter((person) => person.id !== correctPerson.id),
+    correctPerson,
+    OPTIONS_PER_QUESTION - 1,
   );
-  const candidatePool =
-    notRecentlyShown.length > 0 ? notRecentlyShown : people;
-
-  // Among candidates, prefer those with an older (or missing) lastShown timestamp
-  const sorted = [...candidatePool].sort(
-    (a, b) => (a.lastShown ?? 0) - (b.lastShown ?? 0),
-  );
-
-  // Pick from the top half to add some randomness but still favour less-seen people
-  const topHalf = sorted.slice(0, Math.max(1, Math.ceil(sorted.length / 2)));
-  const correctPerson = topHalf[Math.floor(Math.random() * topHalf.length)];
-
-  // ── Pick distractors ──
-  const distractorPool = people.filter((p) => p.id !== correctPerson.id);
-  const shuffledDistractors = shuffleArray(distractorPool);
-  const distractors = shuffledDistractors.slice(0, optionsCount - 1);
-
-  // ── Combine and shuffle options ──
-  const options = shuffleArray([correctPerson, ...distractors]);
 
   return {
     id: `q-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
     correctPersonId: correctPerson.id,
-    options,
+    options: shuffleArray([correctPerson, ...distractors]),
     difficulty,
     startedAt: Date.now(),
   };
 }
-

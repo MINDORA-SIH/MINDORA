@@ -1,6 +1,8 @@
-import { useState } from "react";
-import type { Person } from "./types";
+import { clsx } from "clsx";
+import { PersonPhoto } from "@/components/PersonPhoto";
+import { relationshipLabel } from "@/data/peopleTypes";
 import { GAME_LABELS } from "./gameLabels";
+import type { Person } from "./types";
 
 interface AnswerFeedbackProps {
   correctPerson: Person;
@@ -9,73 +11,64 @@ interface AnswerFeedbackProps {
 }
 
 /**
- * Feedback overlay after an answer is submitted.
- * Shows whether the answer was correct, along with the person's info.
- * Uses gentle language: "Not quite" instead of "Wrong".
+ * Feedback after an answer, and the moment the relationship does its work.
+ *
+ * Right or wrong, the patient is told who the person is and how they are
+ * related — "This is Rajesh Kumar, your son." — with the sentence generated
+ * from the stored Person, never hardcoded. Wrong answers are met with
+ * "Not quite." rather than "Wrong".
  */
 export default function AnswerFeedback({
   correctPerson,
   isCorrect,
   onContinue,
 }: AnswerFeedbackProps) {
-  const [imgError, setImgError] = useState(false);
-
-  const bgColor = isCorrect
-    ? "bg-emerald-50 border-emerald-200"
-    : "bg-amber-50 border-amber-200";
-
-  const titleColor = isCorrect ? "text-emerald-700" : "text-amber-800";
-  const icon = isCorrect ? "✓" : "";
+  const relationship = relationshipLabel(correctPerson);
 
   return (
     <div
-      className={`rounded-3xl border-2 p-6 sm:p-8 text-center space-y-4 ${bgColor}`}
+      className={clsx(
+        "space-y-4 rounded-3xl border-2 p-6 text-center sm:p-8",
+        isCorrect ? "border-emerald-200 bg-emerald-50" : "border-amber-200 bg-amber-50",
+      )}
     >
-      {/* Title */}
-      <h2 className={`text-2xl sm:text-3xl font-extrabold ${titleColor}`}>
-        {icon} {isCorrect ? GAME_LABELS.correctTitle : GAME_LABELS.incorrectTitle}
+      <h2
+        className={clsx(
+          "text-2xl font-extrabold sm:text-3xl",
+          isCorrect ? "text-emerald-700" : "text-amber-800",
+        )}
+      >
+        {isCorrect ? `✓ ${GAME_LABELS.correctTitle}` : GAME_LABELS.incorrectTitle}
       </h2>
 
-      {/* Person photo */}
       <div className="flex justify-center">
-        <div
-          className="w-24 h-24 sm:w-28 sm:h-28 rounded-full border-4 border-white shadow-lg flex items-center justify-center overflow-hidden"
-          style={{ backgroundColor: (correctPerson.color ?? "#FF6584") + "22" }}
-        >
-          {!imgError && correctPerson.photo ? (
-            <img
-              src={correctPerson.photo}
-              alt={correctPerson.name}
-              className="w-full h-full object-cover"
-              onError={() => setImgError(true)}
-            />
-          ) : (
-            <span className="text-5xl select-none" aria-hidden="true">
-              {correctPerson.emoji ?? correctPerson.name.charAt(0)}
-            </span>
-          )}
-        </div>
+        <PersonPhoto
+          person={correctPerson}
+          alt={GAME_LABELS.personPhotoAlt(correctPerson.name)}
+          className="h-28 w-28 rounded-full border-4 border-white shadow-lg sm:h-32 sm:w-32"
+          glyphClassName="text-5xl"
+        />
       </div>
 
-      {/* Person info */}
-      <div>
-        <p className="text-xl sm:text-2xl font-extrabold text-[#1E2445]">
-          This is {correctPerson.name}.
-        </p>
-        <p className="text-lg sm:text-xl font-bold text-slate-500 mt-1">
-          {correctPerson.description ??
-            `Your ${correctPerson.relationship.toLowerCase()}.`}
-        </p>
-      </div>
+      {/* One sentence: the name carries it, the relationship supports it. */}
+      <p className="text-xl font-extrabold leading-snug text-[#1E2445] sm:text-2xl">
+        {GAME_LABELS.personIdentityLead(correctPerson.name)}
+        {relationship === null ? (
+          "."
+        ) : (
+          <span className="font-bold text-slate-500">
+            {GAME_LABELS.personIdentityClause(relationship)}
+          </span>
+        )}
+      </p>
 
-      {/* Continue button */}
       <button
+        type="button"
         onClick={onContinue}
-        className="mt-4 px-8 py-3.5 bg-[#FF6584] text-white font-extrabold text-lg rounded-2xl hover:bg-[#e8506e] transition-all cursor-pointer shadow-md min-h-[52px] active:scale-[0.97]"
+        className="mt-4 min-h-[52px] cursor-pointer rounded-2xl bg-[#FF6584] px-8 py-3.5 text-lg font-extrabold text-white shadow-md transition-all hover:bg-[#e8506e] active:scale-[0.97]"
       >
         {GAME_LABELS.continueButton}
       </button>
     </div>
   );
 }
-
