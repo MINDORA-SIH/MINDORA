@@ -10,7 +10,7 @@
 // people repository both fall back to in-memory data instead of breaking.
 
 const DB_NAME = "mindora-who-is-this";
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 
 /** Caregiver-managed people, shared across activities. Keyed by `id`. */
 export const STORE_PEOPLE = "people";
@@ -20,6 +20,10 @@ export const STORE_RESPONSES = "gameResponses";
 export const STORE_SESSIONS = "gameSessions";
 /** Per-user game settings. Keyed by `userId`. */
 export const STORE_SETTINGS = "gameSettings";
+/** Caregiver-created routines, keyed by stable routine id. */
+export const STORE_ROUTINES = "routines";
+/** Completed Daily Routine attempts, keyed by stable session id. */
+export const STORE_ROUTINE_SESSIONS = "routineGameSessions";
 
 let dbPromise: Promise<IDBDatabase> | null = null;
 
@@ -52,6 +56,16 @@ export function openMindoraDb(): Promise<IDBDatabase> {
       }
       if (!db.objectStoreNames.contains(STORE_SETTINGS)) {
         db.createObjectStore(STORE_SETTINGS, { keyPath: "userId" });
+      }
+      if (!db.objectStoreNames.contains(STORE_ROUTINES)) {
+        const store = db.createObjectStore(STORE_ROUTINES, { keyPath: "id" });
+        store.createIndex("patientId", "patientId", { unique: false });
+      }
+      if (!db.objectStoreNames.contains(STORE_ROUTINE_SESSIONS)) {
+        const store = db.createObjectStore(STORE_ROUTINE_SESSIONS, { keyPath: "id" });
+        store.createIndex("patientId", "patientId", { unique: false });
+        store.createIndex("routineId", "routineId", { unique: false });
+        store.createIndex("startedAt", "startedAt", { unique: false });
       }
     };
 

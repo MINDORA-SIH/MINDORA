@@ -1,5 +1,5 @@
 import { clsx } from "clsx";
-import { ArrowRight, BellRing, Database, LayoutGrid, MessageCircle, Stethoscope, UserRound } from "lucide-react";
+import { ArrowRight, BellRing, Database, LayoutGrid, ListChecks, MessageCircle, Stethoscope, UserRound } from "lucide-react";
 import { Link } from "react-router";
 import { type IconComponent, type SemanticTone, TONES } from "./tokens";
 import { SectionCard } from "./ui";
@@ -34,6 +34,13 @@ const ACTIONS: ActionLink[] = [
     description: "Review and adjust the routine schedule",
     icon: BellRing,
     tone: "monitor",
+  },
+  {
+    to: "/daily-routines",
+    label: "Daily Routines",
+    description: "Create and review the patient's sequencing routines",
+    icon: ListChecks,
+    tone: "stable",
   },
   {
     to: "/",
