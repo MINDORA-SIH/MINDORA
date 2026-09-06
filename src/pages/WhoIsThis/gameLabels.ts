@@ -19,8 +19,11 @@ export function useGameLabels() {
     correctTitle: t("common.correct"),
     incorrectTitle: t("common.incorrect"),
     personIdentityLead: (name: string) => t("games.whoIsThis.personIdentity", { name }).replace(/\.$/, ""),
-    personIdentityClause: (relationship: string) =>
-      t("games.whoIsThis.personIdentityClause", { relationship: relationship.toLowerCase() }),
+    personIdentityClause: (relationship: string) => {
+      const lower = relationship.toLowerCase();
+      const localized = t(`relationships.${lower}`, { defaultValue: relationship });
+      return t("games.whoIsThis.personIdentityClause", { relationship: localized });
+    },
     personPhotoAlt: (name: string) => t("games.whoIsThis.personPhotoAlt", { name }),
     continueButton: t("common.continue"),
     backToGames: t("common.backToGames"),
@@ -39,6 +42,7 @@ export function useGameLabels() {
     notEnoughPeople: t("games.whoIsThis.notEnoughPeople", { count: MIN_ACTIVE_PEOPLE }),
     notEnoughPeopleHint: t("games.whoIsThis.notEnoughPeopleHint"),
     manageDataButton: t("games.whoIsThis.manageDataButton"),
+    loading: t("common.loading"),
   };
 }
 

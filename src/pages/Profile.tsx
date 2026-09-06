@@ -18,7 +18,7 @@ export function Profile() {
               <User size={40} />
             </div>
             <div>
-              <h2 className="text-3xl font-bold" style={{ color: "var(--foreground)" }}>Savitri Devi</h2>
+              <h2 className="text-3xl font-bold" style={{ color: "var(--foreground)" }}>{t("profile.patientName", { defaultValue: "Savitri Devi" })}</h2>
               <p className="text-lg font-medium" style={{ color: "var(--muted)" }}>{t("profile.patient")}</p>
             </div>
           </div>
@@ -44,7 +44,7 @@ export function Profile() {
               <MapPin className="text-sky-blue" size={28} />
               <div>
                 <p className="text-[20px] font-bold tracking-wider" style={{ color: "var(--muted)" }}>{t("profile.location")}</p>
-                <p className="text-xl font-bold" style={{ color: "var(--foreground)" }}>Guwahati, Assam</p>
+                <p className="text-xl font-bold" style={{ color: "var(--foreground)" }}>{t("profile.locationValue", { defaultValue: "Guwahati, Assam" })}</p>
               </div>
             </div>
             
@@ -105,14 +105,14 @@ export function Profile() {
               <li className="flex items-center gap-4 bg-off-white p-4 rounded-2xl">
                 <div className="w-3 h-3 rounded-full bg-lavender"></div>
                 <div className="flex-1">
-                  <p className="text-lg font-bold" style={{ color: "var(--foreground)" }}>Donepezil 5 mg</p>
+                  <p className="text-lg font-bold" style={{ color: "var(--foreground)" }}>{t("profile.medDonepezil", { defaultValue: "Donepezil 5 mg" })}</p>
                   <p className="font-medium" style={{ color: "var(--muted)" }}>{t("profile.medicationNight")}</p>
                 </div>
               </li>
               <li className="flex items-center gap-4 bg-off-white p-4 rounded-2xl">
                 <div className="w-3 h-3 rounded-full bg-rose-pink"></div>
                 <div className="flex-1">
-                  <p className="text-lg font-bold" style={{ color: "var(--foreground)" }}>Vitamin D3</p>
+                  <p className="text-lg font-bold" style={{ color: "var(--foreground)" }}>{t("profile.medVitaminD3", { defaultValue: "Vitamin D3" })}</p>
                   <p className="font-medium" style={{ color: "var(--muted)" }}>{t("profile.medicationMorning")}</p>
                 </div>
               </li>
@@ -126,7 +126,7 @@ export function Profile() {
             </h3>
             <div className="bg-red-50 p-4 rounded-2xl border-2 border-red-100 flex items-center gap-4">
               <div className="w-3 h-3 rounded-full bg-red-500"></div>
-              <p className="text-xl font-bold text-red-700">Penicillin</p>
+              <p className="text-xl font-bold text-red-700">{t("profile.allergyPenicillin", { defaultValue: "Penicillin" })}</p>
             </div>
           </div>
         </div>

@@ -1,5 +1,6 @@
 import { ChevronLeft } from "lucide-react";
 import { Link } from "react-router";
+import { useTranslation } from "react-i18next";
 import { PeopleManager } from "@/components/dashboard/PeopleManager";
 import { DailyRoutineManager } from "./DailyRoutineManager";
 
@@ -11,6 +12,8 @@ import { DailyRoutineManager } from "./DailyRoutineManager";
  * own dashboard card, so a future activity can add one here without a redesign.
  */
 export function ManageData() {
+  const { t } = useTranslation();
+
   return (
     <div className="space-y-4 sm:space-y-5">
       <Link
@@ -19,15 +22,15 @@ export function ManageData() {
         style={{ color: "var(--muted-strong)" }}
       >
         <ChevronLeft size={18} />
-        Back to Dashboard
+        {t("navigation.backToDashboard")}
       </Link>
 
       <header className="space-y-1">
         <h1 className="text-2xl font-extrabold sm:text-3xl" style={{ color: "var(--foreground)" }}>
-          Manage Game Data
+          {t("manageData.title")}
         </h1>
         <p className="text-[17px] font-semibold" style={{ color: "var(--muted-strong)" }}>
-          Manage the people and daily routines the patient's games use.
+          {t("manageData.subtitle")}
         </p>
       </header>
 

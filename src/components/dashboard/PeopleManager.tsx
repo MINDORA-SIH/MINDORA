@@ -1,8 +1,9 @@
 import { clsx } from "clsx";
 import { Pencil, RotateCcw, UserPlus, UserRoundX, Users } from "lucide-react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { PersonPhoto } from "@/components/PersonPhoto";
-import { type Person, type PersonDraft, relationshipText } from "@/data/peopleTypes";
+import { type Person, type PersonDraft, relationshipText, CUSTOM_RELATIONSHIP } from "@/data/peopleTypes";
 import { usePeople } from "@/hooks/usePeople";
 import { MIN_ACTIVE_PEOPLE } from "@/pages/WhoIsThis/gameConfig";
 import { PersonFormDialog } from "./PersonFormDialog";
@@ -11,10 +12,6 @@ import { SectionCard } from "./ui";
 
 type DialogState = { mode: "add" } | { mode: "edit"; person: Person } | null;
 
-function peopleLabel(count: number): string {
-  return `${count} active ${count === 1 ? "person" : "people"}`;
-}
-
 /**
  * Caregiver management for the people used by "Who Is This?".
  *
@@ -22,6 +19,7 @@ function peopleLabel(count: number): string {
  * says about a person comes from these records.
  */
 export function PeopleManager() {
+  const { t } = useTranslation();
   const { people, activePeople, isLoading, storageAvailable, addPerson, editPerson, setActive } =
     usePeople();
   const [dialog, setDialog] = useState<DialogState>(null);
@@ -29,6 +27,11 @@ export function PeopleManager() {
 
   const activeCount = activePeople.length;
   const shortfall = MIN_ACTIVE_PEOPLE - activeCount;
+
+  const peopleLabel = (count: number): string => {
+    const label = count === 1 ? t("peopleManager.person") : t("peopleManager.people");
+    return t("peopleManager.activePeopleCount", { count, label });
+  };
 
   const handleSave = async (draft: PersonDraft) => {
     if (dialog?.mode === "edit") {
@@ -50,18 +53,18 @@ export function PeopleManager() {
 
   return (
     <SectionCard
-      title="Who Is This? People"
-      subtitle="Photos and relationships the memory game uses"
+      title={t("peopleManager.title")}
+      subtitle={t("peopleManager.subtitle")}
       icon={Users}
       tone="brand"
       action={
         <button
           type="button"
           onClick={() => setDialog({ mode: "add" })}
-          className="tap-target gap-2 rounded-2xl bg-[#6C5CC4] px-4 text-[16px] font-extrabold text-white shadow-md"
+          className="tap-target gap-2 rounded-2xl bg-[#6C5CC4] px-4 text-[16px] font-extrabold text-white shadow-md cursor-pointer"
         >
           <UserPlus className="h-5 w-5" />
-          Add Person
+          {t("peopleManager.addPerson")}
         </button>
       }
     >
@@ -80,7 +83,7 @@ export function PeopleManager() {
           </span>
           {people.length > activeCount ? (
             <span className="text-[15px] font-semibold" style={{ color: "var(--muted)" }}>
-              {people.length - activeCount} deactivated
+              {people.length - activeCount} {t("dailyRoutine.inactive")}
             </span>
           ) : null}
         </div>
@@ -94,24 +97,26 @@ export function PeopleManager() {
               TONES.monitor.text,
             )}
           >
-            Add or activate at least {shortfall} more {shortfall === 1 ? "person" : "people"} to play
-            Who Is This?
+            {t("peopleManager.shortfallNotice", {
+              count: shortfall,
+              label: shortfall === 1 ? t("peopleManager.person") : t("peopleManager.people"),
+            })}
           </p>
         ) : null}
 
         {!storageAvailable ? (
           <p className="text-[15px] font-semibold" style={{ color: "var(--muted-strong)" }}>
-            This device is not saving data locally, so these changes last until the app is closed.
+            {t("peopleManager.storageUnavailable")}
           </p>
         ) : null}
 
         {isLoading ? (
           <p className="text-[16px] font-semibold" style={{ color: "var(--muted)" }}>
-            Loading people…
+            {t("common.loading")}
           </p>
         ) : people.length === 0 ? (
           <p className="text-[16px] font-semibold" style={{ color: "var(--muted)" }}>
-            No people yet. Add the family members the patient sees most often.
+            {t("errors.notEnoughPeople", { count: MIN_ACTIVE_PEOPLE })}
           </p>
         ) : (
           <ul className="space-y-2.5">
@@ -128,7 +133,7 @@ export function PeopleManager() {
               >
                 <PersonPhoto
                   person={person}
-                  alt={`Photo of ${person.name}`}
+                  alt={person.name}
                   className="h-14 w-14 rounded-full border-2 border-white shadow-sm dark:border-slate-700"
                   glyphClassName="text-2xl"
                 />
@@ -145,7 +150,11 @@ export function PeopleManager() {
                     className="truncate text-[15px] font-semibold leading-snug"
                     style={{ color: "var(--muted-strong)" }}
                   >
-                    {relationshipText(person)}
+                    {person.relationship === CUSTOM_RELATIONSHIP && person.customRelationship
+                      ? person.customRelationship
+                      : t(`relationships.${person.relationship.toLowerCase()}`, {
+                          defaultValue: person.relationship,
+                        })}
                   </p>
                   {!person.active ? (
                     <span
@@ -156,7 +165,7 @@ export function PeopleManager() {
                         TONES.neutral.text,
                       )}
                     >
-                      Inactive
+                      {t("dailyRoutine.inactive")}
                     </span>
                   ) : null}
                 </div>
@@ -165,18 +174,18 @@ export function PeopleManager() {
                   <button
                     type="button"
                     onClick={() => setDialog({ mode: "edit", person })}
-                    className="tap-target gap-1.5 rounded-2xl border-2 border-slate-200 px-3.5 text-[15px] font-extrabold dark:border-slate-700"
+                    className="tap-target gap-1.5 rounded-2xl border-2 border-slate-200 px-3.5 text-[15px] font-extrabold dark:border-slate-700 cursor-pointer"
                     style={{ color: "var(--muted-strong)" }}
                   >
                     <Pencil className="h-4 w-4" />
-                    Edit
+                    {t("peopleManager.edit")}
                   </button>
                   <button
                     type="button"
                     onClick={() => void handleToggleActive(person)}
                     disabled={pendingId === person.id}
                     className={clsx(
-                      "tap-target gap-1.5 rounded-2xl border-2 px-3.5 text-[15px] font-extrabold disabled:opacity-60",
+                      "tap-target gap-1.5 rounded-2xl border-2 px-3.5 text-[15px] font-extrabold disabled:opacity-60 cursor-pointer",
                       person.active
                         ? [TONES.monitor.border, TONES.monitor.surface, TONES.monitor.text]
                         : [TONES.stable.border, TONES.stable.surface, TONES.stable.text],
@@ -185,12 +194,12 @@ export function PeopleManager() {
                     {person.active ? (
                       <>
                         <UserRoundX className="h-4 w-4" />
-                        Deactivate
+                        {t("peopleManager.deactivate")}
                       </>
                     ) : (
                       <>
                         <RotateCcw className="h-4 w-4" />
-                        Reactivate
+                        {t("peopleManager.activate")}
                       </>
                     )}
                   </button>

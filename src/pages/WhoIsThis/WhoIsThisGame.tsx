@@ -224,7 +224,7 @@ export default function WhoIsThisGame() {
     return (
       <div className="space-y-6">
         {backButton}
-        <p className="py-16 text-center text-xl font-bold text-slate-500">Loading…</p>
+        <p className="py-16 text-center text-xl font-bold text-slate-500">{labels.loading}</p>
       </div>
     );
   }

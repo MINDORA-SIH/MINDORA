@@ -62,11 +62,11 @@ export function Reminders() {
   const [toasts,     setToasts]     = useState<ToastAlert[]>([]);
 
   /* ── Reminder list ── */
-  const [reminders, setReminders] = useState<Reminder[]>([
-    { id: 1, title: "Morning Pills", time: "08:00 AM",            frequency: "daily",   iconName: "pill",      removing: false },
-    { id: 2, title: "Drink Water",   time: "10:30 AM",            frequency: "daily",   iconName: "droplets",  removing: false },
-    { id: 3, title: "Garden Walk",   time: "04:00 PM",            frequency: "weekly",  iconName: "clipboard", removing: false },
-    { id: 4, title: "Doctor Visit",  time: "02:00 PM (Tomorrow)", frequency: "monthly", iconName: "calendar",  removing: false },
+  const [reminders, setReminders] = useState<Reminder[]>(() => [
+    { id: 1, title: t("reminders.morningPills", { defaultValue: "Morning Pills" }), time: "08:00 AM",            frequency: "daily",   iconName: "pill",      removing: false },
+    { id: 2, title: t("reminders.drinkWater", { defaultValue: "Drink Water" }),   time: "10:30 AM",            frequency: "daily",   iconName: "droplets",  removing: false },
+    { id: 3, title: t("reminders.gardenWalk", { defaultValue: "Garden Walk" }),   time: "04:00 PM",            frequency: "weekly",  iconName: "clipboard", removing: false },
+    { id: 4, title: t("reminders.doctorVisit", { defaultValue: "Doctor Visit" }),  time: "02:00 PM (Tomorrow)", frequency: "monthly", iconName: "calendar",  removing: false },
   ]);
 
   /* ── New-reminder form state ── */
@@ -98,7 +98,7 @@ export function Reminders() {
   const markDone = (id: number) => {
     const r = reminders.find((r) => r.id === id);
     if (!r) return;
-    fireToast(`${r.title} — completed for today! 🎉`);
+    fireToast(t("reminders.completedForToday", { title: r.title, defaultValue: `${r.title} — completed for today! 🎉` }));
     setReminders((prev) => prev.map((r) => (r.id === id ? { ...r, removing: true } : r)));
     setTimeout(() => setReminders((prev) => prev.filter((r) => r.id !== id)), 500);
   };
@@ -126,7 +126,7 @@ export function Reminders() {
     setReminders((prev) => [...prev, newReminder]);
     setForm({ title: "", time: "", frequency: "daily" });
     setShowModal(false);
-    fireToast(`"${newReminder.title}" reminder added! ✅`);
+    fireToast(t("reminders.reminderAdded", { title: newReminder.title, defaultValue: `"${newReminder.title}" reminder added! ✅` }));
   };
 
   /* ═══════════════════════════════════════════════════════════ */
@@ -151,7 +151,7 @@ export function Reminders() {
               <span className="absolute inset-0 rounded-full bg-emerald-300 animate-ping opacity-40" style={{ animationDuration: "1.2s" }} />
             </div>
             <p className="flex-1 text-base font-semibold text-charcoal leading-snug">{toast.title}</p>
-            <button onClick={() => dismissToast(toast.id)} className="flex-shrink-0 text-charcoal/40 hover:text-charcoal/80 transition-colors" aria-label="Dismiss">
+            <button onClick={() => dismissToast(toast.id)} className="flex-shrink-0 text-charcoal/40 hover:text-charcoal/80 transition-colors" aria-label={t("reminders.dismiss", { defaultValue: "Dismiss" })}>
               <X size={18} />
             </button>
           </div>
@@ -320,8 +320,8 @@ export function Reminders() {
         {reminders.length === 0 && (
           <div className="flex flex-col items-center justify-center py-20 gap-4 text-charcoal/50">
             <CheckCircle2 size={64} className="text-emerald-400" />
-            <p className="text-2xl font-bold">All done for today! 🎉</p>
-            <p className="text-lg">You completed all your reminders.</p>
+            <p className="text-2xl font-bold">{t("reminders.allDone", { defaultValue: "All done for today! 🎉" })}</p>
+            <p className="text-lg">{t("reminders.allDoneSubtitle", { defaultValue: "You completed all your reminders." })}</p>
           </div>
         )}
       </div>

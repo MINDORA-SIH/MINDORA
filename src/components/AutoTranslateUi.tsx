@@ -33,7 +33,7 @@ export function AutoTranslateUi({ children }: { children: React.ReactNode }) {
       try {
       const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
       const nodes: Text[] = [];
-      for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+      for (let node = walker.nextNode() as Text | null; node; node = walker.nextNode() as Text | null) {
         const text = node.textContent ?? "";
         const parent = node.parentElement;
         if (!parent || EXCLUDED_TAGS.has(parent.tagName) || parent.closest("[data-no-translate]")) continue;

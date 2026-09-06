@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
-import { Bot, Send, User, Sparkles, PhoneCall, Bell, Grid, RefreshCw, Volume2, Mic } from "lucide-react";
+import { Bot, Send, User, Sparkles, RefreshCw } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface Message {
   id: string;
@@ -9,13 +10,15 @@ interface Message {
 }
 
 export function Chatbot() {
-  const [messages, setMessages] = useState<Message[]>([
+  const { t } = useTranslation();
+
+  const [messages, setMessages] = useState<Message[]>(() => [
     {
       id: "1",
       sender: "bot",
-      text: "Hello Savitri! 👋 I am your Mindora Companion. How can I assist you with your games, medications, or daily schedule today?",
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-    }
+      text: t("chat.greeting"),
+      timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+    },
   ]);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
@@ -30,29 +33,29 @@ export function Chatbot() {
   }, [messages, isTyping]);
 
   const quickPrompts = [
-    { label: "🧩 Best game for today?", query: "Which game should I play today for memory improvement?" },
-    { label: "💊 Show my medication", query: "What are my upcoming medication reminders?" },
-    { label: "📊 Check my progress", query: "How is my brain score and game progress this week?" },
-    { label: "💡 Daily brain tip", query: "Give me a daily cognitive tip for senior health" },
+    { label: t("chat.promptGame"), query: t("chat.promptGameQuery") },
+    { label: t("chat.promptMedication"), query: t("chat.promptMedicationQuery") },
+    { label: t("chat.promptProgress"), query: t("chat.promptProgressQuery") },
+    { label: t("chat.promptTip"), query: t("chat.promptTipQuery") },
   ];
 
   const getBotResponse = (userText: string): string => {
     const lower = userText.toLowerCase();
 
-    if (lower.includes("game") || lower.includes("play") || lower.includes("puzzle")) {
-      return "🎮 Based on your recent activity, **Memory Cards** and **Word Association** are ideal for you today! They help strengthen short-term recall. Would you like to start a game now?";
-    } else if (lower.includes("reminder") || lower.includes("medication") || lower.includes("pill") || lower.includes("medicine")) {
-      return "💊 **Upcoming Reminders for Today:**\n• 8:00 PM - Donepezil 5mg (1 Tablet after dinner)\n• 9:30 PM - Evening Hydration & Water Intake\n\nAll set! I can remind you 15 minutes before.";
-    } else if (lower.includes("progress") || lower.includes("score") || lower.includes("stat") || lower.includes("week")) {
-      return "📊 **Great News, Savitri!** Your cognitive accuracy is up **+12%** this week with an overall **85% memory score**. You completed 4 game sessions yesterday! Keep up the brilliant effort!";
-    } else if (lower.includes("tip") || lower.includes("exercise") || lower.includes("health") || lower.includes("brain")) {
-      return "💡 **Today's Brain Tip:** Try taking a 10-minute gentle morning walk and naming 5 different colors you see outdoors. Combining physical motion with visual recognition boosts brain plasticity!";
-    } else if (lower.includes("caretaker") || lower.includes("doctor") || lower.includes("call") || lower.includes("help")) {
-      return "📞 **Caregiver Assistance:** You can reach out to your designated caregiver Ramesh at any time. You can tap the 'Help' icon in the top bar to place a direct call!";
-    } else if (lower.includes("hello") || lower.includes("hi") || lower.includes("hey")) {
-      return "Hello Savitri! 😊 I'm right here with you. Feel free to ask me anything about your routine or games!";
+    if (lower.includes("game") || lower.includes("play") || lower.includes("puzzle") || lower.includes("खेल") || lower.includes("খেল")) {
+      return t("chat.respGame");
+    } else if (lower.includes("reminder") || lower.includes("medication") || lower.includes("pill") || lower.includes("medicine") || lower.includes("दवा") || lower.includes("ঔষধ") || lower.includes("औषध")) {
+      return t("chat.respMedication");
+    } else if (lower.includes("progress") || lower.includes("score") || lower.includes("stat") || lower.includes("week") || lower.includes("प्रगति") || lower.includes("অগ্ৰগতি") || lower.includes("स्कोर")) {
+      return t("chat.respProgress");
+    } else if (lower.includes("tip") || lower.includes("exercise") || lower.includes("health") || lower.includes("brain") || lower.includes("सुझाव") || lower.includes("পৰামৰ্শ") || lower.includes("टिप")) {
+      return t("chat.respTip");
+    } else if (lower.includes("caretaker") || lower.includes("caregiver") || lower.includes("doctor") || lower.includes("call") || lower.includes("help") || lower.includes("सहायता") || lower.includes("সহায়")) {
+      return t("chat.respCaregiver");
+    } else if (lower.includes("hello") || lower.includes("hi") || lower.includes("hey") || lower.includes("नमस्ते") || lower.includes("নমস্কাৰ")) {
+      return t("chat.respGreeting");
     } else {
-      return `I understand you asked about "${userText}". I'm always here to help you navigate Mindora, track your reminders, and suggest brain exercises. Is there a specific game or schedule item you'd like help with?`;
+      return t("chat.respFallback", { query: userText });
     }
   };
 
@@ -64,7 +67,7 @@ export function Chatbot() {
       id: Date.now().toString(),
       sender: "user",
       text: text.trim(),
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
     };
 
     setMessages((prev) => [...prev, userMsg]);
@@ -76,7 +79,7 @@ export function Chatbot() {
         id: (Date.now() + 1).toString(),
         sender: "bot",
         text: getBotResponse(text),
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
       };
       setMessages((prev) => [...prev, botMsg]);
       setIsTyping(false);
@@ -99,9 +102,11 @@ export function Chatbot() {
           </div>
           <div>
             <h2 className="text-xl sm:text-2xl font-black tracking-wide flex items-center gap-2">
-              Mindora Assistant <Sparkles size={20} className="text-amber-300" />
+              {t("chat.assistantTitle")} <Sparkles size={20} className="text-amber-300" />
             </h2>
-            <p className="text-[18px] sm:text-[20px] text-purple-100 font-medium">Your 24/7 Cognitive Companion</p>
+            <p className="text-[18px] sm:text-[20px] text-purple-100 font-medium">
+              {t("chat.assistantSubtitle")}
+            </p>
           </div>
         </div>
 
@@ -109,14 +114,14 @@ export function Chatbot() {
           onClick={() => setMessages([{
             id: Date.now().toString(),
             sender: "bot",
-            text: "Chat reset! How can I assist you now, Savitri?",
-            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            text: t("chat.chatReset"),
+            timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
           }])}
-          title="Reset Conversation"
-          className="p-2.5 rounded-xl bg-white/15 hover:bg-white/25 transition-colors text-white text-[20px] font-semibold flex items-center gap-1.5"
+          title={t("chat.resetConversation")}
+          className="p-2.5 rounded-xl bg-white/15 hover:bg-white/25 transition-colors text-white text-[20px] font-semibold flex items-center gap-1.5 cursor-pointer"
         >
           <RefreshCw size={18} />
-          <span className="hidden sm:inline">Reset</span>
+          <span className="hidden sm:inline">{t("chat.reset")}</span>
         </button>
       </div>
 
@@ -186,14 +191,14 @@ export function Chatbot() {
       {/* Suggested Quick Prompts */}
       <div className="p-3 border-t border-purple-100" style={{ backgroundColor: "var(--card-bg)" }}>
         <p className="text-[18px] font-bold tracking-wider mb-2 px-1" style={{ color: "var(--muted)" }}>
-          Suggested Questions:
+          {t("chat.suggestedQuestions")}
         </p>
         <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
           {quickPrompts.map((prompt, idx) => (
             <button
               key={idx}
               onClick={() => handleSend(prompt.query)}
-              className="px-3.5 py-2 rounded-2xl bg-purple-50 hover:bg-purple-100 text-purple-800 dark:text-purple-200 text-[20px] font-bold whitespace-nowrap transition-colors border border-purple-200 flex-shrink-0"
+              className="px-3.5 py-2 rounded-2xl bg-purple-50 hover:bg-purple-100 text-purple-800 dark:text-purple-200 text-[20px] font-bold whitespace-nowrap transition-colors border border-purple-200 flex-shrink-0 cursor-pointer"
             >
               {prompt.label}
             </button>
@@ -208,15 +213,15 @@ export function Chatbot() {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleSend()}
-          placeholder="Ask Mindora Assistant anything..."
+          placeholder={t("chat.inputPlaceholder")}
           className="flex-1 bg-slate-100 border-2 border-transparent focus:border-purple-500 focus:bg-white dark:focus:bg-slate-800 rounded-2xl px-4 py-3 text-base sm:text-lg font-medium outline-none transition-all placeholder:text-slate-400"
           style={{ color: "var(--foreground)" }}
         />
         <button
           onClick={() => handleSend()}
           disabled={!input.trim()}
-          className="p-3.5 bg-purple-600 hover:bg-purple-700 disabled:opacity-40 text-white rounded-2xl transition-all shadow-md active:scale-95 flex items-center justify-center flex-shrink-0"
-          aria-label="Send message"
+          className="p-3.5 bg-purple-600 hover:bg-purple-700 disabled:opacity-40 text-white rounded-2xl transition-all shadow-md active:scale-95 flex items-center justify-center flex-shrink-0 cursor-pointer"
+          aria-label={t("chat.send")}
         >
           <Send size={22} />
         </button>
@@ -226,4 +231,3 @@ export function Chatbot() {
 }
 
 export default Chatbot;
-

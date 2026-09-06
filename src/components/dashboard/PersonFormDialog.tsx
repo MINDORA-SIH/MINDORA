@@ -10,6 +10,7 @@ import {
   type Relationship,
   RELATIONSHIPS,
 } from "@/data/peopleTypes";
+import { useTranslation } from "react-i18next";
 
 /** Uploads are downscaled before they are stored, to keep the database small. */
 const MAX_PHOTO_EDGE = 512;
@@ -65,6 +66,7 @@ function downscalePhoto(dataUrl: string): Promise<string> {
  * caregiver-editable fields; identity and timestamps belong to the repository.
  */
 export function PersonFormDialog({ person, onCancel, onSave }: PersonFormDialogProps) {
+  const { t } = useTranslation();
   const isEditing = person !== undefined;
   const [name, setName] = useState(person?.name ?? "");
   const [relationship, setRelationship] = useState<Relationship>(
@@ -94,18 +96,18 @@ export function PersonFormDialog({ person, onCancel, onSave }: PersonFormDialogP
   const handlePickPhoto = async (file: File | undefined) => {
     if (!file) return;
     if (!file.type.startsWith("image/")) {
-      setError("Choose an image file.");
+      setError(t("peopleManager.errorChooseImage"));
       return;
     }
     if (file.size > MAX_UPLOAD_BYTES) {
-      setError("That image is too large. Choose one under 12 MB.");
+      setError(t("peopleManager.errorImageTooLarge"));
       return;
     }
     try {
       setPhoto(await readPhotoFile(file));
       setError(null);
     } catch {
-      setError("That photo could not be read. Try another one.");
+      setError(t("peopleManager.errorPhotoUnreadable"));
     }
   };
 
@@ -115,12 +117,12 @@ export function PersonFormDialog({ person, onCancel, onSave }: PersonFormDialogP
     const trimmedCustom = customRelationship.trim();
 
     if (trimmedName.length === 0) {
-      setError("Enter the person's name.");
+      setError(t("peopleManager.errorEnterName"));
       nameRef.current?.focus();
       return;
     }
     if (relationship === CUSTOM_RELATIONSHIP && trimmedCustom.length === 0) {
-      setError("Describe the relationship, or pick one from the list.");
+      setError(t("peopleManager.errorDescribeRelationship"));
       return;
     }
 
@@ -134,7 +136,7 @@ export function PersonFormDialog({ person, onCancel, onSave }: PersonFormDialogP
         ...(relationship === CUSTOM_RELATIONSHIP ? { customRelationship: trimmedCustom } : {}),
       });
     } catch {
-      setError("That could not be saved. Please try again.");
+      setError(t("peopleManager.errorSaveFailed"));
       setIsSaving(false);
     }
   };
@@ -161,12 +163,12 @@ export function PersonFormDialog({ person, onCancel, onSave }: PersonFormDialogP
               className="text-xl font-extrabold"
               style={{ color: "var(--foreground)" }}
             >
-              {isEditing ? "Edit Person" : "Add Person"}
+              {isEditing ? t("peopleManager.editPerson") : t("peopleManager.addPerson")}
             </h2>
             <button
               type="button"
               onClick={onCancel}
-              aria-label="Close"
+              aria-label={t("common.close")}
               className="tap-target -mr-1 -mt-1 rounded-full border-2 border-transparent hover:border-slate-200 dark:hover:border-slate-700"
               style={{ color: "var(--muted)" }}
             >
@@ -177,12 +179,12 @@ export function PersonFormDialog({ person, onCancel, onSave }: PersonFormDialogP
           {/* Photo */}
           <div className="space-y-2">
             <span className={FIELD_LABEL_CLASS} style={{ color: "var(--foreground)" }}>
-              Photo
+              {t("peopleManager.photo")}
             </span>
             <div className="flex items-center gap-4">
               <PersonPhoto
                 person={{ name: name.trim() || "?", photo, emoji: person?.emoji, color: person?.color }}
-                alt={photo ? "Selected photo" : "No photo chosen yet"}
+                alt={photo ? t("peopleManager.selectedPhoto") : t("peopleManager.noPhotoChosen")}
                 className="h-20 w-20 rounded-2xl border-2 border-slate-200 dark:border-slate-700"
                 glyphClassName="text-3xl"
               />
@@ -193,7 +195,7 @@ export function PersonFormDialog({ person, onCancel, onSave }: PersonFormDialogP
                   className="tap-target gap-2 rounded-2xl border-2 border-[#D6CBF5] bg-[#F5F2FF] px-4 text-[16px] font-extrabold text-[#5044A8] dark:border-[#44386B] dark:bg-[#251F3D] dark:text-[#C4B5FD]"
                 >
                   <ImagePlus className="h-5 w-5" />
-                  {photo ? "Change Photo" : "Upload Photo"}
+                  {photo ? t("peopleManager.changePhoto") : t("peopleManager.uploadPhoto")}
                 </button>
                 {photo ? (
                   <button
@@ -202,7 +204,7 @@ export function PersonFormDialog({ person, onCancel, onSave }: PersonFormDialogP
                     className="tap-target rounded-2xl border-2 border-slate-200 px-4 text-[16px] font-extrabold dark:border-slate-700"
                     style={{ color: "var(--muted-strong)" }}
                   >
-                    Remove
+                    {t("peopleManager.removePhoto")}
                   </button>
                 ) : null}
               </div>
@@ -226,7 +228,7 @@ export function PersonFormDialog({ person, onCancel, onSave }: PersonFormDialogP
               className={FIELD_LABEL_CLASS}
               style={{ color: "var(--foreground)" }}
             >
-              Name
+              {t("peopleManager.name")}
             </label>
             <input
               id="person-name"
@@ -234,7 +236,7 @@ export function PersonFormDialog({ person, onCancel, onSave }: PersonFormDialogP
               type="text"
               value={name}
               onChange={(event) => setName(event.target.value)}
-              placeholder="Rajesh Kumar"
+              placeholder={t("peopleManager.namePlaceholder")}
               autoComplete="off"
               className={clsx(FIELD_CLASS, "border-slate-200 dark:border-slate-700")}
               style={{ backgroundColor: "var(--surface)", color: "var(--foreground)" }}
@@ -248,7 +250,7 @@ export function PersonFormDialog({ person, onCancel, onSave }: PersonFormDialogP
               className={FIELD_LABEL_CLASS}
               style={{ color: "var(--foreground)" }}
             >
-              Relationship
+              {t("peopleManager.relationship")}
             </label>
             <select
               id="person-relationship"
@@ -262,7 +264,7 @@ export function PersonFormDialog({ person, onCancel, onSave }: PersonFormDialogP
             >
               {RELATIONSHIPS.map((option) => (
                 <option key={option} value={option}>
-                  {option}
+                  {t(`relationships.${option.toLowerCase()}`, { defaultValue: option })}
                 </option>
               ))}
             </select>
@@ -271,8 +273,8 @@ export function PersonFormDialog({ person, onCancel, onSave }: PersonFormDialogP
                 type="text"
                 value={customRelationship}
                 onChange={(event) => setCustomRelationship(event.target.value)}
-                placeholder="Neighbour, doctor, family friend…"
-                aria-label="Custom relationship"
+                placeholder={t("peopleManager.customRelationshipPlaceholder")}
+                aria-label={t("peopleManager.customRelationship")}
                 autoComplete="off"
                 className={clsx(FIELD_CLASS, "border-[#D6CBF5] dark:border-[#44386B]")}
                 style={{ backgroundColor: "var(--surface)", color: "var(--foreground)" }}
@@ -297,14 +299,14 @@ export function PersonFormDialog({ person, onCancel, onSave }: PersonFormDialogP
               className="tap-target rounded-2xl border-2 border-slate-200 px-5 text-[17px] font-extrabold disabled:opacity-60 dark:border-slate-700"
               style={{ color: "var(--muted-strong)" }}
             >
-              Cancel
+              {t("common.cancel")}
             </button>
             <button
               type="submit"
               disabled={isSaving}
               className="tap-target rounded-2xl bg-[#6C5CC4] px-6 text-[17px] font-extrabold text-white shadow-md disabled:opacity-60"
             >
-              {isSaving ? "Saving…" : "Save"}
+              {isSaving ? t("dailyRoutine.saving") : t("common.save")}
             </button>
           </div>
         </form>

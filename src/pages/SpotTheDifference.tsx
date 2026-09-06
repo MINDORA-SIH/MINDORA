@@ -1,16 +1,18 @@
 import { useState } from "react";
 import { ChevronLeft, Eye, RotateCcw, Star, Trophy } from "lucide-react";
 import { useNavigate } from "react-router";
-
-const differences = [
-  { id: "sun", label: "Sun", left: "☀️", right: "🌤️" },
-  { id: "flower", label: "Flower", left: "🌷", right: "🌻" },
-  { id: "bird", label: "Bird", left: "🐦", right: "" },
-];
+import { useTranslation } from "react-i18next";
 
 export function SpotTheDifference() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [found, setFound] = useState<string[]>([]);
+
+  const differences = [
+    { id: "sun", labelKey: "games.spotTheDifference.itemSun", left: "☀️", right: "🌤️" },
+    { id: "flower", labelKey: "games.spotTheDifference.itemFlower", left: "🌷", right: "🌻" },
+    { id: "bird", labelKey: "games.spotTheDifference.itemBird", left: "🐦", right: "" },
+  ];
 
   const remaining = differences.filter((difference) => !found.includes(difference.id));
   const complete = found.length === differences.length;
@@ -28,7 +30,7 @@ export function SpotTheDifference() {
         className="flex items-center gap-2 text-slate-500 hover:text-slate-800 font-bold text-[20px] transition-colors cursor-pointer"
       >
         <ChevronLeft size={18} />
-        Back to Games
+        {t("common.backToGames")}
       </button>
 
       <div className="flex items-center justify-between gap-3">
@@ -37,8 +39,12 @@ export function SpotTheDifference() {
             <Eye size={22} className="text-[#534AB7]" />
           </div>
           <div>
-            <h1 className="text-xl sm:text-2xl font-extrabold text-[#1E2445] leading-tight">Spot the Difference</h1>
-            <p className="text-[18px] sm:text-[20px] text-slate-500 font-bold">Find the 3 changes between the pictures</p>
+            <h1 className="text-xl sm:text-2xl font-extrabold text-[#1E2445] leading-tight">
+              {t("games.spotTheDifference.title")}
+            </h1>
+            <p className="text-[18px] sm:text-[20px] text-slate-500 font-bold">
+              {t("games.spotTheDifference.subtitle")}
+            </p>
           </div>
         </div>
         <div className="shrink-0 bg-[#F5F0FF] border-2 border-[#EBE0FF] rounded-full px-3 sm:px-4 py-1.5 flex items-center gap-1.5">
@@ -51,30 +57,50 @@ export function SpotTheDifference() {
         <div className="text-center mb-5">
           {complete ? (
             <div className="space-y-1 animate-in fade-in duration-200">
-              <h2 className="text-xl font-extrabold text-emerald-600">Wonderful focus!</h2>
-              <p className="text-slate-500 font-bold">You found every difference.</p>
+              <h2 className="text-xl font-extrabold text-emerald-600">
+                {t("games.spotTheDifference.wonderfulFocus")}
+              </h2>
+              <p className="text-slate-500 font-bold">
+                {t("games.spotTheDifference.foundAll")}
+              </p>
             </div>
           ) : (
-            <p className="text-slate-500 font-bold">Tap an item that looks different in the two scenes.</p>
+            <p className="text-slate-500 font-bold">
+              {t("games.spotTheDifference.instruction")}
+            </p>
           )}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-3xl mx-auto">
           {(["left", "right"] as const).map((side) => (
             <section key={side} className="rounded-3xl border-2 border-[#D9D4F5] bg-[#F9F8FF] p-5 min-h-[245px]">
-              <h2 className="text-center font-extrabold text-[#534AB7] mb-4">Picture {side === "left" ? "A" : "B"}</h2>
+              <h2 className="text-center font-extrabold text-[#534AB7] mb-4">
+                {side === "left" ? t("games.spotTheDifference.picture1") : t("games.spotTheDifference.picture2")}
+              </h2>
               <div className="grid grid-cols-3 gap-3 place-items-center text-4xl sm:text-5xl">
                 <span>🏡</span>
-                <button onClick={() => findDifference("sun")} className={`rounded-2xl p-2 transition ${found.includes("sun") ? "bg-emerald-100 ring-2 ring-emerald-400" : "hover:bg-white focus-visible:ring-2 focus-visible:ring-[#534AB7]"}`} aria-label={`Find the sun difference in picture ${side === "left" ? "A" : "B"}`}>
+                <button
+                  onClick={() => findDifference("sun")}
+                  className={`rounded-2xl p-2 transition cursor-pointer ${found.includes("sun") ? "bg-emerald-100 ring-2 ring-emerald-400" : "hover:bg-white focus-visible:ring-2 focus-visible:ring-[#534AB7]"}`}
+                  aria-label={`${t("games.spotTheDifference.itemSun")} (${side === "left" ? t("games.spotTheDifference.picture1") : t("games.spotTheDifference.picture2")})`}
+                >
                   {side === "left" ? differences[0].left : differences[0].right}
                 </button>
                 <span>☁️</span>
                 <span>🌳</span>
-                <button onClick={() => findDifference("flower")} className={`rounded-2xl p-2 transition ${found.includes("flower") ? "bg-emerald-100 ring-2 ring-emerald-400" : "hover:bg-white focus-visible:ring-2 focus-visible:ring-[#534AB7]"}`} aria-label={`Find the flower difference in picture ${side === "left" ? "A" : "B"}`}>
+                <button
+                  onClick={() => findDifference("flower")}
+                  className={`rounded-2xl p-2 transition cursor-pointer ${found.includes("flower") ? "bg-emerald-100 ring-2 ring-emerald-400" : "hover:bg-white focus-visible:ring-2 focus-visible:ring-[#534AB7]"}`}
+                  aria-label={`${t("games.spotTheDifference.itemFlower")} (${side === "left" ? t("games.spotTheDifference.picture1") : t("games.spotTheDifference.picture2")})`}
+                >
                   {side === "left" ? differences[1].left : differences[1].right}
                 </button>
                 <span>🪑</span>
-                <button onClick={() => findDifference("bird")} className={`rounded-2xl p-2 transition ${found.includes("bird") ? "bg-emerald-100 ring-2 ring-emerald-400" : "hover:bg-white focus-visible:ring-2 focus-visible:ring-[#534AB7]"}`} aria-label={`Find the bird difference in picture ${side === "left" ? "A" : "B"}`}>
+                <button
+                  onClick={() => findDifference("bird")}
+                  className={`rounded-2xl p-2 transition cursor-pointer ${found.includes("bird") ? "bg-emerald-100 ring-2 ring-emerald-400" : "hover:bg-white focus-visible:ring-2 focus-visible:ring-[#534AB7]"}`}
+                  aria-label={`${t("games.spotTheDifference.itemBird")} (${side === "left" ? t("games.spotTheDifference.picture1") : t("games.spotTheDifference.picture2")})`}
+                >
                   {side === "left" ? differences[2].left : <span className="inline-block w-10" aria-hidden="true" />}
                 </button>
                 <span>🐕</span>
@@ -85,10 +111,15 @@ export function SpotTheDifference() {
         </div>
 
         <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
-          <p className="text-slate-500 font-bold text-center">{remaining.length ? `${remaining.length} difference${remaining.length === 1 ? "" : "s"} left` : "All differences found!"}</p>
-          <button onClick={restart} className="px-5 py-2.5 rounded-xl bg-[#534AB7] hover:bg-[#44399A] text-white font-bold flex items-center gap-2 transition cursor-pointer">
+          <p className="text-slate-500 font-bold text-center">
+            {remaining.length ? `${remaining.length} left` : t("games.spotTheDifference.foundAll")}
+          </p>
+          <button
+            onClick={restart}
+            className="px-5 py-2.5 rounded-xl bg-[#534AB7] hover:bg-[#44399A] text-white font-bold flex items-center gap-2 transition cursor-pointer"
+          >
             <RotateCcw size={18} />
-            Play Again
+            {t("common.playAgain")}
           </button>
           {complete && <Trophy size={28} className="text-amber-500" aria-label="Completed" />}
         </div>

@@ -100,7 +100,16 @@
     "spotTheDifference": {
       "title": "Spot the Difference",
       "label": "Focus",
-      "description": "Find the changes between two pictures"
+      "description": "Find the changes between two pictures",
+      "subtitle": "Find the 3 changes between the pictures",
+      "instruction": "Tap an item that looks different in the two scenes.",
+      "wonderfulFocus": "Wonderful focus!",
+      "foundAll": "You found every difference.",
+      "picture1": "Picture 1",
+      "picture2": "Picture 2",
+      "itemSun": "Sun",
+      "itemFlower": "Flower",
+      "itemBird": "Bird"
     },
     "colorSequence": {
       "title": "Color Sequence",
@@ -118,7 +127,11 @@
       "niceTry": "Nice Try!",
       "bestScore": "Best Score: Level {{level}}",
       "tryAgain": "Try Again",
-      "seeResults": "See Results"
+      "seeResults": "See Results",
+      "red": "Red",
+      "blue": "Blue",
+      "green": "Green",
+      "yellow": "Yellow"
     }
   },
   "reminders": {
@@ -142,7 +155,11 @@
     "reminderAdded": "\"{{title}}\" reminder added! ✅",
     "markAsDone": "Mark as done",
     "dismiss": "Dismiss",
-    "close": "Close"
+    "close": "Close",
+    "morningPills": "Morning Pills",
+    "drinkWater": "Drink Water",
+    "gardenWalk": "Garden Walk",
+    "doctorVisit": "Doctor Visit"
   },
   "dashboard": {
     "alertThreshold": "Alert if score drops below {{threshold}}",
@@ -312,7 +329,12 @@
     "currentMedications": "Current Medications",
     "medicationNight": "Night",
     "medicationMorning": "Morning",
-    "knownAllergies": "Known Allergies"
+    "knownAllergies": "Known Allergies",
+    "patientName": "Savitri Devi",
+    "locationValue": "Guwahati, Assam",
+    "medDonepezil": "Donepezil 5 mg",
+    "medVitaminD3": "Vitamin D3",
+    "allergyPenicillin": "Penicillin"
   },
   "settings": {
     "title": "Settings",
@@ -337,7 +359,23 @@
     "inputPlaceholder": "Ask Mindora Assistant anything...",
     "typing": "Typing...",
     "chatReset": "Chat reset! How can I assist you now, Savitri?",
-    "greeting": "Hello Savitri! 👋 I am your Mindora Companion. How can I assist you with your games, medications, or daily schedule today?"
+    "greeting": "Hello Savitri! 👋 I am your Mindora Companion. How can I assist you with your games, medications, or daily schedule today?",
+    "send": "Send",
+    "promptGame": "🧩 Best game for today?",
+    "promptGameQuery": "Which game should I play today for memory improvement?",
+    "promptMedication": "💊 Show my medication",
+    "promptMedicationQuery": "What are my upcoming medication reminders?",
+    "promptProgress": "📊 Check my progress",
+    "promptProgressQuery": "How is my brain score and game progress this week?",
+    "promptTip": "💡 Daily brain tip",
+    "promptTipQuery": "Give me a daily cognitive tip for senior health",
+    "respGame": "🎮 Based on your recent activity, **Memory Cards** and **Word Association** are ideal for you today! They help strengthen short-term recall. Would you like to start a game now?",
+    "respMedication": "💊 **Upcoming Reminders for Today:**\n• 8:00 PM - Donepezil 5mg (1 Tablet after dinner)\n• 9:30 PM - Evening Hydration & Water Intake\n\nAll set! I can remind you 15 minutes before.",
+    "respProgress": "📊 **Great News, Savitri!** Your cognitive accuracy is up **+12%** this week with an overall **85% memory score**. You completed 4 game sessions yesterday! Keep up the brilliant effort!",
+    "respTip": "💡 **Today's Brain Tip:** Try taking a 10-minute gentle morning walk and naming 5 different colors you see outdoors. Combining physical motion with visual recognition boosts brain plasticity!",
+    "respCaregiver": "📞 **Caregiver Assistance:** You can reach out to your designated caregiver Ramesh at any time. You can tap the 'Help' icon in the top bar to place a direct call!",
+    "respGreeting": "Hello Savitri! 😊 I'm right here with you. Feel free to ask me anything about your routine or games!",
+    "respFallback": "I understand you asked about \"{{query}}\". I'm always here to help you navigate Mindora, track your reminders, and suggest brain exercises. Is there a specific game or schedule item you'd like help with?"
   },
   "dailyRoutine": {
     "title": "Daily Routine",
@@ -393,6 +431,83 @@
     "nextLevelReady": "Level {{level}} is ready for your next round.",
     "scoreMessage": "You placed {{accuracy}}% of the activities in the right spot.",
     "chooseRoutine": "Choose a routine",
-    "activityCount": "{{count}} activities"
+    "activityCount": "{{count}} activities",
+    "routineNamePlaceholder": "Morning Routine",
+    "addCustomActivityPlaceholder": "Add a custom activity"
+  },
+  "underDevelopment": {
+    "title": "Under Development",
+    "subtitle": "This page is not available yet.",
+    "backToGames": "Back to Games"
+  },
+  "peopleManager": {
+    "title": "Who Is This? People",
+    "subtitle": "Photos and relationships the memory game uses",
+    "addPerson": "Add Person",
+    "activePeopleCount": "{{count}} active {{label}}",
+    "shortfallNotice": "Add {{count}} more active {{label}} to play Who Is This? on Easy.",
+    "storageUnavailable": "Local storage is not available in this browser session. New people or changes will not be saved.",
+    "person": "person",
+    "people": "people",
+    "edit": "Edit",
+    "activate": "Activate",
+    "deactivate": "Deactivate",
+    "editPerson": "Edit Person",
+    "photo": "Photo",
+    "selectedPhoto": "Selected photo",
+    "noPhotoChosen": "No photo chosen yet",
+    "changePhoto": "Change Photo",
+    "uploadPhoto": "Upload Photo",
+    "removePhoto": "Remove",
+    "name": "Name",
+    "namePlaceholder": "Rajesh Kumar",
+    "relationship": "Relationship",
+    "customRelationshipPlaceholder": "Neighbour, doctor, family friend…",
+    "customRelationship": "Custom relationship",
+    "errorChooseImage": "Choose an image file.",
+    "errorImageTooLarge": "That image is too large. Choose one under 12 MB.",
+    "errorPhotoUnreadable": "That photo could not be read. Try another one.",
+    "errorEnterName": "Enter the person's name.",
+    "errorDescribeRelationship": "Describe the relationship, or pick one from the list.",
+    "errorSaveFailed": "That could not be saved. Please try again."
+  },
+  "relationships": {
+    "son": "son",
+    "daughter": "daughter",
+    "spouse": "spouse",
+    "brother": "brother",
+    "sister": "sister",
+    "grandson": "grandson",
+    "granddaughter": "granddaughter",
+    "nephew": "nephew",
+    "niece": "niece",
+    "friend": "friend",
+    "caregiver": "caregiver",
+    "other": "other"
+  },
+  "categories": {
+    "morning": "Morning",
+    "afternoon": "Afternoon",
+    "evening": "Evening",
+    "bedtime": "Bedtime",
+    "custom": "Custom"
+  },
+  "activities": {
+    "wakeUp": "Wake up",
+    "brushTeeth": "Brush teeth",
+    "takeMedicine": "Take medicine",
+    "drinkWater": "Drink water",
+    "eatBreakfast": "Eat breakfast",
+    "takeBath": "Take a bath",
+    "getDressed": "Get dressed",
+    "readNewspaper": "Read newspaper",
+    "goForAWalk": "Go for a walk",
+    "haveLunch": "Have lunch",
+    "rest": "Rest",
+    "exercise": "Exercise",
+    "talkWithFamily": "Talk with family",
+    "dinner": "Dinner",
+    "prepareForBed": "Prepare for bed",
+    "goToSleep": "Go to sleep"
   }
 }
