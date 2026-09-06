@@ -1,13 +1,16 @@
 import { clsx } from "clsx";
 import { ArrowRight, BellRing, Database, LayoutGrid, MessageCircle, Stethoscope, UserRound } from "lucide-react";
 import { Link } from "react-router";
+import { useTranslation } from "react-i18next";
 import { type IconComponent, type SemanticTone, TONES } from "./tokens";
 import { SectionCard } from "./ui";
 
 interface ActionLink {
   to: string;
-  label: string;
-  description: string;
+  labelKey: string;
+  descriptionKey: string;
+  defaultLabel: string;
+  defaultDescription: string;
   icon: IconComponent;
   tone: SemanticTone;
 }
@@ -16,50 +19,46 @@ interface ActionLink {
 const ACTIONS: ActionLink[] = [
   {
     to: "/profile",
-    label: "Patient Profile",
-    description: "Personal and medical details on record",
+    labelKey: "dashboard.patientProfile", descriptionKey: "dashboard.patientProfileDescription", defaultLabel: "Patient Profile", defaultDescription: "Personal and medical details on record",
     icon: UserRound,
     tone: "brand",
   },
   {
     to: "/manage-data",
-    label: "Manage Game Data",
-    description: "People, photos, relationships and daily routines",
+    labelKey: "dashboard.manageGameData", descriptionKey: "dashboard.manageGameDataDescription", defaultLabel: "Manage Game Data", defaultDescription: "People, photos, relationships and daily routines",
     icon: Database,
     tone: "info",
   },
   {
     to: "/reminders",
-    label: "Daily Reminders",
-    description: "Review and adjust the routine schedule",
+    labelKey: "dashboard.dailyReminders", descriptionKey: "dashboard.dailyRemindersDescription", defaultLabel: "Daily Reminders", defaultDescription: "Review and adjust the routine schedule",
     icon: BellRing,
     tone: "monitor",
   },
   {
     to: "/",
-    label: "Activity Library",
-    description: "Open the activities available to the patient",
+    labelKey: "dashboard.activityLibrary", descriptionKey: "dashboard.activityLibraryDescription", defaultLabel: "Activity Library", defaultDescription: "Open the activities available to the patient",
     icon: LayoutGrid,
     tone: "info",
   },
   {
     to: "/chatbot",
-    label: "Mindora Assistant",
-    description: "Ask a question about using the app",
+    labelKey: "dashboard.assistant", descriptionKey: "dashboard.assistantDescription", defaultLabel: "Mindora Assistant", defaultDescription: "Ask a question about using the app",
     icon: MessageCircle,
     tone: "stable",
   },
 ];
 
 export function CaregiverActions() {
+  const { t } = useTranslation();
   return (
-    <SectionCard title="Caregiver Actions" subtitle="Jump to the tools you manage" icon={Stethoscope} tone="brand">
+    <SectionCard title={t("dashboard.caregiverActions", { defaultValue: "Caregiver Actions" })} subtitle={t("dashboard.caregiverActionsSubtitle", { defaultValue: "Jump to the tools you manage" })} icon={Stethoscope} tone="brand">
       <ul className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
         {ACTIONS.map((action) => {
           const toneStyle = TONES[action.tone];
           const Icon = action.icon;
           return (
-            <li key={action.to + action.label}>
+            <li key={action.to + action.labelKey}>
               <Link
                 to={action.to}
                 className={clsx(
@@ -76,10 +75,10 @@ export function CaregiverActions() {
                 </span>
                 <span className="min-w-0 flex-1">
                   <span className="block text-[16px] font-extrabold" style={{ color: "var(--foreground)" }}>
-                    {action.label}
+                    {t(action.labelKey, { defaultValue: action.defaultLabel })}
                   </span>
                   <span className="block text-[13px] font-semibold" style={{ color: "var(--muted-strong)" }}>
-                    {action.description}
+                    {t(action.descriptionKey, { defaultValue: action.defaultDescription })}
                   </span>
                 </span>
                 <ArrowRight aria-hidden="true" className={clsx("h-5 w-5 shrink-0", toneStyle.text)} />

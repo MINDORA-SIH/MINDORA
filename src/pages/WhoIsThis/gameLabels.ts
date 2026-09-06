@@ -1,85 +1,52 @@
-// ─── Centralized text labels for voice-ready UI ───
-// All user-facing strings are defined here so they can later be
-// connected to Text-to-Speech, i18n, or regional language support.
-
+import { useTranslation } from "react-i18next";
 import { MIN_ACTIVE_PEOPLE } from "./gameConfig";
 
-export const GAME_LABELS = {
-  // Game title & identity
-  gameTitle: "Who Is This?",
-  gameSubtitle: "Identify your family members",
+/** Localized labels for every Who Is This screen. */
+export function useGameLabels() {
+  const { t } = useTranslation();
+  return {
+    gameTitle: t("games.whoIsThis.title"),
+    gameSubtitle: t("games.whoIsThis.subtitle"),
+    welcomeTitle: t("games.whoIsThis.welcomeTitle"),
+    welcomeMessage: t("games.whoIsThis.welcomeMessage"),
+    startButton: t("common.startGame"),
+    currentDifficulty: t("games.whoIsThis.currentDifficulty"),
+    questionText: t("games.whoIsThis.questionText"),
+    questionSubtext: t("games.whoIsThis.questionSubtext"),
+    questionProgress: (current: number, total: number) =>
+      t("games.whoIsThis.questionProgress", { current, total }),
+    questionPhotoAlt: t("games.whoIsThis.questionPhotoAlt"),
+    correctTitle: t("common.correct"),
+    incorrectTitle: t("common.incorrect"),
+    personIdentityLead: (name: string) => t("games.whoIsThis.personIdentity", { name }).replace(/\.$/, ""),
+    personIdentityClause: (relationship: string) =>
+      t("games.whoIsThis.personIdentityClause", { relationship: relationship.toLowerCase() }),
+    personPhotoAlt: (name: string) => t("games.whoIsThis.personPhotoAlt", { name }),
+    continueButton: t("common.continue"),
+    backToGames: t("common.backToGames"),
+    summaryTitle: t("games.whoIsThis.summaryTitle"),
+    summaryMessage: t("games.whoIsThis.summaryMessage"),
+    summaryEncouragement: t("games.whoIsThis.summaryEncouragement"),
+    scoreLabel: t("games.whoIsThis.scoreLabel"),
+    accuracyLabel: t("games.whoIsThis.accuracyLabel"),
+    avgResponseTimeLabel: t("games.whoIsThis.avgResponseTimeLabel"),
+    difficultyLabel: t("games.whoIsThis.difficultyLabel"),
+    playAgainButton: t("common.playAgain"),
+    secondsUnit: t("games.whoIsThis.secondsUnit"),
+    difficultyEasy: t("games.whoIsThis.difficultyEasy"),
+    difficultyMedium: t("games.whoIsThis.difficultyMedium"),
+    difficultyHard: t("games.whoIsThis.difficultyHard"),
+    notEnoughPeople: t("games.whoIsThis.notEnoughPeople", { count: MIN_ACTIVE_PEOPLE }),
+    notEnoughPeopleHint: t("games.whoIsThis.notEnoughPeopleHint"),
+    manageDataButton: t("games.whoIsThis.manageDataButton"),
+  };
+}
 
-  // Intro screen
-  welcomeTitle: "Memory Game",
-  welcomeMessage:
-    "Look at the photo and choose the person's name. Take your time — there is no rush.",
-  startButton: "Start Game",
-  currentDifficulty: "Current Difficulty",
-
-  // Question screen
-  questionText: "Who is this person?",
-  questionSubtext: "Choose the correct name.",
-  questionProgress: (current: number, total: number) => `Question ${current} of ${total}`,
-  /** Neutral alt text: naming the photo would give the answer away. */
-  questionPhotoAlt: "Photo of the person to identify",
-
-  // Feedback
-  correctTitle: "Correct!",
-  incorrectTitle: "Not quite.",
-  /**
-   * The one sentence that turns a right or wrong answer into reinforcement:
-   * "This is Rajesh Kumar, your son." Built from the stored Person, so a
-   * caregiver's edit changes what the patient hears next time.
-   *
-   * `relationship` is null when there is nothing to say (an "Other" record with
-   * no label), and the clause is dropped rather than left empty.
-   */
-  personIdentity: (name: string, relationship: string | null) =>
-    relationship === null
-      ? `This is ${name}.`
-      : `This is ${name}, your ${relationship.toLowerCase()}.`,
-  /** The same sentence in two pieces, so the clause can be styled as secondary. */
-  personIdentityLead: (name: string) => `This is ${name}`,
-  personIdentityClause: (relationship: string) => `, your ${relationship.toLowerCase()}.`,
-  personPhotoAlt: (name: string) => `Photo of ${name}`,
-
-  // Navigation
-  continueButton: "Continue →",
-  nextQuestion: "Let's try another one.",
-  backToGames: "Back to Games",
-
-  // Session summary
-  summaryTitle: "Well Done!",
-  summaryMessage: "You completed today's memory game.",
-  summaryEncouragement: "Great work! Keep exercising your memory.",
-  scoreLabel: "Score",
-  accuracyLabel: "Accuracy",
-  avgResponseTimeLabel: "Average Response Time",
-  difficultyLabel: "Difficulty",
-  playAgainButton: "Play Again",
-  secondsUnit: "seconds",
-
-  // Difficulty labels
-  difficultyEasy: "Easy",
-  difficultyMedium: "Medium",
-  difficultyHard: "Hard",
-
-  // Error / fallback
-  photoUnavailable: "Photo unavailable",
-  /** Shown instead of the game when the caregiver has too few active people. */
-  notEnoughPeople: `Add at least ${MIN_ACTIVE_PEOPLE} people to start this game.`,
-  notEnoughPeopleHint: "A caregiver can add them in Manage Game Data on the dashboard.",
-  manageDataButton: "Open Manage Game Data",
-} as const;
-
-/** Map difficulty to a human-readable label */
-export function difficultyLabel(d: "easy" | "medium" | "hard"): string {
-  switch (d) {
-    case "easy":
-      return GAME_LABELS.difficultyEasy;
-    case "medium":
-      return GAME_LABELS.difficultyMedium;
-    case "hard":
-      return GAME_LABELS.difficultyHard;
-  }
+export function useDifficultyLabel() {
+  const labels = useGameLabels();
+  return (difficulty: "easy" | "medium" | "hard") => {
+    if (difficulty === "easy") return labels.difficultyEasy;
+    if (difficulty === "medium") return labels.difficultyMedium;
+    return labels.difficultyHard;
+  };
 }

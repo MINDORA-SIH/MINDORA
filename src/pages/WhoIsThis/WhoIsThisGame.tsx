@@ -10,7 +10,7 @@ import {
 } from "./difficulty";
 import GameIntro from "./GameIntro";
 import { MIN_ACTIVE_PEOPLE, QUESTIONS_PER_SESSION } from "./gameConfig";
-import { GAME_LABELS } from "./gameLabels";
+import { useGameLabels } from "./gameLabels";
 import { generateQuestion } from "./gameLogic";
 import GameProgress from "./GameProgress";
 import QuestionScreen from "./QuestionScreen";
@@ -48,6 +48,7 @@ const BACK_BUTTON_CLASS =
 export default function WhoIsThisGame() {
   const navigate = useNavigate();
   const { activePeople, isLoading } = usePeople();
+  const labels = useGameLabels();
 
   // ─── Game state ───
   const [gameState, setGameState] = useState<GameState>("intro");
@@ -214,7 +215,7 @@ export default function WhoIsThisGame() {
   const backButton = (
     <button type="button" onClick={() => navigate("/")} className={BACK_BUTTON_CLASS}>
       <ChevronLeft size={18} />
-      {GAME_LABELS.backToGames}
+      {labels.backToGames}
     </button>
   );
 
@@ -235,16 +236,16 @@ export default function WhoIsThisGame() {
         {backButton}
         <div className="space-y-4 py-16 text-center">
           <Users size={48} className="mx-auto text-slate-300" />
-          <p className="text-xl font-bold text-slate-500">{GAME_LABELS.notEnoughPeople}</p>
+          <p className="text-xl font-bold text-slate-500">{labels.notEnoughPeople}</p>
           <p className="text-lg font-semibold text-slate-400">
-            {GAME_LABELS.notEnoughPeopleHint}
+            {labels.notEnoughPeopleHint}
           </p>
           <button
             type="button"
             onClick={() => navigate("/manage-data")}
             className="mt-2 min-h-[52px] cursor-pointer rounded-2xl bg-[#FF6584] px-8 py-3.5 text-lg font-extrabold text-white shadow-md transition-all hover:bg-[#e8506e] active:scale-[0.97]"
           >
-            {GAME_LABELS.manageDataButton}
+            {labels.manageDataButton}
           </button>
         </div>
       </div>
@@ -274,10 +275,10 @@ export default function WhoIsThisGame() {
             </div>
             <div>
               <h1 className="text-xl font-extrabold leading-tight text-[#1E2445] sm:text-2xl">
-                {GAME_LABELS.gameTitle}
+                {labels.gameTitle}
               </h1>
               <p className="text-[18px] font-medium text-slate-500 sm:text-[20px]">
-                {GAME_LABELS.gameSubtitle}
+                {labels.gameSubtitle}
               </p>
             </div>
           </div>

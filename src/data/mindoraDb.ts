@@ -10,7 +10,7 @@
 // people repository both fall back to in-memory data instead of breaking.
 
 const DB_NAME = "mindora-who-is-this";
-const DB_VERSION = 2;
+const DB_VERSION = 3;
 
 /** Caregiver-managed people, shared across activities. Keyed by `id`. */
 export const STORE_PEOPLE = "people";
@@ -24,6 +24,8 @@ export const STORE_SETTINGS = "gameSettings";
 export const STORE_ROUTINES = "routines";
 /** Completed Daily Routine attempts, keyed by stable session id. */
 export const STORE_ROUTINE_SESSIONS = "routineGameSessions";
+/** Cached machine translations for dynamic, caregiver-entered content. */
+export const STORE_TRANSLATIONS = "i18nCache";
 
 let dbPromise: Promise<IDBDatabase> | null = null;
 
@@ -66,6 +68,11 @@ export function openMindoraDb(): Promise<IDBDatabase> {
         store.createIndex("patientId", "patientId", { unique: false });
         store.createIndex("routineId", "routineId", { unique: false });
         store.createIndex("startedAt", "startedAt", { unique: false });
+      }
+      if (!db.objectStoreNames.contains(STORE_TRANSLATIONS)) {
+        const store = db.createObjectStore(STORE_TRANSLATIONS, { keyPath: "id" });
+        store.createIndex("lang", "lang", { unique: false });
+        store.createIndex("cachedAt", "cachedAt", { unique: false });
       }
     };
 

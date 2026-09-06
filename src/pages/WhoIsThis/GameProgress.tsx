@@ -1,4 +1,5 @@
 import { Star } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface GameProgressProps {
   currentQuestion: number;
@@ -15,6 +16,7 @@ export default function GameProgress({
   totalQuestions,
   score,
 }: GameProgressProps) {
+  const { t } = useTranslation();
   const progress = ((currentQuestion) / totalQuestions) * 100;
 
   return (
@@ -22,7 +24,7 @@ export default function GameProgress({
       {/* Score badge row */}
       <div className="flex items-center justify-between">
         <p className="text-base sm:text-lg font-bold text-slate-400">
-          Question {currentQuestion} of {totalQuestions}
+          {t("games.whoIsThis.questionProgress", { current: currentQuestion, total: totalQuestions })}
         </p>
         <div className="bg-[#FFF0F3] border-2 border-[#FFE0E6] rounded-full px-4 py-1.5 flex items-center gap-1.5">
           <Star size={16} className="text-amber-500" />

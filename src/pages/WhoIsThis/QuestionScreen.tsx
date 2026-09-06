@@ -1,5 +1,5 @@
 import { PersonPhoto } from "@/components/PersonPhoto";
-import { GAME_LABELS } from "./gameLabels";
+import { useGameLabels } from "./gameLabels";
 import NameOption from "./NameOption";
 import type { GameQuestion, Person } from "./types";
 
@@ -26,14 +26,15 @@ export default function QuestionScreen({
   isRevealed,
   onSelectPerson,
 }: QuestionScreenProps) {
+  const labels = useGameLabels();
   return (
     <div className="space-y-5 sm:space-y-6">
       <div className="space-y-1 text-center">
         <h2 className="text-2xl font-extrabold text-[#1E2445] sm:text-3xl">
-          {GAME_LABELS.questionText}
+          {labels.questionText}
         </h2>
         <p className="text-lg font-bold text-slate-500 sm:text-xl">
-          {GAME_LABELS.questionSubtext}
+          {labels.questionSubtext}
         </p>
       </div>
 
@@ -41,7 +42,7 @@ export default function QuestionScreen({
       <div className="flex justify-center">
         <PersonPhoto
           person={personInPhoto}
-          alt={GAME_LABELS.questionPhotoAlt}
+          alt={labels.questionPhotoAlt}
           className="h-56 w-56 rounded-3xl border-4 border-white shadow-lg sm:h-64 sm:w-64"
           glyphClassName="text-7xl"
         />

@@ -3,7 +3,10 @@ import logoUrl from "./assets/logo.png";
 import { User, Gamepad2, BarChart2, Bell, Settings as SettingsIcon, Mic, MicOff, Check, Moon, Sun, ArrowLeft, X } from "lucide-react";
 import { useState, useRef, useEffect, useCallback, cloneElement } from "react";
 import { clsx } from "clsx";
-import { LanguageDropdown, DEFAULT_LANGUAGE, type Language } from "./components/LanguageDropdown";
+import { useTranslation } from "react-i18next";
+import i18n from "./i18n";
+import { SUPPORTED_LANGUAGES, type LanguageMeta } from "./i18n/langConfig";
+import { LanguageDropdown } from "./components/LanguageDropdown";
 
 /**
  * Speech recognition stays pinned to one locale. The language dropdown is a
@@ -12,8 +15,14 @@ import { LanguageDropdown, DEFAULT_LANGUAGE, type Language } from "./components/
 const SPEECH_RECOGNITION_LANG = "hi-IN";
 
 export function Layout() {
+  const { t } = useTranslation();
   const [isLangOpen, setIsLangOpen] = useState(false);
-  const [language, setLanguage] = useState<Language>(DEFAULT_LANGUAGE);
+  const [, forceUpdate] = useState(0);
+  const language: LanguageMeta =
+    SUPPORTED_LANGUAGES.find((item) => item.code === i18n.language) ?? SUPPORTED_LANGUAGES[0];
+  const setLanguage = (nextLanguage: LanguageMeta) => {
+    void i18n.changeLanguage(nextLanguage.code);
+  };
 
   const [isListening, setIsListening] = useState(false);
   const [darkMode, setDarkMode] = useState(() => localStorage.getItem("mindora_dark") === "true");
@@ -28,6 +37,12 @@ export function Layout() {
 
   const navigate = useNavigate();
   const location = useLocation();
+
+  useEffect(() => {
+    const handler = () => forceUpdate((count) => count + 1);
+    i18n.on("languageChanged", handler);
+    return () => i18n.off("languageChanged", handler);
+  }, []);
 
   // Close all popups — called before opening any new one
   const closeAllPopups = useCallback(() => {
@@ -106,56 +121,56 @@ export function Layout() {
     const lower = text.toLowerCase();
     
     if (lower.includes("game") || lower.includes("home") || lower.includes("play")) {
-      setVoiceFeedback("Navigating to Games...");
+      setVoiceFeedback(t("layout.navigatingToGames"));
       setTimeout(() => {
         navigate("/");
         setIsListening(false);
         setVoiceFeedback(null);
       }, 1000);
     } else if (lower.includes("chat") || lower.includes("bot") || lower.includes("assistant")) {
-      setVoiceFeedback("Opening Chatbot...");
+      setVoiceFeedback(t("layout.openingChatbot"));
       setTimeout(() => {
         navigate("/chatbot");
         setIsListening(false);
         setVoiceFeedback(null);
       }, 1000);
     } else if (lower.includes("progress") || lower.includes("dashboard") || lower.includes("stat")) {
-      setVoiceFeedback("Navigating to Dashboard...");
+      setVoiceFeedback(t("layout.navigatingToDashboard"));
       setTimeout(() => {
         navigate("/dashboard");
         setIsListening(false);
         setVoiceFeedback(null);
       }, 1000);
     } else if (lower.includes("reminder") || lower.includes("medicine") || lower.includes("pill")) {
-      setVoiceFeedback("Navigating to Reminders...");
+      setVoiceFeedback(t("layout.navigatingToReminders"));
       setTimeout(() => {
         navigate("/reminders");
         setIsListening(false);
         setVoiceFeedback(null);
       }, 1000);
     } else if (lower.includes("setting")) {
-      setVoiceFeedback("Navigating to Settings...");
+      setVoiceFeedback(t("layout.navigatingToSettings"));
       setTimeout(() => {
         navigate("/settings");
         setIsListening(false);
         setVoiceFeedback(null);
       }, 1000);
     } else if (lower.includes("profile") || lower.includes("patient") || lower.includes("account")) {
-      setVoiceFeedback("Opening Profile...");
+      setVoiceFeedback(t("layout.openingProfile"));
       setTimeout(() => {
         navigate("/profile");
         setIsListening(false);
         setVoiceFeedback(null);
       }, 1000);
     } else if (lower.includes("help") || lower.includes("emergency") || lower.includes("sos")) {
-      setVoiceFeedback("Triggering Emergency Alert...");
+      setVoiceFeedback(t("layout.triggeringEmergency"));
       triggerSos();
       setTimeout(() => {
         setIsListening(false);
         setVoiceFeedback(null);
       }, 1000);
     } else {
-      setVoiceFeedback(`Heard: "${text}" [Voice Lang: ${SPEECH_RECOGNITION_LANG}]`);
+      setVoiceFeedback(t("layout.heard", { text, lang: SPEECH_RECOGNITION_LANG }));
     }
   };
 
@@ -241,17 +256,17 @@ export function Layout() {
             {/* 1. Emergency SOS Button */}
             <button
               onClick={triggerSos}
-              title="Emergency Alert"
+              title={t("layout.emergencyAlert")}
               className="h-9 sm:h-10 md:h-11 px-3 sm:px-4 md:px-5 rounded-full bg-red-600 hover:bg-red-700 border-2 border-red-700 text-white flex items-center transition-all cursor-pointer active:scale-95 shadow-md flex-shrink-0 font-black text-sm sm:text-base tracking-wide"
             >
-              SOS
+              {t("layout.sos")}
             </button>
 
             {/* 2. Dark Mode Toggle */}
             {isWide && (
               <button
                 onClick={() => setDarkMode(!darkMode)}
-                title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
+                title={darkMode ? t("layout.switchToLight") : t("layout.switchToDark")}
                 className={clsx(
                   "h-9 w-9 sm:h-10 sm:w-10 md:h-11 md:w-11 rounded-full border-2 flex items-center justify-center transition-all cursor-pointer active:scale-95 shadow-xs flex-shrink-0",
                   darkMode
@@ -296,10 +311,10 @@ export function Layout() {
         >
           <div className="max-w-md sm:max-w-lg mx-auto px-4 py-2">
             <div className="grid grid-cols-4 items-center gap-2">
-              <NavItem to="/" icon={<Gamepad2 size={24} />} label="Games" />
-              <NavItem to="/dashboard" icon={<BarChart2 size={24} />} label="Dashboard" />
-              <NavItem to="/reminders" icon={<Bell size={24} />} label="Reminders" />
-              <NavItem to="/settings" icon={<SettingsIcon size={24} />} label="Settings" />
+              <NavItem to="/" icon={<Gamepad2 size={24} />} label={t("navigation.games")} />
+              <NavItem to="/dashboard" icon={<BarChart2 size={24} />} label={t("navigation.dashboard")} />
+              <NavItem to="/reminders" icon={<Bell size={24} />} label={t("navigation.reminders")} />
+              <NavItem to="/settings" icon={<SettingsIcon size={24} />} label={t("navigation.settings")} />
             </div>
           </div>
         </nav>
@@ -310,7 +325,7 @@ export function Layout() {
             if (!isListening) closeAllPopups();
             toggleListening();
           }}
-          title="Voice Assistant"
+          title={t("layout.voiceAssistant")}
           className={clsx(
             "fixed z-50 right-4 sm:right-6 bottom-[5.5rem] sm:bottom-[6rem] w-14 h-14 sm:w-16 sm:h-16 rounded-full border-3 flex items-center justify-center transition-all cursor-pointer active:scale-90 shadow-lg",
             isListening
@@ -353,9 +368,9 @@ export function Layout() {
               </div>
 
               <div>
-                <h3 className="font-extrabold text-2xl text-slate-800">Voice Assistant</h3>
+                <h3 className="font-extrabold text-2xl text-slate-800">{t("layout.voiceAssistant")}</h3>
                 <p className="text-slate-500 text-[20px] mt-1.5 font-bold">
-                  {voiceFeedback || "Listening... Speak a command"}
+                  {voiceFeedback || t("layout.listening")}
                 </p>
               </div>
 
@@ -369,7 +384,7 @@ export function Layout() {
                 onClick={() => { setIsListening(false); setVoiceFeedback(null); }}
                 className="w-full py-3.5 bg-slate-800 text-white font-extrabold text-base rounded-2xl hover:bg-slate-900 transition-colors shadow-md cursor-pointer mt-2"
               >
-                Stop Listening
+                {t("layout.stopListening")}
               </button>
             </div>
           </div>
@@ -416,10 +431,10 @@ export function Layout() {
                   <div>
                     <h3 className="font-extrabold text-xl sm:text-2xl text-red-700">🚨 Emergency Alert</h3>
                     <p className="text-slate-600 text-sm sm:text-base font-bold mt-2 leading-relaxed">
-                      Sending SMS to your caregiver in <span className="text-red-600 font-black">{sosCountdown}s</span>
+                      {t("layout.sendingSms", { count: sosCountdown })}
                     </p>
                     <p className="text-slate-400 text-xs sm:text-sm font-medium mt-1">
-                      Press cancel to stop the alert
+                      {t("layout.pressCancel")}
                     </p>
                   </div>
 
@@ -428,7 +443,7 @@ export function Layout() {
                     className="w-full py-4 bg-slate-800 hover:bg-slate-900 text-white font-extrabold text-base sm:text-lg rounded-2xl transition-all shadow-lg cursor-pointer flex items-center justify-center gap-2"
                   >
                     <X size={22} />
-                    Cancel Alert
+                    {t("layout.cancelAlert")}
                   </button>
                 </>
               ) : (
@@ -439,9 +454,9 @@ export function Layout() {
                   </div>
 
                   <div>
-                    <h3 className="font-extrabold text-xl sm:text-2xl text-slate-700">Alert Sent</h3>
+                    <h3 className="font-extrabold text-xl sm:text-2xl text-slate-700">{t("layout.alertSent")}</h3>
                     <p className="text-slate-500 text-sm sm:text-base font-bold mt-2 leading-relaxed">
-                      Your caregiver has been notified via SMS. Help is on the way.
+                      {t("layout.caregiverNotified")}
                     </p>
                   </div>
 
@@ -449,7 +464,7 @@ export function Layout() {
                     onClick={cancelSos}
                     className="w-full py-4 bg-slate-700 hover:bg-slate-800 text-white font-extrabold text-base sm:text-lg rounded-2xl transition-all shadow-lg cursor-pointer"
                   >
-                    Close
+                    {t("common.close")}
                   </button>
                 </>
               )}

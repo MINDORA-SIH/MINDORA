@@ -1,4 +1,5 @@
 import { clsx } from "clsx";
+import { useTranslation } from "react-i18next";
 import type { ActivitySummary, MonitoringStatus } from "@/data/dashboardSelectors";
 import type { Patient } from "@/data/dashboardTypes";
 import { STATUS_TONE } from "./tokens";
@@ -12,10 +13,11 @@ interface PatientHeaderProps {
 }
 
 export function PatientHeader({ patient, status, lastActiveLabel, activity }: PatientHeaderProps) {
+  const { t } = useTranslation();
   const facts = [
-    { label: "Age", value: `${patient.age} years` },
-    { label: "Care plan", value: patient.carePlan },
-    { label: "Last active", value: lastActiveLabel },
+    { label: t("dashboard.age", { defaultValue: "Age" }), value: `${patient.age} ${t("profile.years", { count: 0, defaultValue: "years" }).replace(/^0\s*/, "")}` },
+    { label: t("dashboard.carePlan", { defaultValue: "Care plan" }), value: patient.carePlan },
+    { label: t("dashboard.lastActive", { defaultValue: "Last active" }), value: lastActiveLabel },
   ];
 
   return (
@@ -33,7 +35,7 @@ export function PatientHeader({ patient, status, lastActiveLabel, activity }: Pa
               className="text-[13px] font-extrabold uppercase tracking-[0.14em]"
               style={{ color: "var(--muted)" }}
             >
-              Patient Overview
+              {t("dashboard.patientOverview", { defaultValue: "Patient Overview" })}
             </p>
             <h1
               className="text-2xl font-extrabold leading-tight sm:text-3xl"
@@ -59,7 +61,7 @@ export function PatientHeader({ patient, status, lastActiveLabel, activity }: Pa
         <div className="flex shrink-0 flex-col items-start gap-1.5 lg:items-end">
           <StatusPill label={status.label} tone={STATUS_TONE[status.id]} />
           <p className="text-[15px] font-bold" style={{ color: "var(--foreground)" }}>
-            Active {activity.activeDays} of the last {activity.windowDays} days
+            {t("dashboard.activeDays", { active: activity.activeDays, window: activity.windowDays, defaultValue: `Active ${activity.activeDays} of the last ${activity.windowDays} days` })}
           </p>
           <p className="max-w-sm text-[13px] leading-snug lg:text-right" style={{ color: "var(--muted)" }}>
             Monitoring indicator · {status.description}

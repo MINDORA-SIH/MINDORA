@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Pill, Droplets, Calendar, ClipboardList,
   Plus, CheckCircle2, X, Clock, RefreshCw,
@@ -37,7 +38,7 @@ const FREQ_STYLES: Record<Frequency, { label: string; bg: string; text: string }
   monthly: { label: "Monthly", bg: "rgba(255,255,255,0.45)", text: "#5c3d99" },
 };
 
-function FreqBadge({ freq }: { freq: Frequency }) {
+function FreqBadge({ freq, label }: { freq: Frequency; label: string }) {
   const s = FREQ_STYLES[freq];
   return (
     <span
@@ -45,7 +46,7 @@ function FreqBadge({ freq }: { freq: Frequency }) {
       style={{ backgroundColor: s.bg, color: s.text }}
     >
       <RefreshCw size={11} />
-      {s.label}
+      {label}
     </span>
   );
 }
@@ -55,6 +56,7 @@ const ICON_CYCLE: IconName[] = ["pill", "droplets", "clipboard", "calendar"];
 
 /* ═══════════════════════════════════════════════════════════ */
 export function Reminders() {
+  const { t } = useTranslation();
   const [hoveredId, setHoveredId]   = useState<number | null>(null);
   const [showModal,  setShowModal]  = useState(false);
   const [toasts,     setToasts]     = useState<ToastAlert[]>([]);
@@ -169,8 +171,8 @@ export function Reminders() {
           >
             {/* Modal header */}
             <div className="flex items-center justify-between">
-              <h2 className="text-2xl font-extrabold text-charcoal">New Reminder</h2>
-              <button onClick={() => setShowModal(false)} className="text-charcoal/40 hover:text-charcoal transition-colors" aria-label="Close">
+              <h2 className="text-2xl font-extrabold text-charcoal">{t("reminders.newReminder")}</h2>
+              <button onClick={() => setShowModal(false)} className="text-charcoal/40 hover:text-charcoal transition-colors" aria-label={t("common.close")}>
                 <X size={24} />
               </button>
             </div>
@@ -178,12 +180,12 @@ export function Reminders() {
             {/* ① Reminder name */}
             <div className="flex flex-col gap-2">
               <label className="text-[20px] font-bold text-charcoal/70 tracking-widest">
-                Reminder Name
+                {t("reminders.reminderName")}
               </label>
               <input
                 ref={titleRef}
                 type="text"
-                placeholder="e.g. Take Vitamins"
+                placeholder={t("reminders.reminderNamePlaceholder")}
                 value={form.title}
                 onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))}
                 className="w-full rounded-2xl border-2 border-lavender/40 px-4 py-3 text-lg font-semibold text-charcoal outline-none focus:border-[#9BE5AA] transition-colors"
@@ -194,7 +196,7 @@ export function Reminders() {
             {/* ② Time */}
             <div className="flex flex-col gap-2">
               <label className="text-[20px] font-bold text-charcoal/70 tracking-widest flex items-center gap-1">
-                <Clock size={14} /> Time
+                <Clock size={14} /> {t("reminders.time")}
               </label>
               <input
                 type="time"
@@ -207,7 +209,7 @@ export function Reminders() {
             {/* ③ Frequency */}
             <div className="flex flex-col gap-2">
               <label className="text-[20px] font-bold text-charcoal/70 tracking-widest flex items-center gap-1">
-                <RefreshCw size={14} /> Repeat
+                <RefreshCw size={14} /> {t("reminders.repeat")}
               </label>
               <div className="grid grid-cols-3 gap-3">
                 {(["daily", "weekly", "monthly"] as Frequency[]).map((f) => (
@@ -221,7 +223,7 @@ export function Reminders() {
                         : { backgroundColor: "transparent", borderColor: "#e0e0e0", color: "#888" }
                     }
                   >
-                    {f}
+                    {t(`reminders.${f}`)}
                   </button>
                 ))}
               </div>
@@ -233,7 +235,7 @@ export function Reminders() {
                 onClick={() => setShowModal(false)}
                 className="flex-1 py-3 rounded-2xl border-2 border-charcoal/15 text-charcoal/60 font-bold text-lg hover:bg-charcoal/5 transition-colors"
               >
-                Cancel
+                {t("common.cancel")}
               </button>
               <button
                 onClick={handleAdd}
@@ -241,7 +243,7 @@ export function Reminders() {
                 className="flex-1 py-3 rounded-2xl text-charcoal font-bold text-lg transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed active:scale-95"
                 style={{ backgroundColor: "#9BE5AA" }}
               >
-                Add Reminder
+                {t("reminders.addReminder")}
               </button>
             </div>
           </div>
@@ -251,8 +253,8 @@ export function Reminders() {
       {/* ══ Header ══ */}
       <header className="pt-4 pb-2 flex justify-between items-center flex-wrap gap-4">
         <div>
-          <h1 className="text-4xl md:text-5xl font-extrabold text-charcoal mb-2">Daily Reminders</h1>
-          <p className="text-2xl text-charcoal/80 font-medium">Your schedule for today.</p>
+          <h1 className="text-4xl md:text-5xl font-extrabold text-charcoal mb-2">{t("reminders.dailyTitle")}</h1>
+          <p className="text-2xl text-charcoal/80 font-medium">{t("reminders.dailySubtitle")}</p>
         </div>
 
         <button
@@ -260,7 +262,7 @@ export function Reminders() {
           className="bg-rose-pink hover:bg-rose-pink/80 active:scale-95 text-charcoal py-4 px-6 rounded-2xl font-bold text-xl flex items-center gap-3 transition-all tap-target shadow-sm"
         >
           <Plus size={28} />
-          Add New
+          {t("reminders.addNew")}
         </button>
       </header>
 
@@ -301,13 +303,13 @@ export function Reminders() {
             <div className="flex-1 min-w-0">
               <h3 className="text-xl font-bold text-charcoal truncate">{reminder.title}</h3>
               <p className="text-base text-charcoal/70">{reminder.time}</p>
-              <FreqBadge freq={reminder.frequency} />
+              <FreqBadge freq={reminder.frequency} label={t(`reminders.${reminder.frequency}`)} />
             </div>
 
             {/* Done button */}
             <button
               onClick={() => markDone(reminder.id)}
-              aria-label="Mark as done"
+              aria-label={t("reminders.markAsDone")}
               disabled={reminder.removing}
               className="w-14 h-14 rounded-full border-4 bg-white border-white flex items-center justify-center transition-all duration-200 tap-target active:scale-90 hover:bg-green-100 flex-shrink-0"
             />

@@ -1,5 +1,6 @@
 import { Activity, Clock, Flame, Gauge } from "lucide-react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   dashboardDisclaimer,
   getActivitySummary,
@@ -34,6 +35,7 @@ import { ACTIVITY_TONE } from "@/components/dashboard/tokens";
  * it never derives a number itself.
  */
 export function CaregiverDashboard() {
+  const { t } = useTranslation();
   const [highlightedId, setHighlightedId] = useState<CognitiveParameterId | null>(null);
 
   const activity = getActivitySummary();
@@ -47,7 +49,9 @@ export function CaregiverDashboard() {
   const sessions = getRecentSessions();
   const { games, focusInsight } = getGamePerformance();
 
-  const streakUnit = streak.current === 1 ? "day" : "days";
+  const streakUnit = t(streak.current === 1 ? "dashboard.day" : "dashboard.days", {
+    defaultValue: streak.current === 1 ? "day" : "days",
+  });
 
   /** Sends the caregiver from the attention panel to the parameter it names. */
   const handleViewDetails = () => {
@@ -67,40 +71,40 @@ export function CaregiverDashboard() {
         activity={activity}
       />
 
-      <section aria-label="Monitoring summary">
-        <h2 className="sr-only">Monitoring summary</h2>
+      <section aria-label={t("dashboard.monitoringSummary", { defaultValue: "Monitoring summary" })}>
+        <h2 className="sr-only">{t("dashboard.monitoringSummary", { defaultValue: "Monitoring summary" })}</h2>
         <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
           <SummaryMetricCard
-            label="Performance Index"
+            label={t("dashboard.performanceIndex", { defaultValue: "Performance Index" })}
             value={`${performance.current}`}
             unit="/ 100"
-            supporting="Composite score across recent activities"
+            supporting={t("dashboard.compositeScore", { defaultValue: "Composite score across recent activities" })}
             icon={Gauge}
             tone="brand"
-            trend={{ changePercent: performance.changePercent, direction: performance.direction, suffix: "vs last week" }}
+            trend={{ changePercent: performance.changePercent, direction: performance.direction, suffix: t("dashboard.vsLastWeek", { defaultValue: "vs last week" }) }}
           />
           <SummaryMetricCard
-            label="Activity Level"
+            label={t("dashboard.activityLevel", { defaultValue: "Activity Level" })}
             value={activity.levelLabel}
-            supporting={`Active ${activity.activeDays} of the last ${activity.windowDays} days`}
-            footnote={`${activity.activitiesThisWeek} activities this week`}
+            supporting={t("dashboard.activeDays", { active: activity.activeDays, window: activity.windowDays, defaultValue: `Active ${activity.activeDays} of the last ${activity.windowDays} days` })}
+            footnote={t("dashboard.activitiesThisWeek", { count: activity.activitiesThisWeek, defaultValue: `${activity.activitiesThisWeek} activities this week` })}
             icon={Activity}
             tone={ACTIVITY_TONE[activity.level]}
           />
           <SummaryMetricCard
-            label="Current Streak"
+            label={t("dashboard.currentStreak", { defaultValue: "Current Streak" })}
             value={`${streak.current}`}
             unit={streakUnit}
-            supporting="Consecutive days with activity"
-            footnote={`Longest recorded: ${streak.longest} days`}
+            supporting={t("dashboard.consecutiveDays", { defaultValue: "Consecutive days with activity" })}
+            footnote={t("dashboard.longestRecorded", { count: streak.longest, defaultValue: `Longest recorded: ${streak.longest} days` })}
             icon={Flame}
             tone="info"
           />
           <SummaryMetricCard
-            label="Last Session"
+            label={t("dashboard.lastSession", { defaultValue: "Last Session" })}
             value={lastSession.dayLabel}
             supporting={`${lastSession.timeLabel} · ${lastSession.gameName}`}
-            footnote={`${lastSession.minutes} min recorded`}
+            footnote={t("dashboard.minutesRecorded", { count: lastSession.minutes, defaultValue: `${lastSession.minutes} min recorded` })}
             icon={Clock}
             tone="neutral"
           />

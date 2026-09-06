@@ -1,5 +1,6 @@
 import { clsx } from "clsx";
 import { ChevronRight, CircleCheck, TriangleAlert } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import type { AttentionState } from "@/data/dashboardSelectors";
 import { SEVERITY_TONE, TONES } from "./tokens";
 
@@ -26,6 +27,7 @@ function Fact({ label, value, className }: { label: string; value: string; class
  * layer, so the panel switches to its all-clear state on its own.
  */
 export function AttentionRequired({ attention, onViewDetails }: AttentionRequiredProps) {
+  const { t } = useTranslation();
   const toneStyle = TONES[SEVERITY_TONE[attention.severity]];
   const parameter = attention.parameter;
   const Icon = attention.severity === "none" ? CircleCheck : TriangleAlert;
@@ -69,7 +71,7 @@ export function AttentionRequired({ attention, onViewDetails }: AttentionRequire
               toneStyle.text,
             )}
           >
-            View Details
+            {t("dashboard.viewDetails", { defaultValue: "View Details" })}
             <ChevronRight className="h-4 w-4" />
           </button>
         ) : null}
@@ -77,11 +79,11 @@ export function AttentionRequired({ attention, onViewDetails }: AttentionRequire
 
       {parameter ? (
         <dl className="mt-4 grid grid-cols-2 gap-2.5 sm:gap-3 lg:grid-cols-4">
-          <Fact label="Current score" value={`${parameter.score} / 100`} />
-          <Fact label="Previous week" value={`${parameter.previousScore} / 100`} />
-          <Fact label="Change" value={`${parameter.changePercent}%`} />
+          <Fact label={t("dashboard.currentScore", { defaultValue: "Current score" })} value={`${parameter.score} / 100`} />
+          <Fact label={t("dashboard.previousWeek", { defaultValue: "Previous week" })} value={`${parameter.previousScore} / 100`} />
+          <Fact label={t("dashboard.change", { defaultValue: "Change" })} value={`${parameter.changePercent}%`} />
           <Fact
-            label="Last related activity"
+            label={t("dashboard.lastRelatedActivity", { defaultValue: "Last related activity" })}
             value={`${parameter.relatedActivity} · ${parameter.relatedActivityWhen}`}
             className="col-span-2 lg:col-span-1"
           />

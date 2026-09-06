@@ -9,21 +9,15 @@ import {
   type KeyboardEvent,
 } from "react";
 import { clsx } from "clsx";
+import i18n from "../i18n";
+import { SUPPORTED_LANGUAGES, type LanguageMeta } from "../i18n/langConfig";
 
-export interface Language {
-  code: string;
-  name: string;
-  nativeName: string;
-}
+export type { LanguageMeta as Language };
+export const LANGUAGES = SUPPORTED_LANGUAGES;
+export const DEFAULT_LANGUAGE =
+  SUPPORTED_LANGUAGES.find((language) => language.code === "as") ?? SUPPORTED_LANGUAGES[0];
 
-/**
- * Display-only language list, in the order the product asked for.
- *
- * Picking an entry swaps the label shown in the header and on Settings. Nothing
- * else reads it: the app has no translations yet, so the selection is purely
- * presentational and is deliberately not wired to speech recognition.
- */
-export const LANGUAGES: Language[] = [
+/*
   { code: "en", name: "English", nativeName: "English" },
   { code: "hin", name: "Hindi", nativeName: "हिन्दी" },
   { code: "as", name: "Assamese", nativeName: "অসমীয়া" },
@@ -33,11 +27,11 @@ export const LANGUAGES: Language[] = [
   { code: "bn", name: "Bengali", nativeName: "বাংলা" },
 ];
 
-export const DEFAULT_LANGUAGE: Language = LANGUAGES[0];
+*/
 
 interface LanguageDropdownProps {
-  value: Language;
-  onChange: (language: Language) => void;
+  value: LanguageMeta;
+  onChange: (language: LanguageMeta) => void;
   /** Controlled so a caller can keep at most one popup open at a time. */
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -207,6 +201,7 @@ export function LanguageDropdown({
                   role="option"
                   aria-selected={isSelected}
                   onClick={() => {
+                    void i18n.changeLanguage(language.code);
                     onChange(language);
                     close(true);
                   }}
