@@ -10,7 +10,7 @@ import mni from './locales/mni.json';
 import lus from './locales/lus.json';
 import kha from './locales/kha.json';
 import trp from './locales/trp.json';
-import { DEFAULT_LANGUAGE } from './i18n/langConfig';
+import { DEFAULT_LANGUAGE, SUPPORTED_LANGUAGES } from './i18n/langConfig';
 
 type LocaleBundle = Record<string, unknown>;
 
@@ -23,6 +23,18 @@ function withDashboardNamespace(bundle: LocaleBundle): LocaleBundle {
   const caregiver = (bundle.caregiver as Record<string, unknown> | undefined) ?? {};
   const dashboard = (bundle.dashboard as Record<string, unknown> | undefined) ?? {};
   return { ...bundle, dashboard: { ...caregiver, ...dashboard } };
+}
+
+/**
+ * Only trust a persisted locale that is actually supported. Stale or corrupt
+ * localStorage values (e.g. legacy codes like "hin") would otherwise resolve to
+ * a language the dropdown cannot display.
+ */
+function resolveInitialLanguage(): string {
+  const stored = localStorage.getItem('app_user_language');
+  return SUPPORTED_LANGUAGES.some((language) => language.code === stored)
+    ? (stored as string)
+    : DEFAULT_LANGUAGE;
 }
 
 /**
@@ -46,7 +58,7 @@ i18n.use(initReactI18next).init({
     kha: { translation: withDashboardNamespace(kha) },
     trp: { translation: withDashboardNamespace(trp) },
   },
-  lng: localStorage.getItem('app_user_language') ?? DEFAULT_LANGUAGE,
+  lng: resolveInitialLanguage(),
   fallbackLng: 'en',
   returnNull: false,
   interpolation: { escapeValue: false },
@@ -59,7 +71,12 @@ i18n.use(initReactI18next).init({
  */
 i18n.on('languageChanged', (lang) => {
   localStorage.setItem('app_user_language', lang);
+  // Keep assistive tech (screen readers, font shaping) in sync with the UI.
+  document.documentElement.lang = lang;
   window.dispatchEvent(new CustomEvent('memoSaathiLangChange', { detail: lang }));
 });
+
+// Apply the initial locale before the first paint as well.
+document.documentElement.lang = i18n.language;
 
 export default i18n;
