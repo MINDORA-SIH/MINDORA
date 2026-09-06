@@ -1,21 +1,20 @@
-import { useEffect, useState } from "react";
-import type { Person } from "@/data/peopleTypes";
+import { useEffect, useState } from "react"
+import type { Person } from "@/data/peopleTypes"
 
 /** Only the fields a photo needs, so unsaved form drafts can preview too. */
-export type PersonAvatar = Pick<Person, "name" | "photo"> &
-  Partial<Pick<Person, "emoji" | "color">>;
+export type PersonAvatar = Pick<Person, "name" | "photo"> & Partial<Pick<Person, "emoji" | "color">>
 
 interface PersonPhotoProps {
-  person: PersonAvatar;
+  person: PersonAvatar
   /**
    * Alt text. Pass a neutral description wherever naming the person would give
    * away a game answer.
    */
-  alt: string;
+  alt: string
   /** Frame size, rounding and border — the photo is clipped to it. */
-  className?: string;
+  className?: string
   /** Size of the fallback glyph shown when the photo cannot be loaded. */
-  glyphClassName?: string;
+  glyphClassName?: string
 }
 
 /**
@@ -31,15 +30,15 @@ export function PersonPhoto({
   className = "h-16 w-16 rounded-full border-2 border-white shadow-sm",
   glyphClassName = "text-3xl",
 }: PersonPhotoProps) {
-  const [failed, setFailed] = useState(false);
+  const [failed, setFailed] = useState(false)
 
   // A caregiver can replace the photo while this component stays mounted.
   useEffect(() => {
-    setFailed(false);
-  }, [person.photo]);
+    setFailed(false)
+  }, [person.photo])
 
-  const tint = `${person.color ?? "#FF6584"}22`;
-  const showImage = person.photo.length > 0 && !failed;
+  const tint = `${person.color ?? "#FF6584"}22`
+  const showImage = person.photo.length > 0 && !failed
 
   return (
     <span
@@ -54,12 +53,16 @@ export function PersonPhoto({
           onError={() => setFailed(true)}
         />
       ) : (
-        <span className={`select-none leading-none ${glyphClassName}`} role="img" aria-label={alt}>
+        <span
+          className={`select-none leading-none ${glyphClassName}`}
+          role="img"
+          aria-label={alt}
+        >
           {person.emoji ?? person.name.charAt(0).toUpperCase()}
         </span>
       )}
     </span>
-  );
+  )
 }
 
-export default PersonPhoto;
+export default PersonPhoto

@@ -1,13 +1,13 @@
-import { clsx } from "clsx";
-import { PersonPhoto } from "@/components/PersonPhoto";
-import { relationshipLabel } from "@/data/peopleTypes";
-import { GAME_LABELS } from "./gameLabels";
-import type { Person } from "./types";
+import { clsx } from "clsx"
+import { PersonPhoto } from "@/components/PersonPhoto"
+import { relationshipLabel } from "@/data/peopleTypes"
+import { GAME_LABELS } from "./gameLabels"
+import type { Person } from "./types"
 
 interface AnswerFeedbackProps {
-  correctPerson: Person;
-  isCorrect: boolean;
-  onContinue: () => void;
+  correctPerson: Person
+  isCorrect: boolean
+  onContinue: () => void
 }
 
 /**
@@ -23,13 +23,15 @@ export default function AnswerFeedback({
   isCorrect,
   onContinue,
 }: AnswerFeedbackProps) {
-  const relationship = relationshipLabel(correctPerson);
+  const relationship = relationshipLabel(correctPerson)
 
   return (
     <div
       className={clsx(
         "space-y-4 rounded-3xl border-2 p-6 text-center sm:p-8",
-        isCorrect ? "border-emerald-200 bg-emerald-50" : "border-amber-200 bg-amber-50",
+        isCorrect
+          ? "border-emerald-200 bg-emerald-50"
+          : "border-amber-200 bg-amber-50",
       )}
     >
       <h2
@@ -38,7 +40,9 @@ export default function AnswerFeedback({
           isCorrect ? "text-emerald-700" : "text-amber-800",
         )}
       >
-        {isCorrect ? `✓ ${GAME_LABELS.correctTitle}` : GAME_LABELS.incorrectTitle}
+        {isCorrect
+          ? `✓ ${GAME_LABELS.correctTitle}`
+          : GAME_LABELS.incorrectTitle}
       </h2>
 
       <div className="flex justify-center">
@@ -70,5 +74,5 @@ export default function AnswerFeedback({
         {GAME_LABELS.continueButton}
       </button>
     </div>
-  );
+  )
 }

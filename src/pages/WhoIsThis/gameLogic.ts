@@ -4,31 +4,31 @@
 // the names are the answers: the patient's task stays image recognition → name
 // identification. Relationship is never used to build the options.
 
-import { MIN_ACTIVE_PEOPLE, OPTIONS_PER_QUESTION } from "./gameConfig";
-import type { Difficulty, GameQuestion, Person } from "./types";
+import { MIN_ACTIVE_PEOPLE, OPTIONS_PER_QUESTION } from "./gameConfig"
+import type { Difficulty, GameQuestion, Person } from "./types"
 
 /** Fisher-Yates shuffle — returns a new shuffled array. */
 export function shuffleArray<T>(array: readonly T[]): T[] {
-  const shuffled = [...array];
+  const shuffled = [...array]
   for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
   }
-  return shuffled;
+  return shuffled
 }
 
 /** One entry per person: the same record can never fill two options. */
 function dedupeById(people: readonly Person[]): Person[] {
-  const seen = new Set<string>();
+  const seen = new Set<string>()
   return people.filter((person) => {
-    if (seen.has(person.id)) return false;
-    seen.add(person.id);
-    return true;
-  });
+    if (seen.has(person.id)) return false
+    seen.add(person.id)
+    return true
+  })
 }
 
 function nameKey(person: Person): string {
-  return person.name.trim().toLowerCase();
+  return person.name.trim().toLowerCase()
 }
 
 /**
@@ -36,29 +36,33 @@ function nameKey(person: Person): string {
  * already on screen. Two people are allowed to share a name, and in that case
  * showing four options matters more than making every label unique.
  */
-function pickDistractors(pool: readonly Person[], correct: Person, count: number): Person[] {
-  const shuffled = shuffleArray(pool);
-  const chosen: Person[] = [];
-  const usedNames = new Set<string>([nameKey(correct)]);
+function pickDistractors(
+  pool: readonly Person[],
+  correct: Person,
+  count: number,
+): Person[] {
+  const shuffled = shuffleArray(pool)
+  const chosen: Person[] = []
+  const usedNames = new Set<string>([nameKey(correct)])
 
   for (const person of shuffled) {
-    if (chosen.length === count) break;
-    const key = nameKey(person);
-    if (usedNames.has(key)) continue;
-    usedNames.add(key);
-    chosen.push(person);
+    if (chosen.length === count) break
+    const key = nameKey(person)
+    if (usedNames.has(key)) continue
+    usedNames.add(key)
+    chosen.push(person)
   }
 
   if (chosen.length < count) {
-    const taken = new Set(chosen.map((person) => person.id));
+    const taken = new Set(chosen.map((person) => person.id))
     for (const person of shuffled) {
-      if (chosen.length === count) break;
-      if (taken.has(person.id)) continue;
-      chosen.push(person);
+      if (chosen.length === count) break
+      if (taken.has(person.id)) continue
+      chosen.push(person)
     }
   }
 
-  return chosen;
+  return chosen
 }
 
 /**
@@ -73,23 +77,26 @@ export function generateQuestion(
   difficulty: Difficulty,
   recentPersonIds: readonly string[] = [],
 ): GameQuestion {
-  const pool = dedupeById(people.filter((person) => person.active));
+  const pool = dedupeById(people.filter((person) => person.active))
 
   if (pool.length < MIN_ACTIVE_PEOPLE) {
     throw new Error(
       `Need at least ${MIN_ACTIVE_PEOPLE} active people to generate a question.`,
-    );
+    )
   }
 
-  const notRecentlyShown = pool.filter((person) => !recentPersonIds.includes(person.id));
-  const candidates = notRecentlyShown.length > 0 ? notRecentlyShown : pool;
-  const correctPerson = candidates[Math.floor(Math.random() * candidates.length)];
+  const notRecentlyShown = pool.filter(
+    (person) => !recentPersonIds.includes(person.id),
+  )
+  const candidates = notRecentlyShown.length > 0 ? notRecentlyShown : pool
+  const correctPerson =
+    candidates[Math.floor(Math.random() * candidates.length)]
 
   const distractors = pickDistractors(
     pool.filter((person) => person.id !== correctPerson.id),
     correctPerson,
     OPTIONS_PER_QUESTION - 1,
-  );
+  )
 
   return {
     id: `q-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
@@ -97,5 +104,5 @@ export function generateQuestion(
     options: shuffleArray([correctPerson, ...distractors]),
     difficulty,
     startedAt: Date.now(),
-  };
+  }
 }

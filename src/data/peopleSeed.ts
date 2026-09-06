@@ -5,18 +5,19 @@
 // modules so Vite resolves them against the deployed base URL and they keep
 // working offline.
 
-import anilPhoto from "@/assets/people/anil.svg";
-import hariPhoto from "@/assets/people/hari.svg";
-import meenaPhoto from "@/assets/people/meena.svg";
-import rajeshPhoto from "@/assets/people/rajesh.svg";
-import sunitaPhoto from "@/assets/people/sunita.svg";
-import type { Person, PersonDraft } from "./peopleTypes";
+import anilPhoto from "@/assets/people/anil.svg"
+import hariPhoto from "@/assets/people/hari.svg"
+import meenaPhoto from "@/assets/people/meena.svg"
+import rajeshPhoto from "@/assets/people/rajesh.svg"
+import sunitaPhoto from "@/assets/people/sunita.svg"
+import type { Person, PersonDraft } from "./peopleTypes"
 
-interface SeedPerson extends PersonDraft {
+interface SeedPerson
+  extends PersonDraft {
   /** Fixed so responses recorded against a seed person survive a re-seed. */
-  id: string;
-  emoji: string;
-  color: string;
+  id: string
+  emoji: string
+  color: string
 }
 
 const SEED_PEOPLE: readonly SeedPerson[] = [
@@ -60,7 +61,7 @@ const SEED_PEOPLE: readonly SeedPerson[] = [
     emoji: "👴",
     color: "#C98A2E",
   },
-];
+]
 
 /**
  * Full person records for the starter set, stamped at seed time.
@@ -69,14 +70,14 @@ const SEED_PEOPLE: readonly SeedPerson[] = [
  * once the repository sorts by `createdAt`.
  */
 export function buildSeedPeople(): Person[] {
-  const seededAt = Date.now();
+  const seededAt = Date.now()
   return SEED_PEOPLE.map((seed, index) => {
-    const timestamp = new Date(seededAt + index).toISOString();
+    const timestamp = new Date(seededAt + index).toISOString()
     return {
       ...seed,
       active: true,
       createdAt: timestamp,
       updatedAt: timestamp,
-    };
-  });
+    }
+  })
 }

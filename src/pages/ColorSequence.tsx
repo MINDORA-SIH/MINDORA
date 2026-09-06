@@ -1,140 +1,178 @@
-import { useState, useEffect, useCallback, useRef } from "react";
-import { Palette, ChevronLeft, RotateCcw, Star, Trophy, Heart, Volume2 } from "lucide-react";
-import { useNavigate } from "react-router";
-import { useTranslation } from "react-i18next";
+import { useState, useEffect, useCallback, useRef } from "react"
+import {
+  Palette,
+  ChevronLeft,
+  RotateCcw,
+  Star,
+  Trophy,
+  Heart,
+  Volume2,
+} from "lucide-react"
+import { useNavigate } from "react-router"
+import { useTranslation } from "react-i18next"
 
 const COLORS = [
-  { id: "red", bg: "bg-red-500", activeBg: "bg-red-300", border: "border-red-600", label: "Red" },
-  { id: "blue", bg: "bg-blue-500", activeBg: "bg-blue-300", border: "border-blue-600", label: "Blue" },
-  { id: "green", bg: "bg-green-500", activeBg: "bg-green-300", border: "border-green-600", label: "Green" },
-  { id: "yellow", bg: "bg-yellow-400", activeBg: "bg-yellow-200", border: "border-yellow-500", label: "Yellow" },
-];
+  {
+    id: "red",
+    bg: "bg-red-500",
+    activeBg: "bg-red-300",
+    border: "border-red-600",
+    label: "Red",
+  },
+  {
+    id: "blue",
+    bg: "bg-blue-500",
+    activeBg: "bg-blue-300",
+    border: "border-blue-600",
+    label: "Blue",
+  },
+  {
+    id: "green",
+    bg: "bg-green-500",
+    activeBg: "bg-green-300",
+    border: "border-green-600",
+    label: "Green",
+  },
+  {
+    id: "yellow",
+    bg: "bg-yellow-400",
+    activeBg: "bg-yellow-200",
+    border: "border-yellow-500",
+    label: "Yellow",
+  },
+]
 
-type GameState = "idle" | "showing" | "input" | "correct" | "gameover" | "result";
+type GameState = "idle" | "showing" | "input" | "correct" | "gameover" | "result"
 
 export function ColorSequence() {
-  const navigate = useNavigate();
-  const { t } = useTranslation();
-  const [gameState, setGameState] = useState<GameState>("idle");
-  const [gameSeq, setGameSeq] = useState<string[]>([]);
-  const [userSeq, setUserSeq] = useState<string[]>([]);
-  const [level, setLevel] = useState(0);
-  const [highScore, setHighScore] = useState(0);
-  const [flashingColor, setFlashingColor] = useState<string | null>(null);
-  const [userFlash, setUserFlash] = useState<string | null>(null);
-  const [showingIndex, setShowingIndex] = useState(-1);
-  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const navigate = useNavigate()
+  const { t } = useTranslation()
+  const [gameState, setGameState] = useState<GameState>("idle")
+  const [gameSeq, setGameSeq] = useState<string[]>([])
+  const [userSeq, setUserSeq] = useState<string[]>([])
+  const [level, setLevel] = useState(0)
+  const [highScore, setHighScore] = useState(0)
+  const [flashingColor, setFlashingColor] = useState<string | null>(null)
+  const [userFlash, setUserFlash] = useState<string | null>(null)
+  const [showingIndex, setShowingIndex] = useState(-1)
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   // Cleanup timeouts on unmount
   useEffect(() => {
     return () => {
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    };
-  }, []);
+      if (timeoutRef.current) clearTimeout(timeoutRef.current)
+    }
+  }, [])
 
   // Auto-start game on mount
   useEffect(() => {
     if (gameState === "idle") {
-      startGame();
+      startGame()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [])
 
   const playSequence = useCallback((sequence: string[]) => {
-    setGameState("showing");
-    setShowingIndex(-1);
+    setGameState("showing")
+    setShowingIndex(-1)
 
     sequence.forEach((color, index) => {
-      setTimeout(() => {
-        setFlashingColor(color);
-        setShowingIndex(index);
-        setTimeout(() => {
-          setFlashingColor(null);
-        }, 400);
-      }, (index + 1) * 700);
-    });
+      setTimeout(
+        () => {
+          setFlashingColor(color)
+          setShowingIndex(index)
+          setTimeout(() => {
+            setFlashingColor(null)
+          }, 400)
+        },
+        (index + 1) * 700,
+      )
+    })
 
-    setTimeout(() => {
-      setGameState("input");
-      setShowingIndex(-1);
-    }, (sequence.length + 1) * 700);
-  }, []);
+    setTimeout(
+      () => {
+        setGameState("input")
+        setShowingIndex(-1)
+      },
+      (sequence.length + 1) * 700,
+    )
+  }, [])
 
   const levelUp = useCallback(() => {
-    const randColor = COLORS[Math.floor(Math.random() * 4)].id;
-    const newSeq = [...gameSeq, randColor];
-    setGameSeq(newSeq);
-    setUserSeq([]);
-    setLevel((prev) => prev + 1);
+    const randColor = COLORS[Math.floor(Math.random() * 4)].id
+    const newSeq = [...gameSeq, randColor]
+    setGameSeq(newSeq)
+    setUserSeq([])
+    setLevel((prev) => prev + 1)
 
     // Brief pause before showing sequence
     setTimeout(() => {
-      playSequence(newSeq);
-    }, 500);
-  }, [gameSeq, playSequence]);
+      playSequence(newSeq)
+    }, 500)
+  }, [gameSeq, playSequence])
 
   const startGame = useCallback(() => {
-    setGameSeq([]);
-    setUserSeq([]);
-    setLevel(0);
-    setGameState("showing");
+    setGameSeq([])
+    setUserSeq([])
+    setLevel(0)
+    setGameState("showing")
 
     // Start first level
-    const randColor = COLORS[Math.floor(Math.random() * 4)].id;
-    const newSeq = [randColor];
-    setGameSeq(newSeq);
-    setLevel(1);
+    const randColor = COLORS[Math.floor(Math.random() * 4)].id
+    const newSeq = [randColor]
+    setGameSeq(newSeq)
+    setLevel(1)
 
     setTimeout(() => {
-      playSequence(newSeq);
-    }, 500);
-  }, [playSequence]);
+      playSequence(newSeq)
+    }, 500)
+  }, [playSequence])
 
   const handleColorPress = useCallback(
     (colorId: string) => {
-      if (gameState !== "input") return;
+      if (gameState !== "input") return
 
       // User flash feedback
-      setUserFlash(colorId);
-      setTimeout(() => setUserFlash(null), 200);
+      setUserFlash(colorId)
+      setTimeout(() => setUserFlash(null), 200)
 
-      const newUserSeq = [...userSeq, colorId];
-      setUserSeq(newUserSeq);
-      const idx = newUserSeq.length - 1;
+      const newUserSeq = [...userSeq, colorId]
+      setUserSeq(newUserSeq)
+      const idx = newUserSeq.length - 1
 
       if (newUserSeq[idx] === gameSeq[idx]) {
         // Correct so far
         if (newUserSeq.length === gameSeq.length) {
           // Completed the level
-          setGameState("correct");
+          setGameState("correct")
           timeoutRef.current = setTimeout(() => {
-            levelUp();
-          }, 1000);
+            levelUp()
+          }, 1000)
         }
       } else {
         // Wrong answer
-        const newHighScore = Math.max(highScore, level);
-        setHighScore(newHighScore);
-        setGameState("gameover");
+        const newHighScore = Math.max(highScore, level)
+        setHighScore(newHighScore)
+        setGameState("gameover")
       }
     },
-    [gameState, userSeq, gameSeq, level, highScore, levelUp]
-  );
+    [gameState, userSeq, gameSeq, level, highScore, levelUp],
+  )
 
   const handleGameOver = () => {
-    setGameState("result");
-  };
+    setGameState("result")
+  }
 
   const handleRestart = () => {
-    startGame();
-  };
+    startGame()
+  }
 
   const handleBackToIdle = () => {
-    setGameState("idle");
-    setGameSeq([]);
-    setUserSeq([]);
-    setLevel(0);
-  };
+    setGameState("idle")
+    setGameSeq([])
+    setUserSeq([])
+    setLevel(0)
+  }
 
   // Result screen
   if (gameState === "result") {
@@ -160,16 +198,27 @@ export function ColorSequence() {
           </div>
 
           <h2 className="text-2xl sm:text-3xl font-extrabold text-[#1E2445]">
-            {level >= 10 ? t("games.colorSequence.amazingMemory") : level >= 5 ? t("games.colorSequence.greatJob") : t("games.colorSequence.niceTry")}
+            {level >= 10
+              ? t("games.colorSequence.amazingMemory")
+              : level >= 5
+                ? t("games.colorSequence.greatJob")
+                : t("games.colorSequence.niceTry")}
           </h2>
           <p className="text-slate-500 font-bold text-[20px] sm:text-base mt-2 max-w-xs">
-            {t("games.colorSequence.youReached")} <span className="font-extrabold text-[#9333EA]">{t("games.colorSequence.level", { level })}</span>
+            {t("games.colorSequence.youReached")}{" "}
+            <span className="font-extrabold text-[#9333EA]">
+              {t("games.colorSequence.level", { level })}
+            </span>
           </p>
 
           {/* Score Circle */}
           <div className="mt-6 w-32 h-32 md:w-36 md:h-36 rounded-full border-[6px] border-purple-200 flex flex-col items-center justify-center bg-white shadow-md">
-            <span className="text-4xl md:text-5xl font-extrabold text-[#9333EA]">{level}</span>
-            <span className="text-[18px] font-bold text-slate-400 uppercase tracking-wide mt-0.5">{t("games.colorSequence.level", { level: "" })}</span>
+            <span className="text-4xl md:text-5xl font-extrabold text-[#9333EA]">
+              {level}
+            </span>
+            <span className="text-[18px] font-bold text-slate-400 uppercase tracking-wide mt-0.5">
+              {t("games.colorSequence.level", { level: "" })}
+            </span>
           </div>
 
           {highScore > 0 && (
@@ -197,7 +246,7 @@ export function ColorSequence() {
           </div>
         </div>
       </div>
-    );
+    )
   }
 
   return (
@@ -218,8 +267,12 @@ export function ColorSequence() {
             <Palette size={22} className="text-[#9333EA]" />
           </div>
           <div>
-            <h1 className="text-xl sm:text-2xl font-extrabold text-[#1E2445] leading-tight">{t("games.colorSequence.title")}</h1>
-            <p className="text-[18px] sm:text-[20px] text-slate-500 font-bold">{t("games.colorSequence.subtitle")}</p>
+            <h1 className="text-xl sm:text-2xl font-extrabold text-[#1E2445] leading-tight">
+              {t("games.colorSequence.title")}
+            </h1>
+            <p className="text-[18px] sm:text-[20px] text-slate-500 font-bold">
+              {t("games.colorSequence.subtitle")}
+            </p>
           </div>
         </div>
 
@@ -228,7 +281,9 @@ export function ColorSequence() {
           {highScore > 0 && (
             <div className="bg-amber-50 border border-amber-200 rounded-full px-3 py-1.5 hidden sm:flex items-center gap-1.5">
               <Trophy size={14} className="text-amber-500" />
-              <span className="font-extrabold text-[18px] text-amber-700">{highScore}</span>
+              <span className="font-extrabold text-[18px] text-amber-700">
+                {highScore}
+              </span>
             </div>
           )}
           <div className="bg-[#F5F0FF] border-2 border-[#EBE0FF] rounded-full px-4 py-1.5 flex items-center gap-1.5">
@@ -244,29 +299,40 @@ export function ColorSequence() {
       <div className="bg-white border-2 border-slate-100 rounded-3xl shadow-md p-5 sm:p-6 md:p-8">
         {/* Status Message */}
         <div className="text-center mb-6">
-
           {gameState === "showing" && (
             <div className="space-y-2">
               <div className="flex items-center justify-center gap-2">
                 <Volume2 size={20} className="text-[#9333EA] animate-pulse" />
-                <h3 className="text-lg font-extrabold text-[#9333EA]">{t("games.colorSequence.watchCarefully")}</h3>
+                <h3 className="text-lg font-extrabold text-[#9333EA]">
+                  {t("games.colorSequence.watchCarefully")}
+                </h3>
               </div>
               <p className="text-[20px] text-slate-500 font-bold">
-                {t("games.colorSequence.showingColor", { current: showingIndex + 1, total: gameSeq.length })}
+                {t("games.colorSequence.showingColor", {
+                  current: showingIndex + 1,
+                  total: gameSeq.length,
+                })}
               </p>
             </div>
           )}
           {gameState === "input" && (
             <div className="space-y-1">
-              <h3 className="text-lg font-extrabold text-[#1E2445]">{t("games.colorSequence.yourTurn")}</h3>
+              <h3 className="text-lg font-extrabold text-[#1E2445]">
+                {t("games.colorSequence.yourTurn")}
+              </h3>
               <p className="text-[20px] text-slate-500 font-bold">
-                {t("games.colorSequence.tapColors", { done: userSeq.length, total: gameSeq.length })}
+                {t("games.colorSequence.tapColors", {
+                  done: userSeq.length,
+                  total: gameSeq.length,
+                })}
               </p>
             </div>
           )}
           {gameState === "correct" && (
             <div className="space-y-1 animate-in fade-in duration-200">
-              <h3 className="text-lg font-extrabold text-emerald-600">✅ {t("common.correct")}</h3>
+              <h3 className="text-lg font-extrabold text-emerald-600">
+                ✅ {t("common.correct")}
+              </h3>
               <p className="text-[20px] text-slate-500 font-bold">
                 {t("games.colorSequence.getReady")}
               </p>
@@ -274,9 +340,14 @@ export function ColorSequence() {
           )}
           {gameState === "gameover" && (
             <div className="space-y-2 animate-in fade-in duration-200">
-              <h3 className="text-lg font-extrabold text-red-500">❌ {t("games.colorSequence.wrongColor")}</h3>
+              <h3 className="text-lg font-extrabold text-red-500">
+                ❌ {t("games.colorSequence.wrongColor")}
+              </h3>
               <p className="text-[20px] text-slate-500 font-bold">
-                {t("games.colorSequence.youReached")} <span className="font-extrabold text-[#9333EA]">{t("games.colorSequence.level", { level })}</span>
+                {t("games.colorSequence.youReached")}{" "}
+                <span className="font-extrabold text-[#9333EA]">
+                  {t("games.colorSequence.level", { level })}
+                </span>
               </p>
             </div>
           )}
@@ -286,10 +357,10 @@ export function ColorSequence() {
         <div className="max-w-[320px] sm:max-w-[360px] mx-auto">
           <div className="grid grid-cols-2 gap-3 sm:gap-4">
             {COLORS.map((color) => {
-              const isFlashing = flashingColor === color.id;
-              const isUserFlash = userFlash === color.id;
-              const isDisabled = gameState !== "input";
-              const isActive = isFlashing || isUserFlash;
+              const isFlashing = flashingColor === color.id
+              const isUserFlash = userFlash === color.id
+              const isDisabled = gameState !== "input"
+              const isActive = isFlashing || isUserFlash
 
               return (
                 <button
@@ -304,35 +375,37 @@ export function ColorSequence() {
                     !isDisabled
                       ? "cursor-pointer hover:scale-[1.03] active:scale-95 hover:shadow-lg"
                       : "cursor-default"
-                  } ${
-                    gameState === "gameover" ? "opacity-50" : ""
-                  }`}
+                  } ${gameState === "gameover" ? "opacity-50" : ""}`}
                   aria-label={color.label}
                 />
-              );
+              )
             })}
           </div>
         </div>
 
         {/* Progress dots for sequence */}
-        {(gameState === "input" || gameState === "showing") && gameSeq.length > 0 && (
-          <div className="flex items-center justify-center gap-1.5 mt-5">
-            {gameSeq.map((colorId, idx) => {
-              const color = COLORS.find((c) => c.id === colorId);
-              const isFilled = gameState === "input" ? idx < userSeq.length : idx <= showingIndex;
-              return (
-                <div
-                  key={idx}
-                  className={`w-3 h-3 sm:w-3.5 sm:h-3.5 rounded-full border-2 transition-all duration-200 ${
-                    isFilled
-                      ? `${color?.bg || "bg-slate-400"} border-transparent scale-110`
-                      : "bg-white border-slate-300"
-                  }`}
-                />
-              );
-            })}
-          </div>
-        )}
+        {(gameState === "input" || gameState === "showing") &&
+          gameSeq.length > 0 && (
+            <div className="flex items-center justify-center gap-1.5 mt-5">
+              {gameSeq.map((colorId, idx) => {
+                const color = COLORS.find((c) => c.id === colorId)
+                const isFilled =
+                  gameState === "input"
+                    ? idx < userSeq.length
+                    : idx <= showingIndex
+                return (
+                  <div
+                    key={idx}
+                    className={`w-3 h-3 sm:w-3.5 sm:h-3.5 rounded-full border-2 transition-all duration-200 ${
+                      isFilled
+                        ? `${color?.bg || "bg-slate-400"} border-transparent scale-110`
+                        : "bg-white border-slate-300"
+                    }`}
+                  />
+                )
+              })}
+            </div>
+          )}
 
         {/* Game Over Buttons */}
         {gameState === "gameover" && (
@@ -354,7 +427,7 @@ export function ColorSequence() {
         )}
       </div>
     </div>
-  );
+  )
 }
 
-export default ColorSequence;
+export default ColorSequence

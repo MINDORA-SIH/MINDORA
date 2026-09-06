@@ -1,5 +1,12 @@
-import { Eye, FileText, LayoutGrid, ListCheck, Music, Users } from "lucide-react";
-import type { ComponentType } from "react";
+import {
+  Eye,
+  FileText,
+  LayoutGrid,
+  ListCheck,
+  Music,
+  Users,
+} from "lucide-react"
+import type { ComponentType } from "react"
 import type {
   ActivityLevelId,
   AttentionSeverity,
@@ -8,18 +15,18 @@ import type {
   InsightTone,
   MonitoringStatusId,
   TrendDirection,
-} from "@/data/dashboardTypes";
+} from "@/data/dashboardTypes"
 
-export type IconComponent = ComponentType<{ className?: string }>;
+export type IconComponent = ComponentType<{ className?: string }>
 
-export type SemanticTone = "stable" | "monitor" | "alert" | "neutral" | "info" | "brand";
+export type SemanticTone = "stable" | "monitor" | "alert" | "neutral" | "info" | "brand"
 
 export interface ToneStyle {
-  surface: string;
-  border: string;
-  text: string;
-  dot: string;
-  bar: string;
+  surface: string
+  border: string
+  text: string
+  dot: string
+  bar: string
 }
 
 /**
@@ -70,44 +77,44 @@ export const TONES: Record<SemanticTone, ToneStyle> = {
     dot: "bg-[#6C5CC4]",
     bar: "bg-[#6C5CC4]",
   },
-};
+}
 
 export const STATUS_TONE: Record<MonitoringStatusId, SemanticTone> = {
   stable: "stable",
   monitoring: "monitor",
   attention: "alert",
-};
+}
 
 export const ACTIVITY_TONE: Record<ActivityLevelId, SemanticTone> = {
   high: "stable",
   moderate: "monitor",
   low: "alert",
   none: "alert",
-};
+}
 
 export const SEVERITY_TONE: Record<AttentionSeverity, SemanticTone> = {
   none: "stable",
   monitor: "monitor",
   attention: "alert",
-};
+}
 
 export const INSIGHT_TONE: Record<InsightTone, SemanticTone> = {
   positive: "stable",
   neutral: "info",
   watch: "monitor",
-};
+}
 
 export const DIRECTION_TONE: Record<TrendDirection, SemanticTone> = {
   up: "stable",
   down: "monitor",
   flat: "neutral",
-};
+}
 
 /** Score bands: strong, expected range, needs monitoring. */
 export function scoreTone(score: number): SemanticTone {
-  if (score >= 75) return "stable";
-  if (score >= 60) return "info";
-  return "monitor";
+  if (score >= 75) return "stable"
+  if (score >= 60) return "info"
+  return "monitor"
 }
 
 export const GAME_ICONS: Record<GameIconName, IconComponent> = {
@@ -117,7 +124,7 @@ export const GAME_ICONS: Record<GameIconName, IconComponent> = {
   grid: LayoutGrid,
   music: Music,
   "list-check": ListCheck,
-};
+}
 
 /** Per-activity accent chips, matching the colours used on the games grid. */
 export const ACCENT_CHIPS: Record<GameAccent, string> = {
@@ -127,4 +134,4 @@ export const ACCENT_CHIPS: Record<GameAccent, string> = {
   amber: "bg-[#FAEEDA] text-[#854F0B] dark:bg-[#3B2E1E] dark:text-[#F5CE83]",
   green: "bg-[#EAF3DE] text-[#3B6D11] dark:bg-[#1E3B2A] dark:text-[#B7E39A]",
   teal: "bg-[#E1F5EE] text-[#0F6E56] dark:bg-[#1E3B33] dark:text-[#8FE3C8]",
-};
+}

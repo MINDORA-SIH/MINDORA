@@ -8,61 +8,57 @@
 // caregiver can still add and edit people for the current session — the same
 // degrade-gracefully rule the game's session storage already follows.
 
-import {
-  getAllRecords,
-  putRecord,
-  putRecords,
-  STORE_PEOPLE,
-} from "./mindoraDb";
-import { buildSeedPeople } from "./peopleSeed";
-import type { Person, PersonDraft } from "./peopleTypes";
+import { getAllRecords, putRecord, putRecords, STORE_PEOPLE } from "./mindoraDb"
+import { buildSeedPeople } from "./peopleSeed"
+import type { Person, PersonDraft } from "./peopleTypes"
 
-type PeopleListener = (people: Person[]) => void;
+type PeopleListener = (people: Person[]) => void
 
-let cache: Person[] | null = null;
-let loadOnce: Promise<Person[]> | null = null;
-let storageAvailable = true;
-const listeners = new Set<PeopleListener>();
+let cache: Person[] | null = null
+let loadOnce: Promise<Person[]> | null = null
+let storageAvailable = true
+const listeners = new Set<PeopleListener>()
 
 /** Caregiver display order: oldest record first, name as the tie-breaker. */
 function sortPeople(people: readonly Person[]): Person[] {
   return [...people].sort(
-    (a, b) => a.createdAt.localeCompare(b.createdAt) || a.name.localeCompare(b.name),
-  );
+    (a, b) =>
+      a.createdAt.localeCompare(b.createdAt) || a.name.localeCompare(b.name),
+  )
 }
 
 function newPersonId(): string {
-  return `person-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+  return `person-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
 }
 
 /** Empty `customRelationship` is dropped so it never lingers after an edit. */
 function normalizeDraft(draft: PersonDraft): PersonDraft {
-  const custom = draft.customRelationship?.trim();
+  const custom = draft.customRelationship?.trim()
   return {
     name: draft.name.trim(),
     relationship: draft.relationship,
     photo: draft.photo,
     ...(custom ? { customRelationship: custom } : {}),
-  };
+  }
 }
 
 function publish(): void {
-  const snapshot = cache ?? [];
-  for (const listener of listeners) listener(snapshot);
+  const snapshot = cache ?? []
+  for (const listener of listeners) listener(snapshot)
 }
 
 function commit(people: Person[]): Person[] {
-  cache = sortPeople(people);
-  publish();
-  return cache;
+  cache = sortPeople(people)
+  publish()
+  return cache
 }
 
 async function persist(person: Person): Promise<void> {
-  if (!storageAvailable) return;
+  if (!storageAvailable) return
   try {
-    await putRecord(STORE_PEOPLE, person);
+    await putRecord(STORE_PEOPLE, person)
   } catch {
-    storageAvailable = false;
+    storageAvailable = false
   }
 }
 
@@ -73,61 +69,61 @@ async function persist(person: Person): Promise<void> {
  * one load, so the seed can never be written twice.
  */
 export function loadPeople(): Promise<Person[]> {
-  if (cache) return Promise.resolve(cache);
-  if (loadOnce) return loadOnce;
+  if (cache) return Promise.resolve(cache)
+  if (loadOnce) return loadOnce
 
   loadOnce = (async () => {
-    let stored: Person[] = [];
+    let stored: Person[] = []
     try {
-      stored = await getAllRecords<Person>(STORE_PEOPLE);
+      stored = await getAllRecords<Person>(STORE_PEOPLE)
     } catch {
-      storageAvailable = false;
+      storageAvailable = false
     }
 
-    if (stored.length > 0) return commit(stored);
+    if (stored.length > 0) return commit(stored)
 
     // Empty store — first run. Never runs again once anything is saved.
-    const seeded = buildSeedPeople();
+    const seeded = buildSeedPeople()
     if (storageAvailable) {
       try {
-        await putRecords(STORE_PEOPLE, seeded);
+        await putRecords(STORE_PEOPLE, seeded)
       } catch {
-        storageAvailable = false;
+        storageAvailable = false
       }
     }
-    return commit(seeded);
-  })();
+    return commit(seeded)
+  })()
 
-  return loadOnce;
+  return loadOnce
 }
 
 /** Already-loaded people, or `null` before the first load resolves. */
 export function getCachedPeople(): Person[] | null {
-  return cache;
+  return cache
 }
 
 /** Notifies on every change, so open views stay in sync with each other. */
 export function subscribeToPeople(listener: PeopleListener): () => void {
-  listeners.add(listener);
+  listeners.add(listener)
   return () => {
-    listeners.delete(listener);
-  };
+    listeners.delete(listener)
+  }
 }
 
 export async function createPerson(draft: PersonDraft): Promise<Person> {
-  const people = await loadPeople();
-  const now = new Date().toISOString();
+  const people = await loadPeople()
+  const now = new Date().toISOString()
   const person: Person = {
     id: newPersonId(),
     ...normalizeDraft(draft),
     active: true,
     createdAt: now,
     updatedAt: now,
-  };
+  }
 
-  commit([...people, person]);
-  await persist(person);
-  return person;
+  commit([...people, person])
+  await persist(person)
+  return person
 }
 
 /**
@@ -141,11 +137,11 @@ export async function updatePerson(
   id: string,
   draft: PersonDraft,
 ): Promise<Person> {
-  const people = await loadPeople();
-  const existing = people.find((person) => person.id === id);
-  if (!existing) throw new Error(`No person with id "${id}".`);
+  const people = await loadPeople()
+  const existing = people.find((person) => person.id === id)
+  if (!existing) throw new Error(`No person with id "${id}".`)
 
-  const next = normalizeDraft(draft);
+  const next = normalizeDraft(draft)
   const updated: Person = {
     ...existing,
     ...next,
@@ -155,11 +151,11 @@ export async function updatePerson(
     id: existing.id,
     createdAt: existing.createdAt,
     updatedAt: new Date().toISOString(),
-  };
+  }
 
-  commit(people.map((person) => (person.id === id ? updated : person)));
-  await persist(updated);
-  return updated;
+  commit(people.map((person) => (person.id === id ? updated : person)))
+  await persist(updated)
+  return updated
 }
 
 /**
@@ -170,22 +166,22 @@ export async function setPersonActive(
   id: string,
   active: boolean,
 ): Promise<Person> {
-  const people = await loadPeople();
-  const existing = people.find((person) => person.id === id);
-  if (!existing) throw new Error(`No person with id "${id}".`);
+  const people = await loadPeople()
+  const existing = people.find((person) => person.id === id)
+  if (!existing) throw new Error(`No person with id "${id}".`)
 
   const updated: Person = {
     ...existing,
     active,
     updatedAt: new Date().toISOString(),
-  };
+  }
 
-  commit(people.map((person) => (person.id === id ? updated : person)));
-  await persist(updated);
-  return updated;
+  commit(people.map((person) => (person.id === id ? updated : person)))
+  await persist(updated)
+  return updated
 }
 
 /** False once a read or write has failed — the session is memory-only. */
 export function isPeopleStorageAvailable(): boolean {
-  return storageAvailable;
+  return storageAvailable
 }

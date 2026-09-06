@@ -1,10 +1,10 @@
-import { Users } from "lucide-react";
-import type { Difficulty } from "./types";
-import { GAME_LABELS, difficultyLabel } from "./gameLabels";
+import { Users } from "lucide-react"
+import type { Difficulty } from "./types"
+import { GAME_LABELS, difficultyLabel } from "./gameLabels"
 
 interface GameIntroProps {
-  difficulty: Difficulty;
-  onStart: () => void;
+  difficulty: Difficulty
+  onStart: () => void
 }
 
 /**
@@ -54,6 +54,5 @@ export default function GameIntro({ difficulty, onStart }: GameIntroProps) {
         {GAME_LABELS.startButton}
       </button>
     </div>
-  );
+  )
 }
-

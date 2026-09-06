@@ -7,7 +7,7 @@ import type {
   IndexPoint,
   Patient,
   SessionRecord,
-} from "./dashboardTypes";
+} from "./dashboardTypes"
 
 /**
  * Mock data source for the caregiver dashboard.
@@ -18,7 +18,7 @@ import type {
  */
 
 /** The mock "today". Becomes `new Date()` once real session data is wired in. */
-export const TODAY_ISO = "2026-09-05";
+export const TODAY_ISO = "2026-09-05"
 
 export const MONTH_NAMES = [
   "January",
@@ -33,19 +33,36 @@ export const MONTH_NAMES = [
   "October",
   "November",
   "December",
-];
-export const MONTH_ABBR = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-export const WEEKDAY_ABBR = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-export const WEEKDAY_INITIALS = ["S", "M", "T", "W", "T", "F", "S"];
+]
+export const MONTH_ABBR = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
+]
+export const WEEKDAY_ABBR = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+export const WEEKDAY_INITIALS = ["S", "M", "T", "W", "T", "F", "S"]
 
-const DAY_MS = 86_400_000;
+const DAY_MS = 86_400_000
 
 export function isoOf(year: number, monthIndex: number, day: number): string {
-  return `${year}-${String(monthIndex + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+  return `${year}-${String(monthIndex + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`
 }
 
-export function weekdayOf(year: number, monthIndex: number, day: number): number {
-  return new Date(Date.UTC(year, monthIndex, day)).getUTCDay();
+export function weekdayOf(
+  year: number,
+  monthIndex: number,
+  day: number,
+): number {
+  return new Date(Date.UTC(year, monthIndex, day)).getUTCDay()
 }
 
 /* ── Recorded sessions per day ─────────────────────────────────────────── */
@@ -87,7 +104,7 @@ const septemberSessions: Record<number, DaySession> = {
     strongestArea: "Recognition",
     areaToMonitor: "Processing Speed",
   },
-};
+}
 
 /**
  * August 2026 history, generated from a fixed weekly rhythm: rest on Sundays
@@ -95,9 +112,9 @@ const septemberSessions: Record<number, DaySession> = {
  * otherwise.
  */
 function augustSession(day: number): DaySession | undefined {
-  const weekday = weekdayOf(2026, 7, day);
-  if (weekday === 0 || day === 31) return undefined;
-  const base = 73 + Math.floor((day - 1) / 10);
+  const weekday = weekdayOf(2026, 7, day)
+  if (weekday === 0 || day === 31) return undefined
+  const base = 73 + Math.floor((day - 1) / 10)
   if (weekday === 4) {
     return {
       gamesCompleted: 1,
@@ -106,16 +123,16 @@ function augustSession(day: number): DaySession | undefined {
       strongestArea: "Memory",
       areaToMonitor: "Processing Speed",
       partial: true,
-    };
+    }
   }
-  const gamesCompleted = day % 4 === 0 ? 3 : 2;
+  const gamesCompleted = day % 4 === 0 ? 3 : 2
   return {
     gamesCompleted,
     sessionMinutes: gamesCompleted === 3 ? 13 : 10,
     performanceIndex: base + (day % 3 === 0 ? 1 : 0),
     strongestArea: day % 2 === 0 ? "Recognition" : "Memory",
     areaToMonitor: day % 5 === 0 ? "Attention" : "Processing Speed",
-  };
+  }
 }
 
 /* ── Participation calendar ────────────────────────────────────────────── */
@@ -127,11 +144,17 @@ function buildMonth(
   sessionFor: (day: number) => DaySession | undefined,
 ): CalendarMonth {
   const days: DayRecord[] = Array.from({ length: dayCount }, (_, index) => {
-    const day = index + 1;
-    const isoDate = isoOf(year, monthIndex, day);
-    const isFuture = isoDate > TODAY_ISO;
-    const session = isFuture ? undefined : sessionFor(day);
-    const status = isFuture ? "future" : !session ? "none" : session.partial ? "partial" : "completed";
+    const day = index + 1
+    const isoDate = isoOf(year, monthIndex, day)
+    const isFuture = isoDate > TODAY_ISO
+    const session = isFuture ? undefined : sessionFor(day)
+    const status = isFuture
+      ? "future"
+      : !session
+        ? "none"
+        : session.partial
+          ? "partial"
+          : "completed"
     return {
       isoDate,
       year,
@@ -141,8 +164,8 @@ function buildMonth(
       status,
       isToday: isoDate === TODAY_ISO,
       session,
-    };
-  });
+    }
+  })
 
   return {
     id: `${year}-${monthIndex}`,
@@ -151,21 +174,23 @@ function buildMonth(
     monthIndex,
     firstWeekday: weekdayOf(year, monthIndex, 1),
     days,
-  };
+  }
 }
 
 export const calendarMonths: CalendarMonth[] = [
   buildMonth(2026, 7, 31, augustSession),
   buildMonth(2026, 8, 30, (day) => septemberSessions[day]),
-];
+]
 
 /** Every held day, oldest first, across month boundaries. */
-export const allDays: DayRecord[] = calendarMonths.flatMap((month) => month.days);
+export const allDays: DayRecord[] = calendarMonths.flatMap(
+  (month) => month.days,
+)
 
 /* ── Performance Index history ──────────────────────────────────────────── */
 
 /** Six months, so the 3-month view still has a comparison window behind it. */
-const HISTORY_DAYS = 182;
+const HISTORY_DAYS = 182
 
 /**
  * Daily Performance Index, oldest first, ending today.
@@ -175,25 +200,34 @@ const HISTORY_DAYS = 182;
  * so trend comparisons have history to compare against.
  */
 function buildIndexHistory(): IndexPoint[] {
-  const recorded = allDays.filter((day) => day.isoDate <= TODAY_ISO);
-  const generatedCount = Math.max(HISTORY_DAYS - recorded.length, 0);
-  const firstRecordedMs = Date.UTC(2026, 7, 1);
-  const history: IndexPoint[] = [];
+  const recorded = allDays.filter((day) => day.isoDate <= TODAY_ISO)
+  const generatedCount = Math.max(HISTORY_DAYS - recorded.length, 0)
+  const firstRecordedMs = Date.UTC(2026, 7, 1)
+  const history: IndexPoint[] = []
 
   for (let index = 0; index < generatedCount; index++) {
-    const isoDate = new Date(firstRecordedMs - (generatedCount - index) * DAY_MS).toISOString().slice(0, 10);
-    const progress = index / (HISTORY_DAYS - 1);
-    const score = Math.round(68 + progress * 8 + Math.sin(index / 3.3) * 1.6 + Math.cos(index / 7.1) * 1.2);
-    history.push({ isoDate, score });
+    const isoDate = new Date(
+      firstRecordedMs - (generatedCount - index) * DAY_MS,
+    )
+      .toISOString()
+      .slice(0, 10)
+    const progress = index / (HISTORY_DAYS - 1)
+    const score = Math.round(
+      68 +
+        progress * 8 +
+        Math.sin(index / 3.3) * 1.6 +
+        Math.cos(index / 7.1) * 1.2,
+    )
+    history.push({ isoDate, score })
   }
 
-  let carried = history.length ? history[history.length - 1].score : 73;
+  let carried = history.length ? history[history.length - 1].score : 73
   for (const day of recorded) {
-    if (day.session) carried = day.session.performanceIndex;
-    history.push({ isoDate: day.isoDate, score: carried });
+    if (day.session) carried = day.session.performanceIndex
+    history.push({ isoDate: day.isoDate, score: carried })
   }
 
-  return history;
+  return history
 }
 
 /* ── Cognitive parameters ───────────────────────────────────────────────── */
@@ -262,7 +296,7 @@ const cognitiveParameters: CognitiveParameter[] = [
     relatedActivity: "Spot the Difference",
     relatedActivityIso: "2026-09-04",
   },
-];
+]
 
 /* ── Activity performance ───────────────────────────────────────────────── */
 
@@ -321,7 +355,7 @@ const gameScores: GameScore[] = [
     icon: "eye",
     accent: "violet",
   },
-];
+]
 
 /* ── Session history ────────────────────────────────────────────────────── */
 
@@ -386,7 +420,7 @@ const recentSessions: SessionRecord[] = [
     minutes: 5,
     score: 82,
   },
-];
+]
 
 /* ── The dataset the dashboard consumes ─────────────────────────────────── */
 
@@ -396,7 +430,7 @@ const patient: Patient = {
   age: 72,
   carePlan: "Active",
   careSummary: "Home care · Daily cognitive activities",
-};
+}
 
 export const dashboardData = {
   patient,
@@ -411,7 +445,6 @@ export const dashboardData = {
   allDays,
   indexHistory: buildIndexHistory(),
   todayIso: TODAY_ISO,
-};
+}
 
-export type DashboardData = typeof dashboardData;
-
+export type DashboardData = typeof dashboardData

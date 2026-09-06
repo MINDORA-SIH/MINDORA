@@ -1,9 +1,9 @@
-import { Star } from "lucide-react";
+import { Star } from "lucide-react"
 
 interface GameProgressProps {
-  currentQuestion: number;
-  totalQuestions: number;
-  score: number;
+  currentQuestion: number
+  totalQuestions: number
+  score: number
 }
 
 /**
@@ -15,7 +15,7 @@ export default function GameProgress({
   totalQuestions,
   score,
 }: GameProgressProps) {
-  const progress = ((currentQuestion) / totalQuestions) * 100;
+  const progress = (currentQuestion / totalQuestions) * 100
 
   return (
     <div className="space-y-1">
@@ -40,6 +40,5 @@ export default function GameProgress({
         />
       </div>
     </div>
-  );
+  )
 }
-

@@ -1,4 +1,4 @@
-import { CaregiverDashboard } from "./CaregiverDashboard";
+import { CaregiverDashboard } from "./CaregiverDashboard"
 
 /**
  * `/dashboard` is the caregiver monitoring view. Kept as a thin wrapper so the
@@ -6,7 +6,7 @@ import { CaregiverDashboard } from "./CaregiverDashboard";
  * can be reused by a future patient-facing dashboard.
  */
 export function Dashboard() {
-  return <CaregiverDashboard />;
+  return <CaregiverDashboard />
 }
 
-export default Dashboard;
+export default Dashboard

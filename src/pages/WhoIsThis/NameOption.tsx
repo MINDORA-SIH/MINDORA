@@ -1,15 +1,15 @@
-import { clsx } from "clsx";
-import { Check } from "lucide-react";
-import type { Person } from "./types";
+import { clsx } from "clsx"
+import { Check } from "lucide-react"
+import type { Person } from "./types"
 
 interface NameOptionProps {
-  person: Person;
+  person: Person
   /** True when this is the name the patient tapped. */
-  isSelected: boolean;
+  isSelected: boolean
   /** True when this is the person in the photo. Only acted on once revealed. */
-  isCorrectAnswer: boolean;
-  isRevealed: boolean;
-  onSelect: (personId: string) => void;
+  isCorrectAnswer: boolean
+  isRevealed: boolean
+  onSelect: (personId: string) => void
 }
 
 /**
@@ -28,8 +28,8 @@ export default function NameOption({
 }: NameOptionProps) {
   // After the reveal the correct name is always highlighted, even when the
   // patient picked another one — seeing the right answer is the reinforcement.
-  const showCorrect = isRevealed && isCorrectAnswer;
-  const showWrong = isRevealed && isSelected && !isCorrectAnswer;
+  const showCorrect = isRevealed && isCorrectAnswer
+  const showWrong = isRevealed && isSelected && !isCorrectAnswer
 
   return (
     <button
@@ -52,8 +52,10 @@ export default function NameOption({
                 : "border-slate-200 bg-slate-50 text-[#1E2445] hover:border-slate-300 hover:bg-white",
       )}
     >
-      {showCorrect ? <Check className="h-6 w-6 shrink-0" aria-hidden="true" /> : null}
+      {showCorrect ? (
+        <Check className="h-6 w-6 shrink-0" aria-hidden="true" />
+      ) : null}
       {person.name}
     </button>
-  );
+  )
 }

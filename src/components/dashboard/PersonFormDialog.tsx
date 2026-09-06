@@ -1,7 +1,8 @@
-import { clsx } from "clsx";
-import { ImagePlus, X } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
-import { PersonPhoto } from "@/components/PersonPhoto";
+import { clsx } from "clsx"
+import { ImagePlus, X } from "lucide-react"
+import { useEffect, useRef, useState } from "react"
+import { useTranslation } from "react-i18next"
+import { PersonPhoto } from "@/components/PersonPhoto"
 import {
   CUSTOM_RELATIONSHIP,
   isRelationship,
@@ -9,141 +10,174 @@ import {
   type PersonDraft,
   type Relationship,
   RELATIONSHIPS,
-} from "@/data/peopleTypes";
+} from "@/data/peopleTypes"
 
 /** Uploads are downscaled before they are stored, to keep the database small. */
-const MAX_PHOTO_EDGE = 512;
-const MAX_UPLOAD_BYTES = 12 * 1024 * 1024;
+const MAX_PHOTO_EDGE = 512
+const MAX_UPLOAD_BYTES = 12 * 1024 * 1024
 
 interface PersonFormDialogProps {
   /** Present when editing. The record keeps its id, so history stays attached. */
-  person?: Person;
-  onCancel: () => void;
-  onSave: (draft: PersonDraft) => Promise<void>;
+  person?: Person
+  onCancel: () => void
+  onSave: (draft: PersonDraft) => Promise<void>
 }
 
-const FIELD_LABEL_CLASS = "block text-[15px] font-extrabold";
+const FIELD_LABEL_CLASS = "block text-[15px] font-extrabold"
 const FIELD_CLASS =
-  "tap-target w-full rounded-2xl border-2 px-4 py-3 text-[17px] font-semibold outline-none focus-visible:border-[#6C5CC4]";
+  "tap-target w-full rounded-2xl border-2 px-4 py-3 text-[17px] font-semibold outline-none focus-visible:border-[#6C5CC4]"
 
 /** Reads a chosen file and shrinks its longest edge to {@link MAX_PHOTO_EDGE}. */
 async function readPhotoFile(file: File): Promise<string> {
   const dataUrl = await new Promise<string>((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(String(reader.result));
-    reader.onerror = () => reject(reader.error ?? new Error("Unreadable file."));
-    reader.readAsDataURL(file);
-  });
-  return downscalePhoto(dataUrl);
+    const reader = new FileReader()
+    reader.onload = () => resolve(String(reader.result))
+    reader.onerror = () => reject(reader.error ?? new Error("Unreadable file."))
+    reader.readAsDataURL(file)
+  })
+  return downscalePhoto(dataUrl)
 }
 
 function downscalePhoto(dataUrl: string): Promise<string> {
   return new Promise((resolve) => {
-    const image = new Image();
+    const image = new Image()
     image.onload = () => {
-      const longestEdge = Math.max(image.width, image.height);
-      const scale = longestEdge > 0 ? Math.min(1, MAX_PHOTO_EDGE / longestEdge) : 1;
-      const canvas = document.createElement("canvas");
-      canvas.width = Math.round(image.width * scale);
-      canvas.height = Math.round(image.height * scale);
-      const context = canvas.getContext("2d");
+      const longestEdge = Math.max(image.width, image.height)
+      const scale =
+        longestEdge > 0 ? Math.min(1, MAX_PHOTO_EDGE / longestEdge) : 1
+      const canvas = document.createElement("canvas")
+      canvas.width = Math.round(image.width * scale)
+      canvas.height = Math.round(image.height * scale)
+      const context = canvas.getContext("2d")
       // Vector or unsupported sources are kept as-is rather than dropped.
-      if (scale === 1 || !context || canvas.width === 0 || canvas.height === 0) {
-        resolve(dataUrl);
-        return;
+      if (
+        scale === 1 ||
+        !context ||
+        canvas.width === 0 ||
+        canvas.height === 0
+      ) {
+        resolve(dataUrl)
+        return
       }
-      context.drawImage(image, 0, 0, canvas.width, canvas.height);
-      resolve(canvas.toDataURL("image/jpeg", 0.85));
-    };
-    image.onerror = () => resolve(dataUrl);
-    image.src = dataUrl;
-  });
+      context.drawImage(image, 0, 0, canvas.width, canvas.height)
+      resolve(canvas.toDataURL("image/jpeg", 0.85))
+    }
+    image.onerror = () => resolve(dataUrl)
+    image.src = dataUrl
+  })
 }
 
 /**
  * Add / edit form for one person. Photo, name and relationship are the only
  * caregiver-editable fields; identity and timestamps belong to the repository.
  */
-export function PersonFormDialog({ person, onCancel, onSave }: PersonFormDialogProps) {
-  const isEditing = person !== undefined;
-  const [name, setName] = useState(person?.name ?? "");
+export function PersonFormDialog({
+  person,
+  onCancel,
+  onSave,
+}: PersonFormDialogProps) {
+  const { t } = useTranslation()
+  const isEditing = person !== undefined
+  const [name, setName] = useState(person?.name ?? "")
   const [relationship, setRelationship] = useState<Relationship>(
     person?.relationship ?? "Son",
-  );
+  )
   const [customRelationship, setCustomRelationship] = useState(
     person?.customRelationship ?? "",
-  );
-  const [photo, setPhoto] = useState(person?.photo ?? "");
-  const [error, setError] = useState<string | null>(null);
-  const [isSaving, setIsSaving] = useState(false);
-  const nameRef = useRef<HTMLInputElement>(null);
-  const fileRef = useRef<HTMLInputElement>(null);
+  )
+  const [photo, setPhoto] = useState(person?.photo ?? "")
+  const [error, setError] = useState<string | null>(null)
+  const [isSaving, setIsSaving] = useState(false)
+  const nameRef = useRef<HTMLInputElement>(null)
+  const fileRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
-    nameRef.current?.focus();
-  }, []);
+    nameRef.current?.focus()
+  }, [])
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") onCancel();
-    };
-    document.addEventListener("keydown", onKeyDown);
-    return () => document.removeEventListener("keydown", onKeyDown);
-  }, [onCancel]);
+      if (event.key === "Escape") onCancel()
+    }
+    document.addEventListener("keydown", onKeyDown)
+    return () => document.removeEventListener("keydown", onKeyDown)
+  }, [onCancel])
 
   const handlePickPhoto = async (file: File | undefined) => {
-    if (!file) return;
+    if (!file) return
     if (!file.type.startsWith("image/")) {
-      setError("Choose an image file.");
-      return;
+      setError(t("dashboard.errorNotImage", "Choose an image file."))
+      return
     }
     if (file.size > MAX_UPLOAD_BYTES) {
-      setError("That image is too large. Choose one under 12 MB.");
-      return;
+      setError(
+        t(
+          "dashboard.errorImageTooLarge",
+          "That image is too large. Choose one under 12 MB.",
+        ),
+      )
+      return
     }
     try {
-      setPhoto(await readPhotoFile(file));
-      setError(null);
+      setPhoto(await readPhotoFile(file))
+      setError(null)
     } catch {
-      setError("That photo could not be read. Try another one.");
+      setError(
+        t(
+          "dashboard.errorReadingPhoto",
+          "That photo could not be read. Try another one.",
+        ),
+      )
     }
-  };
+  }
 
   const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
-    const trimmedName = name.trim();
-    const trimmedCustom = customRelationship.trim();
+    event.preventDefault()
+    const trimmedName = name.trim()
+    const trimmedCustom = customRelationship.trim()
 
     if (trimmedName.length === 0) {
-      setError("Enter the person's name.");
-      nameRef.current?.focus();
-      return;
+      setError(t("dashboard.errorMissingName", "Enter the person's name."))
+      nameRef.current?.focus()
+      return
     }
     if (relationship === CUSTOM_RELATIONSHIP && trimmedCustom.length === 0) {
-      setError("Describe the relationship, or pick one from the list.");
-      return;
+      setError(
+        t(
+          "dashboard.errorMissingRelationship",
+          "Describe the relationship, or pick one from the list.",
+        ),
+      )
+      return
     }
 
-    setIsSaving(true);
-    setError(null);
+    setIsSaving(true)
+    setError(null)
     try {
       await onSave({
         name: trimmedName,
         relationship,
         photo,
-        ...(relationship === CUSTOM_RELATIONSHIP ? { customRelationship: trimmedCustom } : {}),
-      });
+        ...(relationship === CUSTOM_RELATIONSHIP
+          ? { customRelationship: trimmedCustom }
+          : {}),
+      })
     } catch {
-      setError("That could not be saved. Please try again.");
-      setIsSaving(false);
+      setError(
+        t(
+          "dashboard.errorSaveFailed",
+          "That could not be saved. Please try again.",
+        ),
+      )
+      setIsSaving(false)
     }
-  };
+  }
 
   return (
     <div
       className="fixed inset-0 z-[150] flex items-end justify-center bg-slate-900/40 p-0 backdrop-blur-sm sm:items-center sm:p-4"
       onClick={() => {
-        if (!isSaving) onCancel();
+        if (!isSaving) onCancel()
       }}
     >
       <div
@@ -161,12 +195,14 @@ export function PersonFormDialog({ person, onCancel, onSave }: PersonFormDialogP
               className="text-xl font-extrabold"
               style={{ color: "var(--foreground)" }}
             >
-              {isEditing ? "Edit Person" : "Add Person"}
+              {isEditing
+                ? t("dashboard.editPerson", "Edit Person")
+                : t("dashboard.addPerson", "Add Person")}
             </h2>
             <button
               type="button"
               onClick={onCancel}
-              aria-label="Close"
+              aria-label={t("dashboard.close", "Close")}
               className="tap-target -mr-1 -mt-1 rounded-full border-2 border-transparent hover:border-slate-200 dark:hover:border-slate-700"
               style={{ color: "var(--muted)" }}
             >
@@ -176,13 +212,25 @@ export function PersonFormDialog({ person, onCancel, onSave }: PersonFormDialogP
 
           {/* Photo */}
           <div className="space-y-2">
-            <span className={FIELD_LABEL_CLASS} style={{ color: "var(--foreground)" }}>
-              Photo
+            <span
+              className={FIELD_LABEL_CLASS}
+              style={{ color: "var(--foreground)" }}
+            >
+              {t("dashboard.photo", "Photo")}
             </span>
             <div className="flex items-center gap-4">
               <PersonPhoto
-                person={{ name: name.trim() || "?", photo, emoji: person?.emoji, color: person?.color }}
-                alt={photo ? "Selected photo" : "No photo chosen yet"}
+                person={{
+                  name: name.trim() || "?",
+                  photo,
+                  emoji: person?.emoji,
+                  color: person?.color,
+                }}
+                alt={
+                  photo
+                    ? t("dashboard.selectedPhoto", "Selected photo")
+                    : t("dashboard.noPhotoYet", "No photo chosen yet")
+                }
                 className="h-20 w-20 rounded-2xl border-2 border-slate-200 dark:border-slate-700"
                 glyphClassName="text-3xl"
               />
@@ -193,7 +241,9 @@ export function PersonFormDialog({ person, onCancel, onSave }: PersonFormDialogP
                   className="tap-target gap-2 rounded-2xl border-2 border-[#D6CBF5] bg-[#F5F2FF] px-4 text-[16px] font-extrabold text-[#5044A8] dark:border-[#44386B] dark:bg-[#251F3D] dark:text-[#C4B5FD]"
                 >
                   <ImagePlus className="h-5 w-5" />
-                  {photo ? "Change Photo" : "Upload Photo"}
+                  {photo
+                    ? t("dashboard.changePhoto", "Change Photo")
+                    : t("dashboard.uploadPhoto", "Upload Photo")}
                 </button>
                 {photo ? (
                   <button
@@ -202,7 +252,7 @@ export function PersonFormDialog({ person, onCancel, onSave }: PersonFormDialogP
                     className="tap-target rounded-2xl border-2 border-slate-200 px-4 text-[16px] font-extrabold dark:border-slate-700"
                     style={{ color: "var(--muted-strong)" }}
                   >
-                    Remove
+                    {t("dashboard.remove", "Remove")}
                   </button>
                 ) : null}
               </div>
@@ -213,8 +263,8 @@ export function PersonFormDialog({ person, onCancel, onSave }: PersonFormDialogP
               accept="image/*"
               className="hidden"
               onChange={(event) => {
-                void handlePickPhoto(event.target.files?.[0]);
-                event.target.value = "";
+                void handlePickPhoto(event.target.files?.[0])
+                event.target.value = ""
               }}
             />
           </div>
@@ -226,7 +276,7 @@ export function PersonFormDialog({ person, onCancel, onSave }: PersonFormDialogP
               className={FIELD_LABEL_CLASS}
               style={{ color: "var(--foreground)" }}
             >
-              Name
+              {t("dashboard.name", "Name")}
             </label>
             <input
               id="person-name"
@@ -236,8 +286,14 @@ export function PersonFormDialog({ person, onCancel, onSave }: PersonFormDialogP
               onChange={(event) => setName(event.target.value)}
               placeholder="Rajesh Kumar"
               autoComplete="off"
-              className={clsx(FIELD_CLASS, "border-slate-200 dark:border-slate-700")}
-              style={{ backgroundColor: "var(--surface)", color: "var(--foreground)" }}
+              className={clsx(
+                FIELD_CLASS,
+                "border-slate-200 dark:border-slate-700",
+              )}
+              style={{
+                backgroundColor: "var(--surface)",
+                color: "var(--foreground)",
+              }}
             />
           </div>
 
@@ -248,21 +304,27 @@ export function PersonFormDialog({ person, onCancel, onSave }: PersonFormDialogP
               className={FIELD_LABEL_CLASS}
               style={{ color: "var(--foreground)" }}
             >
-              Relationship
+              {t("dashboard.relationshipLabel", "Relationship")}
             </label>
             <select
               id="person-relationship"
               value={relationship}
               onChange={(event) => {
-                const next = event.target.value;
-                if (isRelationship(next)) setRelationship(next);
+                const next = event.target.value
+                if (isRelationship(next)) setRelationship(next)
               }}
-              className={clsx(FIELD_CLASS, "border-slate-200 dark:border-slate-700")}
-              style={{ backgroundColor: "var(--surface)", color: "var(--foreground)" }}
+              className={clsx(
+                FIELD_CLASS,
+                "border-slate-200 dark:border-slate-700",
+              )}
+              style={{
+                backgroundColor: "var(--surface)",
+                color: "var(--foreground)",
+              }}
             >
               {RELATIONSHIPS.map((option) => (
                 <option key={option} value={option}>
-                  {option}
+                  {t(`relationship.${option}`, option)}
                 </option>
               ))}
             </select>
@@ -271,11 +333,23 @@ export function PersonFormDialog({ person, onCancel, onSave }: PersonFormDialogP
                 type="text"
                 value={customRelationship}
                 onChange={(event) => setCustomRelationship(event.target.value)}
-                placeholder="Neighbour, doctor, family friend…"
-                aria-label="Custom relationship"
+                placeholder={t(
+                  "dashboard.customRelationshipPlaceholder",
+                  "Neighbour, doctor, family friend…",
+                )}
+                aria-label={t(
+                  "dashboard.customRelationshipAria",
+                  "Custom relationship",
+                )}
                 autoComplete="off"
-                className={clsx(FIELD_CLASS, "border-[#D6CBF5] dark:border-[#44386B]")}
-                style={{ backgroundColor: "var(--surface)", color: "var(--foreground)" }}
+                className={clsx(
+                  FIELD_CLASS,
+                  "border-[#D6CBF5] dark:border-[#44386B]",
+                )}
+                style={{
+                  backgroundColor: "var(--surface)",
+                  color: "var(--foreground)",
+                }}
               />
             ) : null}
           </div>
@@ -297,20 +371,22 @@ export function PersonFormDialog({ person, onCancel, onSave }: PersonFormDialogP
               className="tap-target rounded-2xl border-2 border-slate-200 px-5 text-[17px] font-extrabold disabled:opacity-60 dark:border-slate-700"
               style={{ color: "var(--muted-strong)" }}
             >
-              Cancel
+              {t("dashboard.cancel", "Cancel")}
             </button>
             <button
               type="submit"
               disabled={isSaving}
               className="tap-target rounded-2xl bg-[#6C5CC4] px-6 text-[17px] font-extrabold text-white shadow-md disabled:opacity-60"
             >
-              {isSaving ? "Saving…" : "Save"}
+              {isSaving
+                ? t("dashboard.saving", "Saving…")
+                : t("dashboard.save", "Save")}
             </button>
           </div>
         </form>
       </div>
     </div>
-  );
+  )
 }
 
-export default PersonFormDialog;
+export default PersonFormDialog

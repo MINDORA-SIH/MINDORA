@@ -1,13 +1,13 @@
-import i18n from 'i18next';
-import { initReactI18next } from 'react-i18next';
-import en from './locales/en.json';
-import hi from './locales/hi.json';
-import ne from './locales/ne.json';
-import as_ from './locales/as.json';
-import bn from './locales/bn.json';
-import brx from './locales/brx.json';
-import mni from './locales/mni.json';
-import { DEFAULT_LANGUAGE } from './i18n/langConfig';
+import i18n from "i18next"
+import { initReactI18next } from "react-i18next"
+import en from "./locales/en.json"
+import hi from "./locales/hi.json"
+import ne from "./locales/ne.json"
+import as_ from "./locales/as.json"
+import bn from "./locales/bn.json"
+import brx from "./locales/brx.json"
+import mni from "./locales/mni.json"
+import { DEFAULT_LANGUAGE } from "./i18n/langConfig"
 
 /**
  * Every bundle is compiled into the app. Translation happens entirely on-device:
@@ -23,17 +23,17 @@ i18n.use(initReactI18next).init({
     brx: { translation: brx },
     mni: { translation: mni },
   },
-  lng: localStorage.getItem('language') ?? DEFAULT_LANGUAGE,
-  fallbackLng: 'en',
+  lng: localStorage.getItem("language") ?? DEFAULT_LANGUAGE,
+  fallbackLng: "en",
   returnNull: false,
   interpolation: { escapeValue: false },
-});
+})
 
 /**
  * Persist the user preference so the next visit starts in the selected language.
  */
-i18n.on('languageChanged', (lang) => {
-  localStorage.setItem('language', lang);
-});
+i18n.on("languageChanged", (lang) => {
+  localStorage.setItem("language", lang)
+})
 
-export default i18n;
+export default i18n

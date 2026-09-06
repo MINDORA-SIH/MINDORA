@@ -1,44 +1,44 @@
-import { ChevronLeft, Users } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router";
-import { usePeople } from "@/hooks/usePeople";
-import AnswerFeedback from "./AnswerFeedback";
+import { ChevronLeft, Users } from "lucide-react"
+import { useCallback, useEffect, useRef, useState } from "react"
+import { useNavigate } from "react-router"
+import { usePeople } from "@/hooks/usePeople"
+import AnswerFeedback from "./AnswerFeedback"
 import {
   calculateAccuracy,
   calculateAverageResponseTime,
   getAdaptiveDifficulty,
-} from "./difficulty";
-import GameIntro from "./GameIntro";
-import { MIN_ACTIVE_PEOPLE, QUESTIONS_PER_SESSION } from "./gameConfig";
+} from "./difficulty"
+import GameIntro from "./GameIntro"
+import { MIN_ACTIVE_PEOPLE, QUESTIONS_PER_SESSION } from "./gameConfig"
 import { GAME_LABELS } from "./gameLabels";
-import { generateQuestion } from "./gameLogic";
-import GameProgress from "./GameProgress";
-import QuestionScreen from "./QuestionScreen";
-import SessionSummary from "./SessionSummary";
+import { generateQuestion } from "./gameLogic"
+import GameProgress from "./GameProgress"
+import QuestionScreen from "./QuestionScreen"
+import SessionSummary from "./SessionSummary"
 import {
   getGameSettings,
   saveGameResponse,
   saveGameSession,
   saveGameSettings,
-} from "./storage";
+} from "./storage"
 import type {
   Difficulty,
   GameQuestion,
   GameResponse,
   GameSession,
   GameState,
-} from "./types";
-import { useTranslation } from "react-i18next";
+} from "./types"
+import { useTranslation } from "react-i18next"
 
 /** Recently asked people to keep out of the next question. */
-const RECENT_MEMORY = 4;
+const RECENT_MEMORY = 4
 /** Answers between adaptive-difficulty checks. */
-const ADAPT_EVERY = 5;
+const ADAPT_EVERY = 5
 /** Pause after a tap, so the chosen name is seen before the feedback screen. */
-const REVEAL_PAUSE_MS = 600;
+const REVEAL_PAUSE_MS = 600
 
 const BACK_BUTTON_CLASS =
-  "flex cursor-pointer items-center gap-2 text-[20px] font-bold text-slate-500 transition-colors hover:text-slate-800";
+  "flex cursor-pointer items-center gap-2 text-[20px] font-bold text-slate-500 transition-colors hover:text-slate-800"
 
 /**
  * Root orchestrator for the "Who Is This?" memory game.
@@ -47,84 +47,93 @@ const BACK_BUTTON_CLASS =
  * caregiver's records, so a Manage Game Data change reaches the game with no reload.
  */
 export default function WhoIsThisGame() {
-  useTranslation();
+  useTranslation()
   const navigate = useNavigate();
-  const { activePeople, isLoading } = usePeople();
+  const { t } = useTranslation();
+  const { activePeople, isLoading } = usePeople()
 
   // ─── Game state ───
-  const [gameState, setGameState] = useState<GameState>("intro");
-  const [difficulty, setDifficulty] = useState<Difficulty>("easy");
+  const [gameState, setGameState] = useState<GameState>("intro")
+  const [difficulty, setDifficulty] = useState<Difficulty>("easy")
 
   // Question tracking
-  const [currentQuestion, setCurrentQuestion] = useState<GameQuestion | null>(null);
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [selectedPersonId, setSelectedPersonId] = useState<string | null>(null);
-  const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
-  const [isRevealed, setIsRevealed] = useState(false);
+  const [currentQuestion, setCurrentQuestion] = useState<GameQuestion | null>(
+    null,
+  )
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
+  const [selectedPersonId, setSelectedPersonId] = useState<string | null>(null)
+  const [isCorrect, setIsCorrect] = useState<boolean | null>(null)
+  const [isRevealed, setIsRevealed] = useState(false)
 
   // Session tracking
-  const [score, setScore] = useState(0);
-  const [responses, setResponses] = useState<GameResponse[]>([]);
+  const [score, setScore] = useState(0)
+  const [responses, setResponses] = useState<GameResponse[]>([])
   const [sessionId] = useState(
     () => `session-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-  );
-  const [sessionStartTime] = useState(() => Date.now());
+  )
+  const [sessionStartTime] = useState(() => Date.now())
 
-  const questionStartTimeRef = useRef<number>(Date.now());
-  const recentPersonIdsRef = useRef<string[]>([]);
+  const questionStartTimeRef = useRef<number>(Date.now())
+  const recentPersonIdsRef = useRef<string[]>([])
 
   // Difficulty carries over between sessions.
   useEffect(() => {
-    void getGameSettings().then((settings) => setDifficulty(settings.currentDifficulty));
-  }, []);
+    void getGameSettings().then((settings) =>
+      setDifficulty(settings.currentDifficulty),
+    )
+  }, [])
 
   // ─── Generate next question ───
   const generateNextQuestion = useCallback(
     (diff: Difficulty) => {
       // Deactivating people mid-session can empty the pool; the guard below
       // renders instead, so there is nothing to generate.
-      if (activePeople.length < MIN_ACTIVE_PEOPLE) return;
+      if (activePeople.length < MIN_ACTIVE_PEOPLE) return
 
-      const question = generateQuestion(activePeople, diff, recentPersonIdsRef.current);
+      const question = generateQuestion(
+        activePeople,
+        diff,
+        recentPersonIdsRef.current,
+      )
 
       // Remember recent people, but never so many that no candidate is left.
-      const memory = Math.min(RECENT_MEMORY, activePeople.length - 1);
+      const memory = Math.min(RECENT_MEMORY, activePeople.length - 1)
       recentPersonIdsRef.current = [
         ...recentPersonIdsRef.current,
         question.correctPersonId,
-      ].slice(-memory);
+      ].slice(-memory)
 
-      setCurrentQuestion(question);
-      setSelectedPersonId(null);
-      setIsCorrect(null);
-      setIsRevealed(false);
-      questionStartTimeRef.current = Date.now();
+      setCurrentQuestion(question)
+      setSelectedPersonId(null)
+      setIsCorrect(null)
+      setIsRevealed(false)
+      questionStartTimeRef.current = Date.now()
     },
     [activePeople],
-  );
+  )
 
   // ─── Start game ───
   const handleStartGame = useCallback(() => {
-    setGameState("playing");
-    setCurrentQuestionIndex(1);
-    setScore(0);
-    setResponses([]);
-    recentPersonIdsRef.current = [];
-    generateNextQuestion(difficulty);
-  }, [difficulty, generateNextQuestion]);
+    setGameState("playing")
+    setCurrentQuestionIndex(1)
+    setScore(0)
+    setResponses([])
+    recentPersonIdsRef.current = []
+    generateNextQuestion(difficulty)
+  }, [difficulty, generateNextQuestion])
 
   // ─── Handle answer selection ───
   const handleSelectPerson = useCallback(
     (personId: string) => {
-      if (isRevealed || !currentQuestion) return;
+      if (isRevealed || !currentQuestion) return
 
-      const responseTimeMs = Date.now() - questionStartTimeRef.current;
-      const correct = personId === currentQuestion.correctPersonId;
+      const responseTimeMs = Date.now() - questionStartTimeRef.current
+      const correct = personId === currentQuestion.correctPersonId
 
-      setSelectedPersonId(personId);
-      setIsCorrect(correct);
-      setIsRevealed(true);
-      if (correct) setScore((prev) => prev + 1);
+      setSelectedPersonId(personId)
+      setIsCorrect(correct)
+      setIsRevealed(true)
+      if (correct) setScore((prev) => prev + 1)
 
       // Recorded by person id, so later renames leave this answer intact.
       const response: GameResponse = {
@@ -135,19 +144,19 @@ export default function WhoIsThisGame() {
         responseTimeMs,
         difficulty: currentQuestion.difficulty,
         timestamp: Date.now(),
-      };
+      }
 
-      setResponses((prev) => [...prev, response]);
-      void saveGameResponse(response);
+      setResponses((prev) => [...prev, response])
+      void saveGameResponse(response)
 
-      setTimeout(() => setGameState("feedback"), REVEAL_PAUSE_MS);
+      setTimeout(() => setGameState("feedback"), REVEAL_PAUSE_MS)
     },
     [isRevealed, currentQuestion],
-  );
+  )
 
   // ─── Continue to next question ───
   const handleContinue = useCallback(() => {
-    const nextIndex = currentQuestionIndex + 1;
+    const nextIndex = currentQuestionIndex + 1
 
     if (nextIndex > QUESTIONS_PER_SESSION) {
       const session: GameSession = {
@@ -160,36 +169,36 @@ export default function WhoIsThisGame() {
         accuracy: calculateAccuracy(responses),
         averageResponseTime: calculateAverageResponseTime(responses),
         difficulty,
-      };
+      }
 
-      void saveGameSession(session);
+      void saveGameSession(session)
       void saveGameSettings({
         userId: "default",
         currentDifficulty: difficulty,
         lastPlayed: Date.now(),
-      });
+      })
 
-      setGameState("completed");
-      return;
+      setGameState("completed")
+      return
     }
 
     // Difficulty is tracked, not used to change the four options.
-    let newDifficulty = difficulty;
+    let newDifficulty = difficulty
     if (responses.length > 0 && responses.length % ADAPT_EVERY === 0) {
-      newDifficulty = getAdaptiveDifficulty(responses, difficulty);
+      newDifficulty = getAdaptiveDifficulty(responses, difficulty)
       if (newDifficulty !== difficulty) {
-        setDifficulty(newDifficulty);
+        setDifficulty(newDifficulty)
         void saveGameSettings({
           userId: "default",
           currentDifficulty: newDifficulty,
           lastPlayed: Date.now(),
-        });
+        })
       }
     }
 
-    setCurrentQuestionIndex(nextIndex);
-    setGameState("playing");
-    generateNextQuestion(newDifficulty);
+    setCurrentQuestionIndex(nextIndex)
+    setGameState("playing")
+    generateNextQuestion(newDifficulty)
   }, [
     currentQuestionIndex,
     responses,
@@ -198,36 +207,42 @@ export default function WhoIsThisGame() {
     sessionId,
     sessionStartTime,
     generateNextQuestion,
-  ]);
+  ])
 
   // ─── Play again ───
   const handlePlayAgain = useCallback(() => {
-    setGameState("intro");
-    setCurrentQuestionIndex(0);
-    setScore(0);
-    setResponses([]);
-    setCurrentQuestion(null);
-    setSelectedPersonId(null);
-    setIsCorrect(null);
-    setIsRevealed(false);
-    recentPersonIdsRef.current = [];
-  }, []);
+    setGameState("intro")
+    setCurrentQuestionIndex(0)
+    setScore(0)
+    setResponses([])
+    setCurrentQuestion(null)
+    setSelectedPersonId(null)
+    setIsCorrect(null)
+    setIsRevealed(false)
+    recentPersonIdsRef.current = []
+  }, [])
 
   const backButton = (
-    <button type="button" onClick={() => navigate("/")} className={BACK_BUTTON_CLASS}>
+    <button
+      type="button"
+      onClick={() => navigate("/")}
+      className={BACK_BUTTON_CLASS}
+    >
       <ChevronLeft size={18} />
       {GAME_LABELS.backToGames}
     </button>
-  );
+  )
 
   // ─── Waiting for the caregiver's people ───
   if (isLoading) {
     return (
       <div className="space-y-6">
         {backButton}
-        <p className="py-16 text-center text-xl font-bold text-slate-500">{GAME_LABELS ? i18n.t("common.loading") : ""}</p>
+        <p className="py-16 text-center text-xl font-bold text-slate-500">
+          {GAME_LABELS ? t("common.loading") : ""}
+        </p>
       </div>
-    );
+    )
   }
 
   // ─── Too few active people to build four options ───
@@ -237,7 +252,9 @@ export default function WhoIsThisGame() {
         {backButton}
         <div className="space-y-4 py-16 text-center">
           <Users size={48} className="mx-auto text-slate-300" />
-          <p className="text-xl font-bold text-slate-500">{GAME_LABELS.notEnoughPeople}</p>
+          <p className="text-xl font-bold text-slate-500">
+            {GAME_LABELS.notEnoughPeople}
+          </p>
           <p className="text-lg font-semibold text-slate-400">
             {GAME_LABELS.notEnoughPeopleHint}
           </p>
@@ -250,13 +267,14 @@ export default function WhoIsThisGame() {
           </button>
         </div>
       </div>
-    );
+    )
   }
 
   // The person in the photo, resolved from the question's own options.
   const personInPhoto =
-    currentQuestion?.options.find((person) => person.id === currentQuestion.correctPersonId) ??
-    null;
+    currentQuestion?.options.find(
+      (person) => person.id === currentQuestion.correctPersonId,
+    ) ?? null
 
   return (
     <div className="animate-in fade-in space-y-5 duration-300 md:space-y-6">
@@ -331,5 +349,5 @@ export default function WhoIsThisGame() {
         />
       )}
     </div>
-  );
+  )
 }

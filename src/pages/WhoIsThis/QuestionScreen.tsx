@@ -1,15 +1,15 @@
-import { PersonPhoto } from "@/components/PersonPhoto";
-import { GAME_LABELS } from "./gameLabels";
-import NameOption from "./NameOption";
-import type { GameQuestion, Person } from "./types";
+import { PersonPhoto } from "@/components/PersonPhoto"
+import { GAME_LABELS } from "./gameLabels"
+import NameOption from "./NameOption"
+import type { GameQuestion, Person } from "./types"
 
 interface QuestionScreenProps {
-  question: GameQuestion;
+  question: GameQuestion
   /** The person in the photo. Their name is one of `question.options`. */
-  personInPhoto: Person;
-  selectedPersonId: string | null;
-  isRevealed: boolean;
-  onSelectPerson: (personId: string) => void;
+  personInPhoto: Person
+  selectedPersonId: string | null
+  isRevealed: boolean
+  onSelectPerson: (personId: string) => void
 }
 
 /**
@@ -61,5 +61,5 @@ export default function QuestionScreen({
         ))}
       </div>
     </div>
-  );
+  )
 }

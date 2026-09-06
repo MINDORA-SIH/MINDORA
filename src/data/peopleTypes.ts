@@ -26,34 +26,34 @@ export const RELATIONSHIPS = [
   "Friend",
   "Caregiver",
   "Other",
-] as const;
+] as const
 
-export type Relationship = (typeof RELATIONSHIPS)[number];
+export type Relationship = typeof RELATIONSHIPS[number]
 
 /** The single option whose label the caregiver types in themselves. */
-export const CUSTOM_RELATIONSHIP = "Other" satisfies Relationship;
+export const CUSTOM_RELATIONSHIP = "Other" satisfies Relationship
 
 export interface Person {
-  id: string;
-  name: string;
-  relationship: Relationship;
+  id: string
+  name: string
+  relationship: Relationship
   /** Caregiver-entered label. Only meaningful when `relationship` is "Other". */
-  customRelationship?: string;
+  customRelationship?: string
   /** Image source — a bundled placeholder URL or an uploaded data URL. */
-  photo: string;
+  photo: string
   /**
    * Soft-delete flag. Inactive people are excluded from newly generated
    * questions but stay attached to the responses that already reference them.
    */
-  active: boolean;
+  active: boolean
   /** ISO 8601 timestamp. */
-  createdAt: string;
+  createdAt: string
   /** ISO 8601 timestamp. */
-  updatedAt: string;
+  updatedAt: string
   /** Fallback avatar glyph, used only when `photo` fails to load. */
-  emoji?: string;
+  emoji?: string
   /** Tint behind the fallback glyph. */
-  color?: string;
+  color?: string
 }
 
 /**
@@ -62,17 +62,17 @@ export interface Person {
  * person can never change who that record refers to.
  */
 export interface PersonDraft {
-  name: string;
-  relationship: Relationship;
-  customRelationship?: string;
-  photo: string;
+  name: string
+  relationship: Relationship
+  customRelationship?: string
+  photo: string
 }
 
-type RelationshipFields = Pick<Person, "relationship" | "customRelationship">;
+type RelationshipFields = Pick<Person, "relationship" | "customRelationship">
 
 /** Narrows caregiver input or stored strings onto the union. */
 export function isRelationship(value: string): value is Relationship {
-  return (RELATIONSHIPS as readonly string[]).includes(value);
+  return (RELATIONSHIPS as readonly string[]).includes(value)
 }
 
 /**
@@ -82,17 +82,17 @@ export function isRelationship(value: string): value is Relationship {
  * drop the clause entirely instead of reading out "your other".
  */
 export function relationshipLabel(person: RelationshipFields): string | null {
-  if (person.relationship !== CUSTOM_RELATIONSHIP) return person.relationship;
-  const custom = person.customRelationship?.trim();
-  return custom && custom.length > 0 ? custom : null;
+  if (person.relationship !== CUSTOM_RELATIONSHIP) return person.relationship
+  const custom = person.customRelationship?.trim()
+  return custom && custom.length > 0 ? custom : null
 }
 
 /** Same as {@link relationshipLabel}, but always renderable in a list row. */
 export function relationshipText(person: RelationshipFields): string {
-  return relationshipLabel(person) ?? CUSTOM_RELATIONSHIP;
+  return relationshipLabel(person) ?? CUSTOM_RELATIONSHIP
 }
 
 /** Active people, in caregiver display order. */
 export function selectActivePeople(people: readonly Person[]): Person[] {
-  return people.filter((person) => person.active);
+  return people.filter((person) => person.active)
 }

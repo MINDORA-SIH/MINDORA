@@ -1,15 +1,15 @@
-import { Star, Heart, RotateCcw } from "lucide-react";
-import { useNavigate } from "react-router";
-import type { Difficulty } from "./types";
-import { GAME_LABELS, difficultyLabel } from "./gameLabels";
+import { Star, Heart, RotateCcw } from "lucide-react"
+import { useNavigate } from "react-router"
+import type { Difficulty } from "./types"
+import { GAME_LABELS, difficultyLabel } from "./gameLabels"
 
 interface SessionSummaryProps {
-  score: number;
-  totalQuestions: number;
-  accuracy: number;
-  averageResponseTime: number;
-  difficulty: Difficulty;
-  onPlayAgain: () => void;
+  score: number
+  totalQuestions: number
+  accuracy: number
+  averageResponseTime: number
+  difficulty: Difficulty
+  onPlayAgain: () => void
 }
 
 /**
@@ -24,16 +24,16 @@ export default function SessionSummary({
   difficulty,
   onPlayAgain,
 }: SessionSummaryProps) {
-  const navigate = useNavigate();
-  const percentage = Math.round(accuracy * 100);
-  const avgTimeSec = (averageResponseTime / 1000).toFixed(1);
+  const navigate = useNavigate()
+  const percentage = Math.round(accuracy * 100)
+  const avgTimeSec = (averageResponseTime / 1000).toFixed(1)
 
   // Encouraging message based on performance
   const getMessage = () => {
-    if (percentage >= 80) return "Wonderful memory!";
-    if (percentage >= 50) return "Great effort!";
-    return "Good practice! Keep going.";
-  };
+    if (percentage >= 80) return "Wonderful memory!"
+    if (percentage >= 50) return "Great effort!"
+    return "Good practice! Keep going."
+  }
 
   return (
     <div className="flex flex-col items-center text-center py-6 sm:py-10 space-y-6">
@@ -121,6 +121,5 @@ export default function SessionSummary({
         </button>
       </div>
     </div>
-  );
+  )
 }
-

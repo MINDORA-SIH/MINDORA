@@ -1,8 +1,8 @@
-import { ChevronLeft } from "lucide-react";
-import { Link } from "react-router";
-import { PeopleManager } from "@/components/dashboard/PeopleManager";
-import { DailyRoutineManager } from "./DailyRoutineManager";
-import { useTranslation } from "react-i18next";
+import { ChevronLeft } from "lucide-react"
+import { Link } from "react-router"
+import { PeopleManager } from "@/components/dashboard/PeopleManager"
+import { DailyRoutineManager } from "./DailyRoutineManager"
+import { useTranslation } from "react-i18next"
 
 /**
  * `/manage-data` — where a caregiver maintains the data the games read.
@@ -12,7 +12,7 @@ import { useTranslation } from "react-i18next";
  * own dashboard card, so a future activity can add one here without a redesign.
  */
 export function ManageData() {
-  const { t } = useTranslation();
+  const { t } = useTranslation()
   return (
     <div className="space-y-4 sm:space-y-5">
       <Link
@@ -25,10 +25,16 @@ export function ManageData() {
       </Link>
 
       <header className="space-y-1">
-        <h1 className="text-2xl font-extrabold sm:text-3xl" style={{ color: "var(--foreground)" }}>
+        <h1
+          className="text-2xl font-extrabold sm:text-3xl"
+          style={{ color: "var(--foreground)" }}
+        >
           {t("manageData.title")}
         </h1>
-        <p className="text-[17px] font-semibold" style={{ color: "var(--muted-strong)" }}>
+        <p
+          className="text-[17px] font-semibold"
+          style={{ color: "var(--muted-strong)" }}
+        >
           {t("manageData.subtitle")}
         </p>
       </header>
@@ -36,7 +42,7 @@ export function ManageData() {
       <PeopleManager />
       <DailyRoutineManager embedded />
     </div>
-  );
+  )
 }
 
-export default ManageData;
+export default ManageData

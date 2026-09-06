@@ -1,17 +1,18 @@
-import { clsx } from "clsx";
-import type { TrendDirection } from "@/data/dashboardTypes";
-import { type IconComponent, type SemanticTone, TONES } from "./tokens";
-import { CARD_CLASS, CARD_STYLE, TrendBadge } from "./ui";
+import { clsx } from "clsx"
+import { useTranslation } from "react-i18next"
+import type { TrendDirection } from "@/data/dashboardTypes"
+import { type IconComponent, type SemanticTone, TONES } from "./tokens"
+import { CARD_CLASS, CARD_STYLE, TrendBadge } from "./ui"
 
 interface SummaryMetricCardProps {
-  label: string;
-  value: string;
-  unit?: string;
-  supporting: string;
-  footnote?: string;
-  icon: IconComponent;
-  tone: SemanticTone;
-  trend?: { changePercent: number; direction: TrendDirection; suffix?: string };
+  label: string
+  value: string
+  unit?: string
+  supporting: string
+  footnote?: string
+  icon: IconComponent
+  tone: SemanticTone
+  trend?: { changePercent: number; direction: TrendDirection; suffix?: string }
 }
 
 /** One of the four at-a-glance monitoring metrics. */
@@ -25,11 +26,15 @@ export function SummaryMetricCard({
   tone,
   trend,
 }: SummaryMetricCardProps) {
-  const toneStyle = TONES[tone];
+  const { t } = useTranslation()
+  const toneStyle = TONES[tone]
 
   return (
     <div
-      className={clsx(CARD_CLASS, "flex min-h-[152px] flex-col justify-between gap-2.5 p-4 sm:p-5")}
+      className={clsx(
+        CARD_CLASS,
+        "flex min-h-[152px] flex-col justify-between gap-2.5 p-4 sm:p-5",
+      )}
       style={CARD_STYLE}
     >
       <div className="flex items-start justify-between gap-2">
@@ -60,7 +65,10 @@ export function SummaryMetricCard({
             {value}
           </span>
           {unit ? (
-            <span className="text-[15px] font-bold" style={{ color: "var(--muted)" }}>
+            <span
+              className="text-[15px] font-bold"
+              style={{ color: "var(--muted)" }}
+            >
               {unit}
             </span>
           ) : null}
@@ -73,15 +81,21 @@ export function SummaryMetricCard({
       </div>
 
       <div>
-        <p className="text-[14px] font-bold leading-snug" style={{ color: "var(--foreground)" }}>
+        <p
+          className="text-[14px] font-bold leading-snug"
+          style={{ color: "var(--foreground)" }}
+        >
           {supporting}
         </p>
         {footnote ? (
-          <p className="text-[13px] leading-snug" style={{ color: "var(--muted)" }}>
+          <p
+            className="text-[13px] leading-snug"
+            style={{ color: "var(--muted)" }}
+          >
             {footnote}
           </p>
         ) : null}
       </div>
     </div>
-  );
+  )
 }
