@@ -43,7 +43,7 @@ const BACK_BUTTON_CLASS =
  * Root orchestrator for the "Who Is This?" memory game.
  *
  * State machine: intro → playing → feedback → completed. People come from the
- * caregiver's records, so a Manage Data change reaches the game with no reload.
+ * caregiver's records, so a Manage Game Data change reaches the game with no reload.
  */
 export default function WhoIsThisGame() {
   const navigate = useNavigate();

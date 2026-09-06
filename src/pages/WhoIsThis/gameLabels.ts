@@ -68,8 +68,8 @@ export const GAME_LABELS = {
   photoUnavailable: "Photo unavailable",
   /** Shown instead of the game when the caregiver has too few active people. */
   notEnoughPeople: `Add at least ${MIN_ACTIVE_PEOPLE} people to start this game.`,
-  notEnoughPeopleHint: "A caregiver can add them in Manage Data on the dashboard.",
-  manageDataButton: "Open Manage Data",
+  notEnoughPeopleHint: "A caregiver can add them in Manage Game Data on the dashboard.",
+  manageDataButton: "Open Manage Game Data",
 } as const;
 
 /** Map difficulty to a human-readable label */

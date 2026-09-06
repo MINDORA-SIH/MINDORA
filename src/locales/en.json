@@ -31,7 +31,7 @@
     "reminders": "Reminders",
     "settings": "Settings",
     "profile": "Profile",
-    "manageData": "Manage Data",
+    "manageData": "Manage Game Data",
     "chatbot": "Chatbot",
     "dailyRoutine": "Daily Routine",
     "backToDashboard": "Back to Dashboard",
@@ -75,8 +75,8 @@
       "difficultyHard": "Hard",
       "photoUnavailable": "Photo unavailable",
       "notEnoughPeople": "Add at least {{count}} people to start this game.",
-      "notEnoughPeopleHint": "A caregiver can add them in Manage Data on the dashboard.",
-      "manageDataButton": "Open Manage Data"
+      "notEnoughPeopleHint": "A caregiver can add them in Manage Game Data on the dashboard.",
+      "manageDataButton": "Open Manage Game Data"
     },
     "storyQuiz": {
       "title": "Story Quiz",
@@ -236,7 +236,7 @@
     "notificationsDesc": "Turn reminders on or off"
   },
   "manageData": {
-    "title": "Manage Data",
+    "title": "Manage Game Data",
     "subtitle": "The photos, names and relationships the patient's activities use."
   },
   "chat": {

@@ -1,9 +1,10 @@
 import { ChevronLeft } from "lucide-react";
 import { Link } from "react-router";
 import { PeopleManager } from "@/components/dashboard/PeopleManager";
+import { DailyRoutineManager } from "./DailyRoutineManager";
 
 /**
- * `/manage-data` — where a caregiver maintains the records the activities read.
+ * `/manage-data` — where a caregiver maintains the data the games read.
  *
  * Today that means the people behind "Who Is This?": their photo, name and
  * relationship to the patient. The page is a thin frame; each dataset brings its
@@ -23,14 +24,15 @@ export function ManageData() {
 
       <header className="space-y-1">
         <h1 className="text-2xl font-extrabold sm:text-3xl" style={{ color: "var(--foreground)" }}>
-          Manage Data
+          Manage Game Data
         </h1>
         <p className="text-[17px] font-semibold" style={{ color: "var(--muted-strong)" }}>
-          The photos, names and relationships the patient's activities use.
+          Manage the people and daily routines the patient's games use.
         </p>
       </header>
 
       <PeopleManager />
+      <DailyRoutineManager embedded />
     </div>
   );
 }

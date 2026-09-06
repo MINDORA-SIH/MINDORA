@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router";
+import { createBrowserRouter, Navigate } from "react-router";
 import { Layout } from "./Layout";
 import { MainGameGrid } from "./pages/MainGameGrid";
 import { Dashboard } from "./pages/Dashboard";
@@ -10,7 +10,7 @@ import { Chatbot } from "./pages/Chatbot";
 import { SpotTheDifference } from "./pages/SpotTheDifference";
 import { WhoIsThisGame } from "./pages/WhoIsThis";
 import { DailyRoutine } from "./pages/DailyRoutine";
-import { DailyRoutineManager } from "./pages/DailyRoutineManager";
+import { UnderDevelopment } from "./pages/UnderDevelopment";
 
 export const router = createBrowserRouter([
   {
@@ -25,9 +25,11 @@ export const router = createBrowserRouter([
       { path: "profile", Component: Profile },
       { path: "chatbot", Component: Chatbot },
       { path: "daily-routine", Component: DailyRoutine },
-      { path: "daily-routines", Component: DailyRoutineManager },
+      // Daily routine setup is now part of Manage Game Data. Keep existing links working.
+      { path: "daily-routines", element: <Navigate to="/manage-data" replace /> },
       { path: "spot-the-difference", Component: SpotTheDifference },
       { path: "who-is-this", Component: WhoIsThisGame },
+      { path: "*", Component: UnderDevelopment },
     ],
   },
 ]);
