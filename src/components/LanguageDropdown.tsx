@@ -164,6 +164,11 @@ export function LanguageDropdown({
           className="flex-shrink-0 text-purple-600 dark:text-purple-300"
         />
         <span className="truncate">{value.name}</span>
+        {value.isBeta && (
+          <span className="rounded-md bg-amber-100 px-1.5 py-0.5 text-[10px] font-black uppercase tracking-wider text-amber-800 dark:bg-amber-900/50 dark:text-amber-300">
+            Beta
+          </span>
+        )}
         <ChevronDown
           size={isLarge ? 20 : 14}
           className={clsx(
@@ -223,11 +228,18 @@ export function LanguageDropdown({
                     <span
                       className={clsx(
                         "block truncate font-extrabold",
+                        "flex items-center gap-2 truncate font-extrabold",
                         isLarge ? "text-base sm:text-lg" : "text-sm sm:text-base",
                         isSelected ? "text-purple-700 dark:text-purple-200" : "text-slate-800",
                       )}
                     >
                       {language.name}
+                      <span className="truncate">{language.name}</span>
+                      {language.isBeta && (
+                        <span className="rounded-md bg-amber-100 px-1.5 py-0.5 text-[10px] font-black uppercase tracking-wider text-amber-800 dark:bg-amber-900/50 dark:text-amber-300">
+                          Beta
+                        </span>
+                      )}
                     </span>
                     <span
                       className={clsx(

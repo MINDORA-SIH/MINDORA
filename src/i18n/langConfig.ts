@@ -27,6 +27,7 @@ export interface LanguageMeta {
   isStaticTrack: boolean;
   floresCode?: string;
   script?: string;
+  isBeta?: boolean;
 }
 
 export const SUPPORTED_LANGUAGES: LanguageMeta[] = [
@@ -37,9 +38,9 @@ export const SUPPORTED_LANGUAGES: LanguageMeta[] = [
   { code: "ne", name: "Nepali", nativeName: "नेपाली", isStaticTrack: false, floresCode: "npi_Deva", script: "Devanagari" },
   { code: "brx", name: "Bodo", nativeName: "बड़ो", isStaticTrack: false, floresCode: "brx_Deva", script: "Devanagari" },
   { code: "mni", name: "Meitei", nativeName: "ꯃꯤꯇꯩ ꯂꯣꯟ", isStaticTrack: false, floresCode: "mni_Mtei", script: "Meitei" },
-  { code: "lus", name: "Mizo", nativeName: "Mizo", isStaticTrack: false, floresCode: "lus_Latn", script: "Latin" },
-  { code: "kha", name: "Khasi", nativeName: "Khasi", isStaticTrack: false, floresCode: "kha_Latn", script: "Latin" },
-  { code: "trp", name: "Kokborok", nativeName: "Kokborok", isStaticTrack: false, floresCode: "trp_Beng", script: "Bengali" }
+  { code: "lus", name: "Mizo", nativeName: "Mizo", isStaticTrack: false, floresCode: "lus_Latn", script: "Latin", isBeta: true },
+  { code: "kha", name: "Khasi", nativeName: "Khasi", isStaticTrack: false, floresCode: "kha_Latn", script: "Latin", isBeta: true },
+  { code: "trp", name: "Kokborok", nativeName: "Kokborok", isStaticTrack: false, floresCode: "trp_Beng", script: "Bengali", isBeta: true }
 ];
 
 /** Assamese is the first-run locale. */

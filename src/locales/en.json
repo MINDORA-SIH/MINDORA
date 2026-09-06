@@ -432,6 +432,8 @@
     "scoreMessage": "You placed {{accuracy}}% of the activities in the right spot.",
     "chooseRoutine": "Choose a routine",
     "activityCount": "{{count}} activities",
+    "fallbackRoutineName": "Morning Routine",
+    "fallbackRoutineDescription": "A simple morning routine",
     "routineNamePlaceholder": "Morning Routine",
     "addCustomActivityPlaceholder": "Add a custom activity"
   },
