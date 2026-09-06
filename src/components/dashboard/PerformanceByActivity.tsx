@@ -1,5 +1,6 @@
 import { clsx } from "clsx";
 import { Gauge } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import type { GamePerformanceEntry } from "@/data/dashboardSelectors";
 import { ACCENT_CHIPS, GAME_ICONS, TONES, scoreTone } from "./tokens";
 import { ProgressBar, SectionCard, TrendBadge } from "./ui";
@@ -14,12 +15,13 @@ interface PerformanceByActivityProps {
  * ranking, so no single weak result reads as a verdict on the patient.
  */
 export function PerformanceByActivity({ games, focusInsight }: PerformanceByActivityProps) {
+  const { t } = useTranslation();
   const infoTone = TONES.info;
 
   return (
     <SectionCard
-      title="Performance by Activity"
-      subtitle="Current performance by activity, with change from the previous session set"
+      title={t("dashboard.performanceByActivity", { defaultValue: "Performance by Activity" })}
+      subtitle={t("dashboard.currentPerformanceByActivity", { defaultValue: "Current performance by activity, with change from the previous session set" })}
       icon={Gauge}
       tone="info"
     >
@@ -63,7 +65,7 @@ export function PerformanceByActivity({ games, focusInsight }: PerformanceByActi
                 <ProgressBar
                   value={game.score}
                   tone={scoreTone(game.score)}
-                  label={`${game.name}: ${game.score} out of 100`}
+                  label={t("dashboard.scoreOutOf100", { name: game.name, score: game.score, defaultValue: "{{name}}: {{score}} out of 100" })}
                 />
               </div>
             </li>

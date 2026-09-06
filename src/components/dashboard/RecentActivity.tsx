@@ -1,5 +1,6 @@
 import { clsx } from "clsx";
 import { ClipboardList } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import type { SessionEntry } from "@/data/dashboardSelectors";
 import { ACCENT_CHIPS, GAME_ICONS } from "./tokens";
 import { SectionCard } from "./ui";
@@ -9,10 +10,11 @@ import { SectionCard } from "./ui";
  * a caregiver reads it to confirm participation, not to compare scores.
  */
 export function RecentActivity({ sessions }: { sessions: SessionEntry[] }) {
+  const { t } = useTranslation();
   return (
     <SectionCard
-      title="Recent Activity"
-      subtitle="Individual sessions, most recent first"
+      title={t("dashboard.recentActivity", { defaultValue: "Recent Activity" })}
+      subtitle={t("dashboard.individualSessions", { defaultValue: "Individual sessions, most recent first" })}
       icon={ClipboardList}
       tone="neutral"
     >
@@ -45,7 +47,7 @@ export function RecentActivity({ sessions }: { sessions: SessionEntry[] }) {
                   {session.score}
                 </p>
                 <p className="mt-1 text-[12px] font-extrabold uppercase tracking-[0.08em]" style={{ color: "var(--muted)" }}>
-                  Score
+                  {t("dashboard.score", { defaultValue: "Score" })}
                 </p>
               </div>
             </li>

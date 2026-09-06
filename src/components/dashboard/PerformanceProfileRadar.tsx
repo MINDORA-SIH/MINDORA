@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import type { ParameterInsight } from "@/data/dashboardSelectors";
 import type { CognitiveParameterId } from "@/data/dashboardTypes";
 
@@ -39,6 +40,7 @@ function polygon(scores: number[]) {
  * bars above remain the primary read.
  */
 export function PerformanceProfileRadar({ parameters }: { parameters: ParameterInsight[] }) {
+  const { t } = useTranslation();
   const ordered = AXIS_ORDER.map((id) => parameters.find((parameter) => parameter.id === id)).filter(
     (parameter): parameter is ParameterInsight => Boolean(parameter),
   );
@@ -51,7 +53,7 @@ export function PerformanceProfileRadar({ parameters }: { parameters: ParameterI
         viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
         className="mx-auto h-auto w-full max-w-[420px]"
         role="img"
-        aria-label={`Performance profile: ${ordered.map((parameter) => `${parameter.name} ${parameter.score}`).join(", ")}`}
+        aria-label={t("dashboard.performanceProfileLabel", { labels: ordered.map((parameter) => `${parameter.name} ${parameter.score}`).join(", "), defaultValue: "Performance profile: {{labels}}" })}
       >
         {RINGS.map((ring) => (
           <polygon
@@ -103,11 +105,11 @@ export function PerformanceProfileRadar({ parameters }: { parameters: ParameterI
       <ul className="mt-1 flex flex-wrap items-center justify-center gap-x-5 gap-y-1.5">
         <li className="flex items-center gap-2 text-[13px] font-bold" style={{ color: "var(--muted)" }}>
           <span aria-hidden="true" className="h-1 w-6 rounded-full bg-[#6C5CC4]" />
-          This week
+          {t("dashboard.thisWeekLabel", { defaultValue: "This week" })}
         </li>
         <li className="flex items-center gap-2 text-[13px] font-bold" style={{ color: "var(--muted)" }}>
           <span aria-hidden="true" className="h-1 w-6 rounded-full bg-[#94A3B8]" />
-          Previous week
+          {t("dashboard.previousWeekLabel", { defaultValue: "Previous week" })}
         </li>
       </ul>
     </div>

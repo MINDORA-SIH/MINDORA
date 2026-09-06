@@ -285,7 +285,7 @@ export function Layout() {
             {/* 3. Profile Button */}
             <NavLink
               to="/profile"
-              title="Profile"
+              title={t("navigation.profile")}
               className="h-9 w-9 sm:h-10 sm:w-10 md:h-11 md:w-11 rounded-full bg-white/70 hover:bg-white border-2 border-slate-200 text-slate-700 flex items-center justify-center transition-all cursor-pointer active:scale-95 shadow-xs flex-shrink-0"
             >
               <User size={18} />
@@ -429,7 +429,7 @@ export function Layout() {
                   </div>
 
                   <div>
-                    <h3 className="font-extrabold text-xl sm:text-2xl text-red-700">🚨 Emergency Alert</h3>
+                    <h3 className="font-extrabold text-xl sm:text-2xl text-red-700">🚨 {t("layout.emergencyAlert")}</h3>
                     <p className="text-slate-600 text-sm sm:text-base font-bold mt-2 leading-relaxed">
                       {t("layout.sendingSms", { count: sosCountdown })}
                     </p>

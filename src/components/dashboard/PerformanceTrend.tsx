@@ -1,12 +1,14 @@
 import { clsx } from "clsx";
 import { ChartLine } from "lucide-react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { defaultTrendRange, getTrendSummary, trendRangeOptions } from "@/data/dashboardSelectors";
 import type { TrendRangeId } from "@/data/dashboardTypes";
 import { TrendChart } from "./TrendChart";
 import { SectionCard, StatTile, TrendBadge } from "./ui";
 
 export function PerformanceTrend() {
+  const { t } = useTranslation();
   const [rangeId, setRangeId] = useState<TrendRangeId>(defaultTrendRange);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
 
@@ -17,7 +19,7 @@ export function PerformanceTrend() {
   const rangeControl = (
     <div
       role="group"
-      aria-label="Trend period"
+      aria-label={t("dashboard.trendPeriod", { defaultValue: "Trend period" })}
       className="flex flex-wrap gap-1.5 rounded-2xl border-2 border-slate-200 p-1 dark:border-slate-700"
     >
       {trendRangeOptions.map((option) => {
@@ -48,8 +50,8 @@ export function PerformanceTrend() {
 
   return (
     <SectionCard
-      title="Performance Trend"
-      subtitle="Performance Index over the selected period"
+      title={t("dashboard.performanceTrend", { defaultValue: "Performance Trend" })}
+      subtitle={t("dashboard.performanceIndexOverPeriod", { defaultValue: "Performance Index over the selected period" })}
       icon={ChartLine}
       tone="brand"
       action={rangeControl}
@@ -57,14 +59,14 @@ export function PerformanceTrend() {
     >
       <div className="flex flex-wrap items-center justify-between gap-2">
         <p className="text-[15px] font-bold" style={{ color: "var(--muted)" }}>
-          Dashed line: average for the {summary.comparisonLabel}
+          {t("dashboard.dashedLineAverage", { label: summary.comparisonLabel, defaultValue: "Dashed line: average for the {{label}}" })}
         </p>
         <p
           aria-live="polite"
           className="rounded-full border border-[#D6CBF5] bg-[#F5F2FF] px-3 py-1 text-[14px] font-extrabold dark:border-[#44386B] dark:bg-[#251F3D]"
           style={{ color: "var(--foreground)" }}
         >
-          {activePoint.fullLabel} · Index {activePoint.score}
+          {t("dashboard.pointDetail", { label: activePoint.fullLabel, score: activePoint.score, defaultValue: "{{label}} · Index {{score}}" })}
         </p>
       </div>
 
@@ -78,24 +80,24 @@ export function PerformanceTrend() {
       </div>
 
       <dl className="mt-4 grid grid-cols-2 gap-2.5 sm:grid-cols-3">
-        <StatTile label="Current" value={`${summary.current} / 100`} hint="latest recorded index" tone="brand" />
+        <StatTile label={t("dashboard.current", { defaultValue: "Current" })} value={`${summary.current} / 100`} hint={t("dashboard.latestRecordedIndex", { defaultValue: "latest recorded index" })} tone="brand" />
         <StatTile
-          label="Previous period"
+          label={t("dashboard.previousPeriod", { defaultValue: "Previous period" })}
           value={`${summary.previousAverage} / 100`}
-          hint={`average, ${summary.comparisonLabel}`}
+          hint={t("dashboard.averageComparison", { label: summary.comparisonLabel, defaultValue: "average, {{label}}" })}
         />
         <div className="col-span-2 flex flex-col justify-center gap-1.5 rounded-2xl border border-[#DCE3EC] bg-[#F4F6FA] px-3.5 py-3 sm:col-span-1 dark:border-[#33405A] dark:bg-[#232F42]">
           <dt className="text-[12px] font-extrabold uppercase tracking-[0.1em]" style={{ color: "var(--muted-strong)" }}>
-            Change
+            {t("dashboard.change", { defaultValue: "Change" })}
           </dt>
           <dd>
-            <TrendBadge changePercent={summary.changePercent} direction={summary.direction} suffix="vs previous" />
+            <TrendBadge changePercent={summary.changePercent} direction={summary.direction} suffix={t("dashboard.vsPrevious", { defaultValue: "vs previous" })} />
           </dd>
         </div>
       </dl>
 
       <p className="mt-3 text-[13px] leading-snug" style={{ color: "var(--muted)" }}>
-        The Performance Index is a 0-100 summary of scores across recent activities.
+        {t("dashboard.performanceIndexExplanation", { defaultValue: "The Performance Index is a 0-100 summary of scores across recent activities." })}
       </p>
     </SectionCard>
   );

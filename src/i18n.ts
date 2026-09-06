@@ -12,6 +12,19 @@ import kha from './locales/kha.json';
 import trp from './locales/trp.json';
 import { DEFAULT_LANGUAGE } from './i18n/langConfig';
 
+type LocaleBundle = Record<string, unknown>;
+
+/**
+ * Older dashboard copy was stored under `caregiver`, while dashboard components
+ * correctly request `dashboard.*`. Keep the legacy keys as a compatibility
+ * source, then let a locale's dedicated dashboard keys take precedence.
+ */
+function withDashboardNamespace(bundle: LocaleBundle): LocaleBundle {
+  const caregiver = (bundle.caregiver as Record<string, unknown> | undefined) ?? {};
+  const dashboard = (bundle.dashboard as Record<string, unknown> | undefined) ?? {};
+  return { ...bundle, dashboard: { ...caregiver, ...dashboard } };
+}
+
 /**
  * Bootstraps i18next with all pre-generated locale bundles.
  *
@@ -22,16 +35,16 @@ import { DEFAULT_LANGUAGE } from './i18n/langConfig';
  */
 i18n.use(initReactI18next).init({
   resources: {
-    en: { translation: en },
-    hi: { translation: hi },
-    ne: { translation: ne },
-    as: { translation: as_ },
-    bn: { translation: bn },
-    brx: { translation: brx },
-    mni: { translation: mni },
-    lus: { translation: lus },
-    kha: { translation: kha },
-    trp: { translation: trp },
+    en: { translation: withDashboardNamespace(en) },
+    hi: { translation: withDashboardNamespace(hi) },
+    ne: { translation: withDashboardNamespace(ne) },
+    as: { translation: withDashboardNamespace(as_) },
+    bn: { translation: withDashboardNamespace(bn) },
+    brx: { translation: withDashboardNamespace(brx) },
+    mni: { translation: withDashboardNamespace(mni) },
+    lus: { translation: withDashboardNamespace(lus) },
+    kha: { translation: withDashboardNamespace(kha) },
+    trp: { translation: withDashboardNamespace(trp) },
   },
   lng: localStorage.getItem('app_user_language') ?? DEFAULT_LANGUAGE,
   fallbackLng: 'en',

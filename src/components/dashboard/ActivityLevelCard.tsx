@@ -1,5 +1,6 @@
 import { clsx } from "clsx";
 import { Activity } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { WEEKDAY_INITIALS } from "@/data/dashboardData";
 import { type ActivitySummary, formatShortDate } from "@/data/dashboardSelectors";
 import type { CalendarDayStatus } from "@/data/dashboardTypes";
@@ -14,14 +15,15 @@ const DAY_TONE: Record<CalendarDayStatus, SemanticTone> = {
 };
 
 export function ActivityLevelCard({ activity }: { activity: ActivitySummary }) {
+  const { t } = useTranslation();
   const tone = ACTIVITY_TONE[activity.level];
   const toneStyle = TONES[tone];
   const filledBlocks = Math.max(Math.round(activity.ratio * 10), activity.activeDays > 0 ? 1 : 0);
 
   return (
     <SectionCard
-      title="Activity Level"
-      subtitle="Participation over the last 7 days"
+      title={t("dashboard.activityLevelTitle", { defaultValue: "Activity Level" })}
+      subtitle={t("dashboard.activityLevelSubtitle", { defaultValue: "Participation over the last 7 days" })}
       icon={Activity}
       tone={tone}
       className="h-full"
@@ -32,11 +34,15 @@ export function ActivityLevelCard({ activity }: { activity: ActivitySummary }) {
             {activity.levelLabel}
           </p>
           <p className="mt-1 text-[15px] font-semibold" style={{ color: "var(--muted)" }}>
-            {activity.activeDays} of {activity.windowDays} days active
+            {t("dashboard.daysActive", {
+              active: activity.activeDays,
+              window: activity.windowDays,
+              defaultValue: "{{active}} of {{window}} days active",
+            })}
           </p>
         </div>
         <p className={clsx("rounded-full border px-3 py-1 text-[13px] font-extrabold", toneStyle.surface, toneStyle.border, toneStyle.text)}>
-          Today: {activity.todayLevelLabel}
+          {t("dashboard.todayLevelPrefix", { defaultValue: "Today:" })} {activity.todayLevelLabel}
         </p>
       </div>
 
@@ -44,7 +50,12 @@ export function ActivityLevelCard({ activity }: { activity: ActivitySummary }) {
         <SegmentedMeter
           filled={filledBlocks}
           tone={tone}
-          label={`Activity level ${activity.levelLabel}, ${activity.activeDays} of ${activity.windowDays} days active`}
+          label={t("dashboard.activityLevelMeter", {
+            level: activity.levelLabel,
+            active: activity.activeDays,
+            window: activity.windowDays,
+            defaultValue: "Activity level {{level}}, {{active}} of {{window}} days active",
+          })}
         />
       </div>
 
@@ -52,8 +63,12 @@ export function ActivityLevelCard({ activity }: { activity: ActivitySummary }) {
         {activity.week.map((day) => {
           const dayToneStyle = TONES[DAY_TONE[day.status]];
           const detail = day.session
-            ? `${day.session.gamesCompleted} activities · ${day.session.sessionMinutes} min`
-            : "No activity recorded";
+            ? t("dashboard.activitiesAndMinutes", {
+                count: day.session.gamesCompleted,
+                minutes: day.session.sessionMinutes,
+                defaultValue: "{{count}} activities · {{minutes}} min",
+              })
+            : t("dashboard.noActivityRecorded", { defaultValue: "No activity recorded" });
           return (
             <li key={day.isoDate} className="flex flex-col items-center gap-1">
               <span className="text-[12px] font-extrabold" style={{ color: "var(--muted)" }}>
@@ -77,14 +92,30 @@ export function ActivityLevelCard({ activity }: { activity: ActivitySummary }) {
       </ul>
 
       <dl className="mt-4 grid grid-cols-2 gap-2.5 sm:grid-cols-3">
-        <StatTile label="Sessions" value={`${activity.sessions}`} hint="this week" />
-        <StatTile label="Average session" value={`${activity.averageSessionMinutes} min`} hint="per active day" />
-        <StatTile label="Activities" value={`${activity.activitiesThisWeek}`} hint="completed this week" />
-        <StatTile label="Total time" value={`${activity.totalMinutes} min`} hint="this week" />
         <StatTile
-          label="Last 30 days"
+          label={t("dashboard.statSessions", { defaultValue: "Sessions" })}
+          value={`${activity.sessions}`}
+          hint={t("dashboard.statSessionsHint", { defaultValue: "this week" })}
+        />
+        <StatTile
+          label={t("dashboard.statAverageSession", { defaultValue: "Average session" })}
+          value={`${activity.averageSessionMinutes} min`}
+          hint={t("dashboard.statAverageSessionHint", { defaultValue: "per active day" })}
+        />
+        <StatTile
+          label={t("dashboard.statActivitiesCompleted", { defaultValue: "Activities" })}
+          value={`${activity.activitiesThisWeek}`}
+          hint={t("dashboard.statActivitiesHint", { defaultValue: "completed this week" })}
+        />
+        <StatTile
+          label={t("dashboard.statTotalTime", { defaultValue: "Total time" })}
+          value={`${activity.totalMinutes} min`}
+          hint={t("dashboard.statTotalTimeHint", { defaultValue: "this week" })}
+        />
+        <StatTile
+          label={t("dashboard.statLast30Days", { defaultValue: "Last 30 days" })}
           value={`${activity.activitiesLast30Days}`}
-          hint="activities completed"
+          hint={t("dashboard.statLast30DaysHint", { defaultValue: "activities completed" })}
           tone="info"
         />
       </dl>

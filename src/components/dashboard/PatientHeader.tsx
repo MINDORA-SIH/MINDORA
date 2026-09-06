@@ -64,7 +64,7 @@ export function PatientHeader({ patient, status, lastActiveLabel, activity }: Pa
             {t("dashboard.activeDays", { active: activity.activeDays, window: activity.windowDays, defaultValue: `Active ${activity.activeDays} of the last ${activity.windowDays} days` })}
           </p>
           <p className="max-w-sm text-[13px] leading-snug lg:text-right" style={{ color: "var(--muted)" }}>
-            Monitoring indicator · {status.description}
+            {t("dashboard.monitoringIndicator", { defaultValue: "Monitoring indicator" }) + " · " + status.description}
           </p>
         </div>
       </div>

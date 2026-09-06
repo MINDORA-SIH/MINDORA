@@ -1,6 +1,7 @@
 import { clsx } from "clsx";
 import { Minus, TrendingDown, TrendingUp } from "lucide-react";
 import type { ReactNode } from "react";
+import { useTranslation } from "react-i18next";
 import type { TrendDirection } from "@/data/dashboardTypes";
 import { type IconComponent, type SemanticTone, TONES } from "./tokens";
 
@@ -97,9 +98,10 @@ interface TrendBadgeProps {
 }
 
 export function TrendBadge({ changePercent, direction, suffix, tone }: TrendBadgeProps) {
+  const { t } = useTranslation();
   const toneStyle = TONES[tone ?? (direction === "up" ? "stable" : direction === "down" ? "monitor" : "neutral")];
   const Icon = TREND_ICONS[direction];
-  const value = direction === "flat" ? "No change" : `${direction === "up" ? "+" : "-"}${Math.abs(changePercent)}%`;
+  const value = direction === "flat" ? t("dashboard.noChange", { defaultValue: "No change" }) : `${direction === "up" ? "+" : "-"}${Math.abs(changePercent)}%`;
   return (
     <span
       className={clsx(

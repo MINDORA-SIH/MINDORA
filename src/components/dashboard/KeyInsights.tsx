@@ -1,14 +1,16 @@
 import { clsx } from "clsx";
 import { Lightbulb } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import type { CaregiverInsight } from "@/data/dashboardSelectors";
 import { INSIGHT_TONE, TONES } from "./tokens";
 import { SectionCard } from "./ui";
 
 export function KeyInsights({ insights }: { insights: CaregiverInsight[] }) {
+  const { t } = useTranslation();
   return (
     <SectionCard
-      title="Key Insights"
-      subtitle="Observations derived from recent activity data"
+      title={t("dashboard.keyInsights", { defaultValue: "Key Insights" })}
+      subtitle={t("dashboard.observationsDerived", { defaultValue: "Observations derived from recent activity data" })}
       icon={Lightbulb}
       tone="info"
       className="h-full"
