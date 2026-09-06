@@ -28,6 +28,7 @@ import type {
   GameSession,
   GameState,
 } from "./types";
+import { useTranslation } from "react-i18next";
 
 /** Recently asked people to keep out of the next question. */
 const RECENT_MEMORY = 4;
@@ -46,6 +47,7 @@ const BACK_BUTTON_CLASS =
  * caregiver's records, so a Manage Game Data change reaches the game with no reload.
  */
 export default function WhoIsThisGame() {
+  useTranslation();
   const navigate = useNavigate();
   const { activePeople, isLoading } = usePeople();
 
@@ -223,7 +225,7 @@ export default function WhoIsThisGame() {
     return (
       <div className="space-y-6">
         {backButton}
-        <p className="py-16 text-center text-xl font-bold text-slate-500">Loading…</p>
+        <p className="py-16 text-center text-xl font-bold text-slate-500">{GAME_LABELS ? i18n.t("common.loading") : ""}</p>
       </div>
     );
   }

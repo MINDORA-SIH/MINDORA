@@ -7,18 +7,11 @@ import as_ from './locales/as.json';
 import bn from './locales/bn.json';
 import brx from './locales/brx.json';
 import mni from './locales/mni.json';
-import lus from './locales/lus.json';
-import kha from './locales/kha.json';
-import trp from './locales/trp.json';
 import { DEFAULT_LANGUAGE } from './i18n/langConfig';
 
 /**
- * Bootstraps i18next with all pre-generated locale bundles.
- *
- * 100% offline: every locale JSON is bundled by Vite at build time. The runtime
- * never calls a translation model or backend API. The machine track (IndicTrans2)
- * runs only at build time; the static track ships English fallback until a human
- * reviewer commits a reviewed translation.
+ * Every bundle is compiled into the app. Translation happens entirely on-device:
+ * no translation API or external service is used at runtime.
  */
 i18n.use(initReactI18next).init({
   resources: {
@@ -29,24 +22,18 @@ i18n.use(initReactI18next).init({
     bn: { translation: bn },
     brx: { translation: brx },
     mni: { translation: mni },
-    lus: { translation: lus },
-    kha: { translation: kha },
-    trp: { translation: trp },
   },
-  lng: localStorage.getItem('app_user_language') ?? DEFAULT_LANGUAGE,
+  lng: localStorage.getItem('language') ?? DEFAULT_LANGUAGE,
   fallbackLng: 'en',
   returnNull: false,
   interpolation: { escapeValue: false },
 });
 
 /**
- * On every language change, persist the choice and notify all dependent
- * subsystems (Web Speech API + Coqui TTS WASM) via a single custom event.
- * `useLanguageSync` listens for this event.
+ * Persist the user preference so the next visit starts in the selected language.
  */
 i18n.on('languageChanged', (lang) => {
-  localStorage.setItem('app_user_language', lang);
-  window.dispatchEvent(new CustomEvent('memoSaathiLangChange', { detail: lang }));
+  localStorage.setItem('language', lang);
 });
 
 export default i18n;

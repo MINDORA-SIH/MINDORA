@@ -3,29 +3,29 @@
 // connected to Text-to-Speech, i18n, or regional language support.
 
 import { MIN_ACTIVE_PEOPLE } from "./gameConfig";
+import i18n from "../../i18n";
 
 export const GAME_LABELS = {
   // Game title & identity
-  gameTitle: "Who Is This?",
-  gameSubtitle: "Identify your family members",
+  get gameTitle() { return i18n.t("games.whoIsThis.title"); },
+  get gameSubtitle() { return i18n.t("games.whoIsThis.subtitle"); },
 
   // Intro screen
-  welcomeTitle: "Memory Game",
-  welcomeMessage:
-    "Look at the photo and choose the person's name. Take your time — there is no rush.",
-  startButton: "Start Game",
-  currentDifficulty: "Current Difficulty",
+  get welcomeTitle() { return i18n.t("games.whoIsThis.welcomeTitle"); },
+  get welcomeMessage() { return i18n.t("games.whoIsThis.welcomeMessage"); },
+  get startButton() { return i18n.t("common.startGame"); },
+  get currentDifficulty() { return i18n.t("games.whoIsThis.currentDifficulty"); },
 
   // Question screen
-  questionText: "Who is this person?",
-  questionSubtext: "Choose the correct name.",
-  questionProgress: (current: number, total: number) => `Question ${current} of ${total}`,
+  get questionText() { return i18n.t("games.whoIsThis.questionText"); },
+  get questionSubtext() { return i18n.t("games.whoIsThis.questionSubtext"); },
+  questionProgress: (current: number, total: number) => i18n.t("games.whoIsThis.questionProgress", { current, total }),
   /** Neutral alt text: naming the photo would give the answer away. */
-  questionPhotoAlt: "Photo of the person to identify",
+  get questionPhotoAlt() { return i18n.t("games.whoIsThis.questionPhotoAlt"); },
 
   // Feedback
-  correctTitle: "Correct!",
-  incorrectTitle: "Not quite.",
+  get correctTitle() { return i18n.t("common.correct"); },
+  get incorrectTitle() { return i18n.t("common.incorrect"); },
   /**
    * The one sentence that turns a right or wrong answer into reinforcement:
    * "This is Rajesh Kumar, your son." Built from the stored Person, so a
@@ -34,42 +34,41 @@ export const GAME_LABELS = {
    * `relationship` is null when there is nothing to say (an "Other" record with
    * no label), and the clause is dropped rather than left empty.
    */
-  personIdentity: (name: string, relationship: string | null) =>
-    relationship === null
-      ? `This is ${name}.`
-      : `This is ${name}, your ${relationship.toLowerCase()}.`,
+  personIdentity: (name: string, relationship: string | null) => relationship === null
+    ? i18n.t("games.whoIsThis.personIdentity", { name })
+    : i18n.t("games.whoIsThis.personIdentity", { name }) + i18n.t("games.whoIsThis.personIdentityClause", { relationship: relationship.toLowerCase() }),
   /** The same sentence in two pieces, so the clause can be styled as secondary. */
-  personIdentityLead: (name: string) => `This is ${name}`,
-  personIdentityClause: (relationship: string) => `, your ${relationship.toLowerCase()}.`,
-  personPhotoAlt: (name: string) => `Photo of ${name}`,
+  personIdentityLead: (name: string) => i18n.t("games.whoIsThis.personIdentity", { name }).replace(/[.!]$/, ""),
+  personIdentityClause: (relationship: string) => i18n.t("games.whoIsThis.personIdentityClause", { relationship: relationship.toLowerCase() }),
+  personPhotoAlt: (name: string) => i18n.t("games.whoIsThis.personPhotoAlt", { name }),
 
   // Navigation
-  continueButton: "Continue →",
-  nextQuestion: "Let's try another one.",
-  backToGames: "Back to Games",
+  get continueButton() { return i18n.t("common.continue"); },
+  get nextQuestion() { return i18n.t("games.whoIsThis.nextQuestion"); },
+  get backToGames() { return i18n.t("common.backToGames"); },
 
   // Session summary
-  summaryTitle: "Well Done!",
-  summaryMessage: "You completed today's memory game.",
-  summaryEncouragement: "Great work! Keep exercising your memory.",
-  scoreLabel: "Score",
-  accuracyLabel: "Accuracy",
-  avgResponseTimeLabel: "Average Response Time",
-  difficultyLabel: "Difficulty",
-  playAgainButton: "Play Again",
-  secondsUnit: "seconds",
+  get summaryTitle() { return i18n.t("games.whoIsThis.summaryTitle"); },
+  get summaryMessage() { return i18n.t("games.whoIsThis.summaryMessage"); },
+  get summaryEncouragement() { return i18n.t("games.whoIsThis.summaryEncouragement"); },
+  get scoreLabel() { return i18n.t("games.whoIsThis.scoreLabel"); },
+  get accuracyLabel() { return i18n.t("games.whoIsThis.accuracyLabel"); },
+  get avgResponseTimeLabel() { return i18n.t("games.whoIsThis.avgResponseTimeLabel"); },
+  get difficultyLabel() { return i18n.t("games.whoIsThis.difficultyLabel"); },
+  get playAgainButton() { return i18n.t("common.playAgain"); },
+  get secondsUnit() { return i18n.t("games.whoIsThis.secondsUnit"); },
 
   // Difficulty labels
-  difficultyEasy: "Easy",
-  difficultyMedium: "Medium",
-  difficultyHard: "Hard",
+  get difficultyEasy() { return i18n.t("games.whoIsThis.difficultyEasy"); },
+  get difficultyMedium() { return i18n.t("games.whoIsThis.difficultyMedium"); },
+  get difficultyHard() { return i18n.t("games.whoIsThis.difficultyHard"); },
 
   // Error / fallback
-  photoUnavailable: "Photo unavailable",
+  get photoUnavailable() { return i18n.t("games.whoIsThis.photoUnavailable"); },
   /** Shown instead of the game when the caregiver has too few active people. */
-  notEnoughPeople: `Add at least ${MIN_ACTIVE_PEOPLE} people to start this game.`,
-  notEnoughPeopleHint: "A caregiver can add them in Manage Game Data on the dashboard.",
-  manageDataButton: "Open Manage Game Data",
+  get notEnoughPeople() { return i18n.t("games.whoIsThis.notEnoughPeople", { count: MIN_ACTIVE_PEOPLE }); },
+  get notEnoughPeopleHint() { return i18n.t("games.whoIsThis.notEnoughPeopleHint"); },
+  get manageDataButton() { return i18n.t("games.whoIsThis.manageDataButton"); },
 } as const;
 
 /** Map difficulty to a human-readable label */

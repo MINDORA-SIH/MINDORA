@@ -100,7 +100,15 @@
     "spotTheDifference": {
       "title": "Spot the Difference",
       "label": "Focus",
-      "description": "Find the changes between two pictures"
+      "description": "Find the changes between two pictures",
+      "subtitle": "Find the 3 changes between the pictures",
+      "wonderfulFocus": "Wonderful focus!",
+      "foundEvery": "You found every difference.",
+      "instruction": "Tap an item that looks different in the two scenes.",
+      "picture": "Picture {{letter}}",
+      "differencesLeft_one": "{{count}} difference left",
+      "differencesLeft_other": "{{count}} differences left",
+      "allFound": "All differences found!"
     },
     "colorSequence": {
       "title": "Color Sequence",
@@ -164,6 +172,7 @@
   "accessibility": {
     "startButtonLabel": "Press to begin the game",
     "langSelectLabel": "Choose your language",
+    "languageCurrent": "Language: {{language}}",
     "voiceAssistant": "Voice Assistant",
     "stopListening": "Stop Listening",
     "sendMessage": "Send message",
@@ -237,7 +246,7 @@
   },
   "manageData": {
     "title": "Manage Game Data",
-    "subtitle": "The photos, names and relationships the patient's activities use."
+    "subtitle": "Manage the people and daily routines the patient's games use."
   },
   "chat": {
     "assistantTitle": "Mindora Assistant",
@@ -295,5 +304,9 @@
     "moveUp": "Move up",
     "moveDown": "Move down",
     "remove": "Remove"
+  },
+  "underDevelopment": {
+    "title": "Under Development",
+    "message": "This page is not available yet."
   }
 }

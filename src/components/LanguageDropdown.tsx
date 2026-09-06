@@ -9,6 +9,8 @@ import {
   type KeyboardEvent,
 } from "react";
 import { clsx } from "clsx";
+import { useTranslation } from "react-i18next";
+import { SUPPORTED_LANGUAGES } from "../i18n/langConfig";
 
 export interface Language {
   code: string;
@@ -17,21 +19,9 @@ export interface Language {
 }
 
 /**
- * Display-only language list, in the order the product asked for.
- *
- * Picking an entry swaps the label shown in the header and on Settings. Nothing
- * else reads it: the app has no translations yet, so the selection is purely
- * presentational and is deliberately not wired to speech recognition.
+ * UI locale list. The parent changes i18next when a user picks an entry.
  */
-export const LANGUAGES: Language[] = [
-  { code: "en", name: "English", nativeName: "English" },
-  { code: "hin", name: "Hindi", nativeName: "हिन्दी" },
-  { code: "as", name: "Assamese", nativeName: "অসমীয়া" },
-  { code: "ne", name: "Nepali", nativeName: "नेपाली" },
-  { code: "brx", name: "Bodo", nativeName: "बड़ो" },
-  { code: "mni", name: "Meitei", nativeName: "মৈতৈলোন্" },
-  { code: "bn", name: "Bengali", nativeName: "বাংলা" },
-];
+export const LANGUAGES: Language[] = SUPPORTED_LANGUAGES.map(({ code, name, nativeName }) => ({ code, name, nativeName }));
 
 export const DEFAULT_LANGUAGE: Language = LANGUAGES[0];
 
@@ -57,6 +47,7 @@ export function LanguageDropdown({
   align = "start",
   className,
 }: LanguageDropdownProps) {
+  const { t } = useTranslation();
   const listboxId = useId();
   const rootRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -154,7 +145,7 @@ export function LanguageDropdown({
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-controls={open ? listboxId : undefined}
-        aria-label={`Language: ${value.name}`}
+        aria-label={t("accessibility.languageCurrent", { language: value.name })}
         className={clsx(
           "rounded-full border-2 border-purple-200 font-bold shadow-sm transition-all cursor-pointer",
           "hover:border-purple-400 hover:shadow-md active:scale-[0.98]",
@@ -192,7 +183,7 @@ export function LanguageDropdown({
           <div
             id={listboxId}
             role="listbox"
-            aria-label="Select language"
+            aria-label={t("accessibility.langSelectLabel")}
             className="flex max-h-[min(70vh,30rem)] flex-col gap-1 overflow-y-auto overscroll-contain p-2"
           >
             {LANGUAGES.map((language, index) => {

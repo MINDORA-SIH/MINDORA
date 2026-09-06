@@ -2,6 +2,7 @@ import { Moon, Sun, Globe, BellRing } from "lucide-react";
 import { useState } from "react";
 import { useOutletContext } from "react-router";
 import { LanguageDropdown, type Language } from "../components/LanguageDropdown";
+import { useTranslation } from "react-i18next";
 
 interface LayoutContext {
   darkMode: boolean;
@@ -24,6 +25,7 @@ function ToggleSwitch({ enabled, onToggle, activeColor }: { enabled: boolean; on
 }
 
 export function Settings() {
+  const { t } = useTranslation();
   const { darkMode, setDarkMode, language, setLanguage } = useOutletContext<LayoutContext>();
   const [alertsEnabled, setAlertsEnabled] = useState(true);
   const [isLangOpen, setIsLangOpen] = useState(false);
@@ -32,10 +34,10 @@ export function Settings() {
     <div className="space-y-6 sm:space-y-8 max-w-3xl mx-auto animate-in fade-in duration-500">
       <header className="pt-2 sm:pt-4 pb-1 sm:pb-2">
         <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold mb-2 sm:mb-4" style={{ color: "var(--foreground)" }}>
-          Settings
+          {t("settings.title")}
         </h1>
         <p className="text-base sm:text-lg md:text-xl lg:text-2xl font-medium" style={{ color: "var(--muted)" }}>
-          Adjust the app to your preferences.
+          {t("settings.subtitle")}
         </p>
       </header>
 
@@ -52,8 +54,8 @@ export function Settings() {
               )}
             </div>
             <div className="min-w-0">
-              <h2 className="text-lg sm:text-xl md:text-2xl font-bold truncate" style={{ color: "var(--foreground)" }}>Dark Mode</h2>
-              <p className="text-sm sm:text-base md:text-xl truncate" style={{ color: "var(--muted)" }}>Make the screen darker</p>
+              <h2 className="text-lg sm:text-xl md:text-2xl font-bold truncate" style={{ color: "var(--foreground)" }}>{t("settings.darkMode")}</h2>
+              <p className="text-sm sm:text-base md:text-xl truncate" style={{ color: "var(--muted)" }}>{t("settings.darkModeDesc")}</p>
             </div>
           </div>
           <ToggleSwitch enabled={darkMode} onToggle={() => setDarkMode(!darkMode)} activeColor="bg-sky-blue" />
@@ -66,8 +68,8 @@ export function Settings() {
               <Globe size={24} className="text-lavender sm:w-8 sm:h-8 md:w-10 md:h-10" />
             </div>
             <div className="min-w-0">
-              <h2 className="text-lg sm:text-xl md:text-2xl font-bold" style={{ color: "var(--foreground)" }}>Language</h2>
-              <p className="text-sm sm:text-base md:text-xl" style={{ color: "var(--muted)" }}>Choose your preferred language</p>
+              <h2 className="text-lg sm:text-xl md:text-2xl font-bold" style={{ color: "var(--foreground)" }}>{t("settings.language")}</h2>
+              <p className="text-sm sm:text-base md:text-xl" style={{ color: "var(--muted)" }}>{t("settings.languageDesc")}</p>
             </div>
           </div>
           <LanguageDropdown
@@ -87,8 +89,8 @@ export function Settings() {
               <BellRing size={24} className="text-rose-pink sm:w-8 sm:h-8 md:w-10 md:h-10" />
             </div>
             <div className="min-w-0">
-              <h2 className="text-lg sm:text-xl md:text-2xl font-bold truncate" style={{ color: "var(--foreground)" }}>Notifications</h2>
-              <p className="text-sm sm:text-base md:text-xl truncate" style={{ color: "var(--muted)" }}>Turn reminders on or off</p>
+              <h2 className="text-lg sm:text-xl md:text-2xl font-bold truncate" style={{ color: "var(--foreground)" }}>{t("settings.notifications")}</h2>
+              <p className="text-sm sm:text-base md:text-xl truncate" style={{ color: "var(--muted)" }}>{t("settings.notificationsDesc")}</p>
             </div>
           </div>
           <ToggleSwitch enabled={alertsEnabled} onToggle={() => setAlertsEnabled(prev => !prev)} activeColor="bg-rose-pink" />
