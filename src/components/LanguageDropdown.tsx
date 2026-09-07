@@ -17,18 +17,6 @@ export const LANGUAGES = SUPPORTED_LANGUAGES;
 export const DEFAULT_LANGUAGE =
   SUPPORTED_LANGUAGES.find((language) => language.code === "as") ?? SUPPORTED_LANGUAGES[0];
 
-/*
-  { code: "en", name: "English", nativeName: "English" },
-  { code: "hin", name: "Hindi", nativeName: "हिन्दी" },
-  { code: "as", name: "Assamese", nativeName: "অসমীয়া" },
-  { code: "ne", name: "Nepali", nativeName: "नेपाली" },
-  { code: "brx", name: "Bodo", nativeName: "बड़ो" },
-  { code: "mni", name: "Meitei", nativeName: "মৈতৈলোন্" },
-  { code: "bn", name: "Bengali", nativeName: "বাংলা" },
-];
-
-*/
-
 interface LanguageDropdownProps {
   value: LanguageMeta;
   onChange: (language: LanguageMeta) => void;
@@ -233,7 +221,6 @@ export function LanguageDropdown({
                         isSelected ? "text-purple-700 dark:text-purple-200" : "text-slate-800",
                       )}
                     >
-                      {language.name}
                       <span className="truncate">{language.name}</span>
                       {language.isBeta && (
                         <span className="rounded-md bg-amber-100 px-1.5 py-0.5 text-[10px] font-black uppercase tracking-wider text-amber-800 dark:bg-amber-900/50 dark:text-amber-300">
