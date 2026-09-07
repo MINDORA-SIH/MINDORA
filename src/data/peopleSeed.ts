@@ -80,3 +80,15 @@ export function buildSeedPeople(): Person[] {
     };
   });
 }
+
+/**
+ * Current seed IDs → freshly resolved photo URLs.
+ *
+ * Vite hashes asset filenames on every build, so an IndexedDB record that
+ * stored a previous build's URL will point at a 404. The repository uses this
+ * map on every load to patch seed-person photos back to the live URL.
+ */
+export const SEED_PHOTO_MAP: ReadonlyMap<string, string> = new Map(
+  SEED_PEOPLE.map((p) => [p.id, p.photo]),
+);
+

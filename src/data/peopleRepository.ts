@@ -14,7 +14,7 @@ import {
   putRecords,
   STORE_PEOPLE,
 } from "./mindoraDb";
-import { buildSeedPeople } from "./peopleSeed";
+import { buildSeedPeople, SEED_PHOTO_MAP } from "./peopleSeed";
 import type { Person, PersonDraft } from "./peopleTypes";
 
 /** Old seed IDs that must be replaced with the current set. */
@@ -123,7 +123,30 @@ export function loadPeople(): Promise<Person[]> {
         return commit(merged);
       }
 
-      return commit(stored);
+      // ── Refresh seed-person photo URLs ──
+      // Vite hashes asset filenames per build, so a stored URL from a
+      // previous build 404s. Patch every seed person's photo to the
+      // current build's URL on every load.
+      let patched = false;
+      const refreshed = stored.map((p) => {
+        const freshUrl = SEED_PHOTO_MAP.get(p.id);
+        if (freshUrl && !p.photo.startsWith("data:") && p.photo !== freshUrl) {
+          patched = true;
+          return { ...p, photo: freshUrl };
+        }
+        return p;
+      });
+
+      if (patched && storageAvailable) {
+        try {
+          const toWrite = refreshed.filter((p) => SEED_PHOTO_MAP.has(p.id));
+          await putRecords(STORE_PEOPLE, toWrite);
+        } catch {
+          storageAvailable = false;
+        }
+      }
+
+      return commit(refreshed);
     }
 
     // Empty store — first run. Never runs again once anything is saved.
