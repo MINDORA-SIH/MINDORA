@@ -52,6 +52,8 @@ export function Layout() {
     PROCESSING: "Transcribing...",
     CONFIRMING: `Did you mean ${voiceIntent?.label ?? "this page"}?`,
     SUCCESS: `Opening ${voiceIntent?.label ?? "page"}...`,
+    ERROR: "I couldn't process that voice command.",
+    IDLE: "",
   }[voiceStatus];
 
   useEffect(() => {

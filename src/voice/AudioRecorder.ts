@@ -1,7 +1,11 @@
+import { AudioFeatureExtractor, type AudioFeatureSummary } from "./AudioFeatureExtractor";
+
 export interface RecordingResult {
   blob: Blob;
   mimeType: string;
   durationMs: number;
+  /** In-memory-only Meyda MFCC summary. It is never sent to the ASR API. */
+  audioFeatures?: AudioFeatureSummary;
 }
 
 /** Keeps an in-memory recording only for the duration of one voice command. */
@@ -13,6 +17,7 @@ export class AudioRecorder {
   private maxTimer: ReturnType<typeof setTimeout> | null = null;
   private analyserNode: AnalyserNode | null = null;
   private audioContext: AudioContext | null = null;
+  private featureExtractor = new AudioFeatureExtractor();
   private silenceCheckInterval: ReturnType<typeof setInterval> | null = null;
   private resultPromise: Promise<RecordingResult> | null = null;
   private resolveResult: ((value: RecordingResult) => void) | null = null;
@@ -40,15 +45,18 @@ export class AudioRecorder {
     this.audioContext = new (window.AudioContext || (window as Window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext)();
     const source = this.audioContext.createMediaStreamSource(this.stream);
     this.analyserNode = this.audioContext.createAnalyser();
-    this.analyserNode.fftSize = 256;
+    this.analyserNode.fftSize = 512;
     source.connect(this.analyserNode);
 
     let silenceStart = Date.now();
     let speechStarted = false;
     const dataArray = new Uint8Array(this.analyserNode.frequencyBinCount);
+    const waveform = new Float32Array(this.analyserNode.fftSize);
     this.silenceCheckInterval = setInterval(() => {
       if (!this.analyserNode || this.mediaRecorder?.state !== "recording") return;
       this.analyserNode.getByteFrequencyData(dataArray);
+      this.analyserNode.getFloatTimeDomainData(waveform);
+      this.featureExtractor.extract(waveform, this.audioContext?.sampleRate ?? 44_100);
       const average = dataArray.reduce((sum, value) => sum + value, 0) / dataArray.length;
       if (average > 10) {
         speechStarted = true;
@@ -94,6 +102,7 @@ export class AudioRecorder {
     const mimeType = this.mediaRecorder?.mimeType || "audio/webm";
     const durationMs = Date.now() - this.startTime;
     const blob = new Blob(this.audioChunks, { type: mimeType });
+    const audioFeatures = this.featureExtractor.summarize();
     const resolve = this.resolveResult;
     const reject = this.rejectResult;
     this.resultPromise = null;
@@ -104,7 +113,7 @@ export class AudioRecorder {
     if (blob.size === 0) reject?.(new Error("Empty audio recording"));
     // Reserve 16 bytes for the AES-GCM authentication tag so base64 remains below 2 MB.
     else if (blob.size > 1_572_848) reject?.(new Error("Audio recording exceeds maximum allowed size (1.5MB)"));
-    else resolve?.({ blob, mimeType, durationMs });
+    else resolve?.({ blob, mimeType, durationMs, audioFeatures });
   }
 
   private releaseResources(): void {
@@ -119,6 +128,7 @@ export class AudioRecorder {
     this.stream = null;
     this.mediaRecorder = null;
     this.audioChunks = [];
+    this.featureExtractor.clear();
   }
 
   private getSupportedMimeType(): string {

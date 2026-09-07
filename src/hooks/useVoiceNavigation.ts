@@ -3,6 +3,7 @@ import { useNavigate } from "react-router";
 import { getLangConfig } from "@/i18n/langConfig";
 import { AudioRecorder } from "@/voice/AudioRecorder";
 import { decryptTranscript, encryptAudio, establishSessionKey } from "@/voice/CryptoService";
+import { detectLanguage } from "@/voice/LanguageDetectionService";
 import { parseCommand } from "@/voice/CommandParser";
 import { getSession, transcribe } from "@/voice/SpeechRecognitionClient";
 import { resolveNavigation, type IntentResult, VoiceIntent } from "@/voice/VoiceNavigation";
@@ -16,9 +17,13 @@ type BrowserSpeechRecognition = {
   start: () => void;
   stop: () => void;
   abort: () => void;
-  onresult: ((event: SpeechRecognitionEvent) => void) | null;
+  onresult: ((event: BrowserSpeechRecognitionEvent) => void) | null;
   onerror: ((event: { error: string }) => void) | null;
   onend: (() => void) | null;
+};
+
+type BrowserSpeechRecognitionEvent = {
+  results: ArrayLike<ArrayLike<{ transcript: string; confidence: number }>>;
 };
 
 type BrowserWindow = Window & {
@@ -76,7 +81,10 @@ export function useVoiceNavigation() {
     setIntent(nextIntent);
     setStatus("SUCCESS");
     window.setTimeout(() => {
-      resolveNavigation(nextIntent, navigate);
+      resolveNavigation(nextIntent, (to) => {
+        if (typeof to === "number") navigate(to);
+        else navigate(to);
+      });
       reset();
     }, 700);
   }, [navigate, reset]);
@@ -100,7 +108,7 @@ export function useVoiceNavigation() {
     navigateForIntent(parsed);
   }, [navigateForIntent]);
 
-  const startBasicRecognition = useCallback((language: string) => {
+  const startBasicRecognition = useCallback((language: string, version = requestVersion.current) => {
     const Recognition = (window as BrowserWindow).SpeechRecognition || (window as BrowserWindow).webkitSpeechRecognition;
     if (!Recognition) {
       setError("Voice navigation requires an internet connection.");
@@ -112,7 +120,17 @@ export function useVoiceNavigation() {
     recognition.continuous = false;
     recognition.interimResults = false;
     recognition.lang = getLangConfig(language).speechRecognitionLang;
-    recognition.onresult = (event) => handleTranscript(event.results[0][0].transcript, language, event.results[0][0].confidence || 1);
+    recognition.onresult = (event) => {
+      const result = event.results[0][0];
+      void detectLanguage(result.transcript, language).then((detected) => {
+        if (version !== requestVersion.current) return;
+        handleTranscript(
+          result.transcript,
+          detected.language,
+          detected.source === "fasttext" ? Math.max(result.confidence || 1, detected.confidence) : result.confidence || 1,
+        );
+      });
+    };
     recognition.onerror = (event) => {
       if (event.error !== "aborted") {
         setError(event.error === "not-allowed" ? "Microphone permission is required for voice navigation." : "I couldn't hear any speech. Please try again.");
@@ -136,7 +154,13 @@ export function useVoiceNavigation() {
       if (version !== requestVersion.current) return;
       const text = await decryptTranscript({ encryptedData: response.encryptedText, iv: response.iv }, aesKey);
       if (version !== requestVersion.current) return;
-      handleTranscript(text, response.language, response.confidence);
+      const detected = await detectLanguage(text, response.language);
+      if (version !== requestVersion.current) return;
+      handleTranscript(
+        text,
+        detected.language,
+        detected.source === "fasttext" ? Math.max(response.confidence, detected.confidence) : response.confidence,
+      );
     } catch (nextError) {
       if (version === requestVersion.current) {
         setError(friendlyError(nextError));
@@ -149,7 +173,7 @@ export function useVoiceNavigation() {
     reset();
     const version = requestVersion.current;
     if (!navigator.onLine) {
-      startBasicRecognition(language);
+      startBasicRecognition(language, version);
       return;
     }
     try {
@@ -172,7 +196,7 @@ export function useVoiceNavigation() {
         });
     } catch (nextError) {
       if (version !== requestVersion.current) return;
-      if (nextError instanceof Error && nextError.message.toLowerCase().includes("network")) startBasicRecognition(language);
+      if (nextError instanceof Error && nextError.message.toLowerCase().includes("network")) startBasicRecognition(language, version);
       else {
         setError(friendlyError(nextError));
         setStatus("ERROR");
