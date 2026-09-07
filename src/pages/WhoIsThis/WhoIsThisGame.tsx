@@ -72,10 +72,23 @@ export default function WhoIsThisGame() {
   const questionStartTimeRef = useRef<number>(Date.now());
   const recentPersonIdsRef = useRef<string[]>([]);
 
-  // Difficulty carries over between sessions.
+  // Difficulty carries over between sessions; for a fresh start (no saved
+  // settings / never played) derive difficulty from the number of photos in
+  // the database so the game scales automatically with the people pool.
   useEffect(() => {
-    void getGameSettings().then((settings) => setDifficulty(settings.currentDifficulty));
-  }, []);
+    void getGameSettings().then((settings) => {
+      if (settings.lastPlayed) {
+        // Returning player — honour their saved difficulty.
+        setDifficulty(settings.currentDifficulty);
+      } else {
+        // First session — base difficulty on how many photos are available.
+        const count = activePeople.length;
+        if (count >= 9) setDifficulty("hard");
+        else if (count >= 6) setDifficulty("medium");
+        else setDifficulty("easy");
+      }
+    });
+  }, [activePeople.length]);
 
   // ─── Generate next question ───
   const generateNextQuestion = useCallback(

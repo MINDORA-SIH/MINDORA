@@ -17,6 +17,15 @@ import {
 import { buildSeedPeople } from "./peopleSeed";
 import type { Person, PersonDraft } from "./peopleTypes";
 
+/** Old seed IDs that must be replaced with the current set. */
+const OLD_SEED_IDS = new Set([
+  "person-seed-anil",
+  "person-seed-hari",
+  "person-seed-meena",
+  "person-seed-rajesh",
+  "person-seed-sunita",
+]);
+
 type PeopleListener = (people: Person[]) => void;
 
 let cache: Person[] | null = null;
@@ -84,7 +93,38 @@ export function loadPeople(): Promise<Person[]> {
       storageAvailable = false;
     }
 
-    if (stored.length > 0) return commit(stored);
+    if (stored.length > 0) {
+      // ── Migrate old seed people to the new set ──
+      const hasOldSeeds = stored.some((p) => OLD_SEED_IDS.has(p.id));
+      if (hasOldSeeds) {
+        // Keep any caregiver-added records, drop old seeds.
+        const kept = stored.filter((p) => !OLD_SEED_IDS.has(p.id));
+        const newSeeds = buildSeedPeople();
+        const merged = [...kept, ...newSeeds];
+
+        if (storageAvailable) {
+          try {
+            // Remove old seed records from IndexedDB.
+            const db = await import("./mindoraDb").then((m) => m.openMindoraDb());
+            const tx = db.transaction(STORE_PEOPLE, "readwrite");
+            const store = tx.objectStore(STORE_PEOPLE);
+            for (const id of OLD_SEED_IDS) store.delete(id);
+            await new Promise<void>((resolve, reject) => {
+              tx.oncomplete = () => resolve();
+              tx.onerror = () => reject(tx.error);
+            });
+            // Write new seeds.
+            await putRecords(STORE_PEOPLE, newSeeds);
+          } catch {
+            storageAvailable = false;
+          }
+        }
+
+        return commit(merged);
+      }
+
+      return commit(stored);
+    }
 
     // Empty store — first run. Never runs again once anything is saved.
     const seeded = buildSeedPeople();
