@@ -47,11 +47,11 @@ export async function transcribe(
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        session_id: sessionId,
-        client_public_key: clientPublicKey,
-        encrypted_audio: encryptedPayload.encryptedData,
+        sessionId,
+        clientPublicKey: clientPublicKey,
+        encryptedAudio: encryptedPayload.encryptedData,
         iv: encryptedPayload.iv,
-        mime_type: mimeType
+        mimeType
       }),
       signal: controller.signal
     });

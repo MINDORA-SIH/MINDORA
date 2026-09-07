@@ -71,6 +71,8 @@ export async function establishSessionKey(serverPublicKeyBase64: string): Promis
     ['encrypt', 'decrypt']
   );
 
+  new Uint8Array(sharedBits).fill(0);
+
   const clientPubKeyBytes = await crypto.subtle.exportKey('raw', clientKeyPair.publicKey);
   const clientPublicKeyBase64 = arrayBufferToBase64(clientPubKeyBytes);
 
@@ -105,5 +107,7 @@ export async function decryptTranscript(payload: EncryptedPayload, aesKey: Crypt
     encryptedBuffer
   );
 
-  return new TextDecoder().decode(decryptedBuffer);
+  const transcript = new TextDecoder().decode(decryptedBuffer);
+  new Uint8Array(decryptedBuffer).fill(0);
+  return transcript;
 }

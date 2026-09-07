@@ -15,6 +15,7 @@ router = APIRouter(prefix="/api/asr", tags=["speech"])
 async def get_session():
     try:
         session_id = secrets.token_urlsafe(32)
+        crypto_service.create_session(session_id)
         public_key = crypto_service.get_server_public_key_base64()
         return SessionResponse(session_id=session_id, public_key=public_key)
     except Exception as e:
@@ -25,12 +26,15 @@ async def get_session():
 async def transcribe(request: TranscribeRequest):
     start_time = time.time()
     
+    # A session is one-use and must be valid before any key or ciphertext work.
+    try:
+        crypto_service.consume_session(request.session_id)
+    except ValueError as error:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(error))
+
     # Check if model is loaded
     if not indicwhisper_service.is_loaded:
-        # We can either fail with 503 or fallback. Let's allow fallback for now based on service implementation
-        # But if we strictly want 503 when the model fails:
-        # raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="ASR Model not loaded")
-        pass
+        raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="ASR model is unavailable")
 
     # Derive session key
     try:

@@ -1,18 +1,13 @@
-import { Outlet, NavLink, useNavigate, useLocation } from "react-router";
+import { Outlet, NavLink, useLocation } from "react-router";
 import logoUrl from "./assets/logo.png";
-import { User, Gamepad2, BarChart2, Bell, Settings as SettingsIcon, Mic, MicOff, Check, Moon, Sun, ArrowLeft, X } from "lucide-react";
+import { User, Gamepad2, BarChart2, Bell, Settings as SettingsIcon, Mic, Check, Moon, Sun, ArrowLeft, X } from "lucide-react";
 import { useState, useRef, useEffect, useCallback, cloneElement } from "react";
 import { clsx } from "clsx";
 import { useTranslation } from "react-i18next";
 import i18n from "./i18n";
 import { SUPPORTED_LANGUAGES, type LanguageMeta } from "./i18n/langConfig";
 import { LanguageDropdown } from "./components/LanguageDropdown";
-
-/**
- * Speech recognition stays pinned to one locale. The language dropdown is a
- * display-only control, so switching it must not retarget the microphone.
- */
-const SPEECH_RECOGNITION_LANG = "hi-IN";
+import { useVoiceNavigation } from "./hooks/useVoiceNavigation";
 
 export function Layout() {
   const { t } = useTranslation();
@@ -24,10 +19,7 @@ export function Layout() {
     void i18n.changeLanguage(nextLanguage.code);
   };
 
-  const [isListening, setIsListening] = useState(false);
   const [darkMode, setDarkMode] = useState(() => localStorage.getItem("mindora_dark") === "true");
-  const [transcript, setTranscript] = useState("");
-  const [voiceFeedback, setVoiceFeedback] = useState<string | null>(null);
 
   // Emergency SOS state
   const [sosActive, setSosActive] = useState(false);
@@ -35,8 +27,32 @@ export function Layout() {
   const [sosSent, setSosSent] = useState(false);
   const sosIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const navigate = useNavigate();
   const location = useLocation();
+  const {
+    status: voiceStatus,
+    isListening,
+    transcript,
+    detectedLanguage,
+    intent: voiceIntent,
+    confidence: voiceConfidence,
+    error: voiceError,
+    isBasicMode,
+    startListening,
+    stopListening,
+    confirmNavigation,
+    cancel: cancelVoice,
+  } = useVoiceNavigation();
+  const isVoiceOpen = voiceStatus !== "IDLE";
+
+  const voiceFeedback = voiceError ?? {
+    LISTENING: isBasicMode
+      ? "Voice navigation is in basic mode. Advanced recognition requires an internet connection."
+      : "Listening... Speak a command.",
+    ENCRYPTING: "Securing your voice...",
+    PROCESSING: "Transcribing...",
+    CONFIRMING: `Did you mean ${voiceIntent?.label ?? "this page"}?`,
+    SUCCESS: `Opening ${voiceIntent?.label ?? "page"}...`,
+  }[voiceStatus];
 
   useEffect(() => {
     const handler = () => forceUpdate((count) => count + 1);
@@ -47,9 +63,8 @@ export function Layout() {
   // Close all popups — called before opening any new one
   const closeAllPopups = useCallback(() => {
     setIsLangOpen(false);
-    setIsListening(false);
-    setVoiceFeedback(null);
-  }, []);
+    cancelVoice();
+  }, [cancelVoice]);
 
   // Track navigation direction for slide animations
   const routeOrder = ["/", "/dashboard", "/manage-data", "/reminders", "/settings", "/profile", "/chatbot", "/who-is-this"];
@@ -115,100 +130,6 @@ export function Layout() {
       }
     };
   }, [sosActive, sosSent]);
-
-  const handleVoiceCommand = (text: string) => {
-    setTranscript(text);
-    const lower = text.toLowerCase();
-    
-    if (lower.includes("game") || lower.includes("home") || lower.includes("play")) {
-      setVoiceFeedback(t("layout.navigatingToGames"));
-      setTimeout(() => {
-        navigate("/");
-        setIsListening(false);
-        setVoiceFeedback(null);
-      }, 1000);
-    } else if (lower.includes("chat") || lower.includes("bot") || lower.includes("assistant")) {
-      setVoiceFeedback(t("layout.openingChatbot"));
-      setTimeout(() => {
-        navigate("/chatbot");
-        setIsListening(false);
-        setVoiceFeedback(null);
-      }, 1000);
-    } else if (lower.includes("progress") || lower.includes("dashboard") || lower.includes("stat")) {
-      setVoiceFeedback(t("layout.navigatingToDashboard"));
-      setTimeout(() => {
-        navigate("/dashboard");
-        setIsListening(false);
-        setVoiceFeedback(null);
-      }, 1000);
-    } else if (lower.includes("reminder") || lower.includes("medicine") || lower.includes("pill")) {
-      setVoiceFeedback(t("layout.navigatingToReminders"));
-      setTimeout(() => {
-        navigate("/reminders");
-        setIsListening(false);
-        setVoiceFeedback(null);
-      }, 1000);
-    } else if (lower.includes("setting")) {
-      setVoiceFeedback(t("layout.navigatingToSettings"));
-      setTimeout(() => {
-        navigate("/settings");
-        setIsListening(false);
-        setVoiceFeedback(null);
-      }, 1000);
-    } else if (lower.includes("profile") || lower.includes("patient") || lower.includes("account")) {
-      setVoiceFeedback(t("layout.openingProfile"));
-      setTimeout(() => {
-        navigate("/profile");
-        setIsListening(false);
-        setVoiceFeedback(null);
-      }, 1000);
-    } else if (lower.includes("help") || lower.includes("emergency") || lower.includes("sos")) {
-      setVoiceFeedback(t("layout.triggeringEmergency"));
-      triggerSos();
-      setTimeout(() => {
-        setIsListening(false);
-        setVoiceFeedback(null);
-      }, 1000);
-    } else {
-      setVoiceFeedback(t("layout.heard", { text, lang: SPEECH_RECOGNITION_LANG }));
-    }
-  };
-
-  const toggleListening = () => {
-    if (isListening) {
-      setIsListening(false);
-      setVoiceFeedback(null);
-    } else {
-      setIsListening(true);
-      setTranscript("");
-      setVoiceFeedback(null);
-
-      const windowWithSpeech = window as unknown as {
-        SpeechRecognition?: new () => any;
-        webkitSpeechRecognition?: new () => any;
-      };
-
-      const SpeechRecognitionClass = windowWithSpeech.SpeechRecognition || windowWithSpeech.webkitSpeechRecognition;
-
-      if (SpeechRecognitionClass) {
-        try {
-          const recognition = new SpeechRecognitionClass();
-          recognition.continuous = false;
-          recognition.interimResults = false;
-          recognition.lang = SPEECH_RECOGNITION_LANG;
-          recognition.onresult = (event: any) => {
-            const speechResult = event.results[0][0].transcript;
-            handleVoiceCommand(speechResult);
-          };
-          recognition.onerror = () => {};
-          recognition.onend = () => {};
-          recognition.start();
-        } catch (e) {
-          console.error("Speech recognition error:", e);
-        }
-      }
-    }
-  };
 
   return (
       <div className="w-full min-h-screen flex flex-col relative transition-colors duration-300" style={{ backgroundColor: "var(--card-bg)", color: "var(--foreground)" }}>
@@ -322,27 +243,34 @@ export function Layout() {
         {/* Fixed Mic FAB — bottom right, above dock */}
         <button
           onClick={() => {
-            if (!isListening) closeAllPopups();
-            toggleListening();
+            if (isListening) stopListening();
+            else if (isVoiceOpen) cancelVoice();
+            else {
+              setIsLangOpen(false);
+              void startListening(language.code);
+            }
           }}
           title={t("layout.voiceAssistant")}
+          aria-label="Voice navigation"
+          aria-pressed={isListening}
+          aria-live="polite"
           className={clsx(
-            "fixed z-50 right-4 sm:right-6 bottom-[5.5rem] sm:bottom-[6rem] w-14 h-14 sm:w-16 sm:h-16 rounded-full border-3 flex items-center justify-center transition-all cursor-pointer active:scale-90 shadow-lg",
-            isListening
+            "fixed z-50 right-4 sm:right-6 bottom-[5.5rem] sm:bottom-[6rem] w-14 h-14 sm:w-16 sm:h-16 rounded-full border-3 flex items-center justify-center transition-all cursor-pointer active:scale-90 shadow-lg focus-visible:outline-4 focus-visible:outline-offset-2 focus-visible:outline-pink-500",
+            isVoiceOpen
               ? "bg-[#FF6584] text-white border-[#FF6584] animate-pulse shadow-[0_0_20px_rgba(255,101,132,0.5)]"
               : "bg-white hover:bg-[#FFF0F3] border-[#FF6584] text-[#FF6584] shadow-[0_4px_15px_rgba(255,101,132,0.3)]"
           )}
         >
-          {isListening ? <MicOff size={24} /> : <Mic size={24} />}
+          <Mic size={24} />
         </button>
 
         {/* Global Root-Level Popups */}
 
         {/* 1. Voice Assistant Popup */}
-        {isListening && (
+        {isVoiceOpen && (
           <div 
             className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm transition-all"
-            onClick={() => { setIsListening(false); setVoiceFeedback(null); }}
+            onClick={cancelVoice}
           >
             <div 
               className="w-full max-w-sm bg-white rounded-3xl shadow-2xl border-2 border-pink-200 p-6 flex flex-col items-center gap-5 text-center animate-in fade-in zoom-in-95 duration-200"
@@ -350,7 +278,7 @@ export function Layout() {
             >
               <div className="w-full flex justify-start -mb-2">
                 <button 
-                  onClick={() => { setIsListening(false); setVoiceFeedback(null); }}
+                  onClick={cancelVoice}
                   className="p-2 -ml-2 rounded-full hover:bg-slate-100 text-slate-500 transition-colors cursor-pointer"
                 >
                   <ArrowLeft size={24} />
@@ -370,7 +298,7 @@ export function Layout() {
               <div>
                 <h3 className="font-extrabold text-2xl text-slate-800">{t("layout.voiceAssistant")}</h3>
                 <p className="text-slate-500 text-[20px] mt-1.5 font-bold">
-                  {voiceFeedback || t("layout.listening")}
+                  {voiceFeedback || t("layout.voiceAssistant")}
                 </p>
               </div>
 
@@ -380,11 +308,30 @@ export function Layout() {
                 </div>
               )}
 
+              {voiceStatus === "CONFIRMING" && (
+                <button
+                  onClick={confirmNavigation}
+                  className="w-full py-3.5 bg-[#FF6584] text-white font-extrabold text-base rounded-2xl hover:bg-pink-600 transition-colors shadow-md cursor-pointer"
+                >
+                  Yes, open {voiceIntent?.label}
+                </button>
+              )}
+
+              {import.meta.env.DEV && transcript && (
+                <div className="w-full rounded-xl border border-slate-200 bg-slate-50 p-3 text-left text-xs text-slate-600">
+                  <div>Language: {detectedLanguage || language.code}</div>
+                  <div>Intent: {voiceIntent?.type ?? "UNKNOWN_COMMAND"}</div>
+                  <div>Route: {voiceIntent?.route ?? "—"}</div>
+                  <div>Confidence: {voiceConfidence?.toFixed(2) ?? "—"}</div>
+                  <div>Encrypted: {isBasicMode ? "basic mode" : "AES-256-GCM"}</div>
+                </div>
+              )}
+
               <button
-                onClick={() => { setIsListening(false); setVoiceFeedback(null); }}
+                onClick={isListening ? stopListening : cancelVoice}
                 className="w-full py-3.5 bg-slate-800 text-white font-extrabold text-base rounded-2xl hover:bg-slate-900 transition-colors shadow-md cursor-pointer mt-2"
               >
-                {t("layout.stopListening")}
+                {isListening ? t("layout.stopListening") : "Close"}
               </button>
             </div>
           </div>

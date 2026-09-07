@@ -1,6 +1,7 @@
 import io
 import os
 import logging
+import subprocess
 import numpy as np
 
 logger = logging.getLogger(__name__)
@@ -31,34 +32,34 @@ class IndicWhisperService:
             self.model = WhisperForConditionalGeneration.from_pretrained(model_id).to(self.device)
             self.is_loaded = True
             logger.info(f"Model loaded successfully on {self.device}")
-        except Exception as e:
-            logger.warning(f"Failed to load IndicWhisper model: {e}. Will use fallback/mock responses.")
+        except Exception:
+            logger.warning("IndicWhisper model could not be loaded; voice transcription is unavailable.")
             self.is_loaded = False
 
     def transcribe(self, audio_bytes: bytearray, mime_type: str) -> dict:
         if not self.is_loaded:
-            logger.info("Using mock transcription due to model not being loaded")
-            return {
-                "text": "This is a mock transcription because the model failed to load.",
-                "language": "en",
-                "confidence": 0.95
-            }
+            raise RuntimeError("ASR model is unavailable")
 
         try:
-            import librosa
             import soundfile as sf
-            
-            # Use soundfile directly with BytesIO
-            with io.BytesIO(audio_bytes) as audio_file:
-                audio_array, sample_rate = sf.read(audio_file)
+            try:
+                with io.BytesIO(audio_bytes) as audio_file:
+                    audio_array, sample_rate = sf.read(audio_file, dtype="float32")
+                if len(audio_array.shape) > 1:
+                    audio_array = np.mean(audio_array, axis=1, dtype=np.float32)
+                if sample_rate != 16000:
+                    import librosa
+                    audio_array = librosa.resample(audio_array, orig_sr=sample_rate, target_sr=16000)
+            except Exception:
+                # FFmpeg converts WebM/Opus in memory; no audio file is created.
+                result = subprocess.run(
+                    ["ffmpeg", "-v", "error", "-i", "pipe:0", "-f", "f32le", "-ac", "1", "-ar", "16000", "pipe:1"],
+                    input=bytes(audio_bytes), capture_output=True, check=True, timeout=15,
+                )
+                audio_array = np.frombuffer(result.stdout, dtype=np.float32).copy()
 
-            # Convert to mono if necessary
-            if len(audio_array.shape) > 1:
-                audio_array = librosa.to_mono(audio_array.T)
-
-            # Resample to 16000Hz which Whisper expects
-            if sample_rate != 16000:
-                audio_array = librosa.resample(audio_array, orig_sr=sample_rate, target_sr=16000)
+            if audio_array.size == 0:
+                raise RuntimeError("Audio contained no samples")
 
             # Process with model
             import torch
@@ -66,20 +67,40 @@ class IndicWhisperService:
             input_features = inputs.input_features.to(self.device)
 
             with torch.no_grad():
-                predicted_ids = self.model.generate(input_features)
+                generation = self.model.generate(
+                    input_features,
+                    return_dict_in_generate=True,
+                    output_scores=True,
+                )
+            predicted_ids = generation.sequences
                 
             transcription = self.processor.batch_decode(predicted_ids, skip_special_tokens=True)[0]
+
+            detected_language = "en"
+            language_ids = getattr(self.model.generation_config, "lang_to_id", {})
+            initial_tokens = set(predicted_ids[0, :5].tolist())
+            for language, token_id in language_ids.items():
+                if token_id in initial_tokens:
+                    detected_language = language.removeprefix("<|").removesuffix("|>")
+                    break
+
+            confidence = 0.0
+            if generation.scores:
+                confidence = sum(
+                    float(torch.softmax(score, dim=-1).max(dim=-1).values.mean().item())
+                    for score in generation.scores
+                ) / len(generation.scores)
             
             # Zero out the arrays
             audio_array.fill(0)
             
             return {
                 "text": transcription.strip(),
-                "language": "en", # Simplified language detection for mock/indicwhisper-medium
-                "confidence": 0.85
+                "language": detected_language,
+                "confidence": confidence
             }
-        except Exception as e:
-            logger.error("Error during transcription") # generic log without transcript info
-            raise RuntimeError(f"Transcription failed")
+        except Exception:
+            logger.error("Error during transcription")
+            raise RuntimeError("Transcription failed")
 
 indicwhisper_service = IndicWhisperService()
