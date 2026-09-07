@@ -73,7 +73,7 @@ i18n.on('languageChanged', (lang) => {
   localStorage.setItem('app_user_language', lang);
   // Keep assistive tech (screen readers, font shaping) in sync with the UI.
   document.documentElement.lang = lang;
-  window.dispatchEvent(new CustomEvent('memoSaathiLangChange', { detail: lang }));
+  window.dispatchEvent(new CustomEvent('mindoraLangChange', { detail: lang }));
 });
 
 // Apply the initial locale before the first paint as well.
