@@ -1,4 +1,5 @@
-import { allDays, dashboardData, MONTH_ABBR, MONTH_NAMES, TODAY_ISO, WEEKDAY_ABBR } from "./dashboardData";
+import i18n from "@/i18n";
+import { allDays, dashboardData, TODAY_ISO } from "./dashboardData";
 import type {
   ActivityLevelId,
   AttentionSeverity,
@@ -21,6 +22,46 @@ import type {
 
 /* ── Formatting ─────────────────────────────────────────────────────────── */
 
+/**
+ * Translate at call time (not at module load) so a language switch is picked
+ * up on the next render — components re-run these selectors while rendering.
+ */
+function dt(key: string, options?: Record<string, unknown>): string {
+  return i18n.t(key, options ?? {}) as string;
+}
+
+function localeTag(): string {
+  return i18n.language || "en";
+}
+
+function utcDateOf(iso: string): Date {
+  return new Date(`${iso}T00:00:00Z`);
+}
+
+export function formatShortDate(iso: string): string {
+  return new Intl.DateTimeFormat(localeTag(), { day: "numeric", month: "short", timeZone: "UTC" }).format(utcDateOf(iso));
+}
+
+export function formatFullDate(iso: string): string {
+  return new Intl.DateTimeFormat(localeTag(), { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }).format(utcDateOf(iso));
+}
+
+export function weekdayLabel(iso: string): string {
+  return new Intl.DateTimeFormat(localeTag(), { weekday: "short", timeZone: "UTC" }).format(utcDateOf(iso));
+}
+
+/** Localized single-letter weekday headers, Sunday first. */
+export function weekdayInitials(): string[] {
+  const formatter = new Intl.DateTimeFormat(localeTag(), { weekday: "narrow", timeZone: "UTC" });
+  // 2023-01-01 is a Sunday; the next six dates cover the whole week.
+  return Array.from({ length: 7 }, (_, index) => formatter.format(new Date(Date.UTC(2023, 0, 1 + index))));
+}
+
+/** Localized "September 2026"-style month label. */
+export function monthLabel(year: number, monthIndex: number): string {
+  return new Intl.DateTimeFormat(localeTag(), { month: "long", year: "numeric", timeZone: "UTC" }).format(new Date(Date.UTC(year, monthIndex, 1)));
+}
+
 export function percentChange(current: number, previous: number): number {
   if (!previous) return 0;
   return Math.round(((current - previous) / previous) * 100);
@@ -30,33 +71,13 @@ export function directionOf(change: number): TrendDirection {
   return change > 0 ? "up" : change < 0 ? "down" : "flat";
 }
 
-function partsOf(iso: string) {
-  const [year, month, day] = iso.split("-").map(Number);
-  return { year, monthIndex: month - 1, day };
-}
-
-export function formatShortDate(iso: string): string {
-  const { monthIndex, day } = partsOf(iso);
-  return `${MONTH_ABBR[monthIndex]} ${day}`;
-}
-
-export function formatFullDate(iso: string): string {
-  const { year, monthIndex, day } = partsOf(iso);
-  return `${MONTH_NAMES[monthIndex]} ${day}, ${year}`;
-}
-
-export function weekdayLabel(iso: string): string {
-  const { year, monthIndex, day } = partsOf(iso);
-  return WEEKDAY_ABBR[new Date(Date.UTC(year, monthIndex, day)).getUTCDay()];
-}
-
 const YESTERDAY_ISO = new Date(new Date(`${TODAY_ISO}T00:00:00Z`).getTime() - 86_400_000)
   .toISOString()
   .slice(0, 10);
 
 export function relativeDayLabel(iso: string): string {
-  if (iso === TODAY_ISO) return "Today";
-  if (iso === YESTERDAY_ISO) return "Yesterday";
+  if (iso === TODAY_ISO) return dt("dashboard.today", { defaultValue: "Today" });
+  if (iso === YESTERDAY_ISO) return dt("dashboard.yesterday", { defaultValue: "Yesterday" });
   return formatShortDate(iso);
 }
 
@@ -66,15 +87,15 @@ const elapsedDays: DayRecord[] = allDays.filter((day) => day.isoDate <= TODAY_IS
 /* ── Performance trend ──────────────────────────────────────────────────── */
 
 const TREND_RANGES = {
-  "7d": { label: "7 Days", days: 7, step: 1, useWeekdayLabels: true, comparison: "previous 7 days" },
-  "30d": { label: "30 Days", days: 30, step: 3, useWeekdayLabels: false, comparison: "previous 30 days" },
-  "3m": { label: "3 Months", days: 91, step: 7, useWeekdayLabels: false, comparison: "previous 3 months" },
+  "7d": { days: 7, step: 1, useWeekdayLabels: true, labelKey: "dashboard.range7d", comparisonKey: "dashboard.prev7d" },
+  "30d": { days: 30, step: 3, useWeekdayLabels: false, labelKey: "dashboard.range30d", comparisonKey: "dashboard.prev30d" },
+  "3m": { days: 91, step: 7, useWeekdayLabels: false, labelKey: "dashboard.range3m", comparisonKey: "dashboard.prev3m" },
 } as const;
 
-export const trendRangeOptions: { id: TrendRangeId; label: string }[] = [
-  { id: "7d", label: TREND_RANGES["7d"].label },
-  { id: "30d", label: TREND_RANGES["30d"].label },
-  { id: "3m", label: TREND_RANGES["3m"].label },
+export const trendRangeOptions: { id: TrendRangeId; labelKey: string }[] = [
+  { id: "7d", labelKey: TREND_RANGES["7d"].labelKey },
+  { id: "30d", labelKey: TREND_RANGES["30d"].labelKey },
+  { id: "3m", labelKey: TREND_RANGES["3m"].labelKey },
 ];
 
 export const defaultTrendRange: TrendRangeId = "30d";
@@ -99,8 +120,8 @@ export function getTrendSummary(rangeId: TrendRangeId) {
 
   return {
     rangeId,
-    rangeLabel: range.label,
-    comparisonLabel: range.comparison,
+    rangeLabel: dt(range.labelKey, { defaultValue: rangeId }),
+    comparisonLabel: dt(range.comparisonKey, { defaultValue: rangeId }),
     points: sampled.map((point) => ({
       isoDate: point.isoDate,
       score: point.score,
@@ -132,12 +153,90 @@ export function getPerformanceSnapshot() {
 
 /* ── Cognitive parameters ───────────────────────────────────────────────── */
 
+/* Localized display names. The data layer stores stable ids; wording lives in
+ * the locale bundles so every consumer (list, radar, tiles) stays in sync. */
+const AREA_NAME_KEYS: Record<string, { name: string; short?: string }> = {
+  memory: { name: "dashboard.areaMemory" },
+  recognition: { name: "dashboard.areaRecognition" },
+  reasoning: { name: "dashboard.areaReasoning" },
+  language: { name: "dashboard.areaLanguage" },
+  "executive-function": { name: "dashboard.areaExecutive", short: "dashboard.areaExecutiveShort" },
+  attention: { name: "dashboard.areaAttention" },
+  "processing-speed": { name: "dashboard.areaSpeed", short: "dashboard.areaSpeedShort" },
+};
+
+export function areaName(id: string): string {
+  return dt(AREA_NAME_KEYS[id]?.name ?? "dashboard.areaMemory", { defaultValue: id });
+}
+
+export function areaShortName(id: string): string {
+  const shortKey = AREA_NAME_KEYS[id]?.short;
+  return shortKey ? dt(shortKey, { defaultValue: id }) : areaName(id);
+}
+
+/** Session records store English area display names; map them back to keys. */
+const SESSION_AREA_KEYS: Record<string, string> = {
+  Memory: "dashboard.areaMemory",
+  Recognition: "dashboard.areaRecognition",
+  Attention: "dashboard.areaAttention",
+  "Processing Speed": "dashboard.areaSpeed",
+};
+
+export function sessionAreaLabel(name: string): string {
+  const key = SESSION_AREA_KEYS[name];
+  return key ? dt(key, { defaultValue: name }) : name;
+}
+
+/* Game titles live under the shared `games.*` keys used by the home grid. */
+const GAME_TITLE_KEYS: Record<string, string> = {
+  "who-is-this": "games.whoIsThis.title",
+  "word-sound-memory": "games.wordSoundMemory.title",
+  "story-quiz": "games.storyQuiz.title",
+  "daily-routine": "dailyRoutine.title",
+  "pattern-recognition": "games.patternRecognition.title",
+  "spot-the-difference": "games.spotTheDifference.title",
+  "color-sequence": "games.colorSequence.title",
+};
+
+const GAME_TITLE_KEYS_BY_NAME: Record<string, string> = {
+  "Who Is This?": "games.whoIsThis.title",
+  "Word-Sound Memory": "games.wordSoundMemory.title",
+  "Story Quiz": "games.storyQuiz.title",
+  "Daily Routine": "dailyRoutine.title",
+  "Pattern Recognition": "games.patternRecognition.title",
+  "Spot the Difference": "games.spotTheDifference.title",
+  "Color Sequence": "games.colorSequence.title",
+};
+
+export function gameTitle(idOrName: string): string {
+  const key = GAME_TITLE_KEYS[idOrName] ?? GAME_TITLE_KEYS_BY_NAME[idOrName];
+  return key ? dt(key, { defaultValue: idOrName }) : idOrName;
+}
+
+/* Focus labels per game score entry. */
+const FOCUS_KEYS: Record<string, string> = {
+  Memory: "dashboard.focusMemory",
+  Listening: "dashboard.focusListening",
+  Recall: "dashboard.focusRecall",
+  Sequencing: "dashboard.focusSequencing",
+  Reasoning: "dashboard.focusReasoning",
+  Focus: "dashboard.focusFocus",
+};
+
+export function focusLabel(focus: string): string {
+  const key = FOCUS_KEYS[focus];
+  return key ? dt(key, { defaultValue: focus }) : focus;
+}
+
 export function getCognitiveParameters() {
   return dashboardData.cognitiveParameters
     .map((parameter) => {
       const changePercent = percentChange(parameter.score, parameter.previousScore);
       return {
         ...parameter,
+        name: areaName(parameter.id),
+        shortName: areaShortName(parameter.id),
+        relatedActivity: gameTitle(parameter.relatedActivity),
         changePercent,
         direction: directionOf(changePercent),
         relatedActivityWhen: relativeDayLabel(parameter.relatedActivityIso),
@@ -168,19 +267,13 @@ export function getParameterHighlights() {
 
 const ACTIVITY_WINDOW = 7;
 
-const ACTIVITY_LABELS: Record<ActivityLevelId, string> = {
-  high: "High",
-  moderate: "Moderate",
-  low: "Low",
-  none: "None",
-};
+function activityLevelLabel(level: ActivityLevelId): string {
+  return dt(`dashboard.level${level.charAt(0).toUpperCase()}${level.slice(1)}`, { defaultValue: level });
+}
 
-const ACTIVITY_INTERPRETATION: Record<ActivityLevelId, string> = {
-  high: "Patient has maintained regular activity this week.",
-  moderate: "Activity has been somewhat inconsistent this week.",
-  low: "Patient has had limited recent activity.",
-  none: "No activity has been recorded in the last 7 days.",
-};
+function activityInterpretation(level: ActivityLevelId): string {
+  return dt(`dashboard.interp${level.charAt(0).toUpperCase()}${level.slice(1)}`, { defaultValue: level });
+}
 
 export function getActivitySummary() {
   const window = elapsedDays.slice(-ACTIVITY_WINDOW);
@@ -209,10 +302,10 @@ export function getActivitySummary() {
     activitiesLast30Days: last30.reduce((total, day) => total + (day.session?.gamesCompleted ?? 0), 0),
     ratio,
     level,
-    levelLabel: ACTIVITY_LABELS[level],
-    interpretation: ACTIVITY_INTERPRETATION[level],
+    levelLabel: activityLevelLabel(level),
+    interpretation: activityInterpretation(level),
     todayLevel,
-    todayLevelLabel: ACTIVITY_LABELS[todayLevel],
+    todayLevelLabel: activityLevelLabel(todayLevel),
     todayGames,
     todayMinutes,
   };
@@ -235,6 +328,7 @@ export function getStreak() {
 export function getRecentSessions() {
   return dashboardData.recentSessions.map((session) => ({
     ...session,
+    gameName: gameTitle(session.gameName),
     dayLabel: relativeDayLabel(session.isoDate),
   }));
 }
@@ -264,9 +358,9 @@ export function getAttentionState() {
     return {
       severity: "none" as AttentionSeverity,
       parameter: null,
-      title: "No Immediate Concerns",
-      message: "Cognitive performance and activity levels are stable compared with the previous week.",
-      recommendation: "Continue with the current activity routine.",
+      title: dt("dashboard.attentionOkTitle", { defaultValue: "No Immediate Concerns" }),
+      message: dt("dashboard.attentionOkMessage", { defaultValue: "Cognitive performance and activity levels are stable compared with the previous week." }),
+      recommendation: dt("dashboard.attentionOkRecommendation", { defaultValue: "Continue with the current activity routine." }),
     };
   }
 
@@ -277,12 +371,12 @@ export function getAttentionState() {
   return {
     severity,
     parameter: declining,
-    title: "Attention Required",
-    message: `${declining.name} declined ${drop}% this week.`,
+    title: dt("dashboard.attentionTitle", { defaultValue: "Attention Required" }),
+    message: dt("dashboard.attentionMessage", { name: declining.name, drop, defaultValue: "{{name}} declined {{drop}}% this week." }),
     recommendation:
       severity === "attention"
-        ? `Review recent ${declining.name.toLowerCase()} activities and note any change in daily routine.`
-        : `Keep monitoring ${declining.name.toLowerCase()} over the next few sessions.`,
+        ? dt("dashboard.attentionRecAttention", { name: declining.name, defaultValue: "Review recent {{name}} activities and note any change in daily routine." })
+        : dt("dashboard.attentionRecMonitor", { name: declining.name, defaultValue: "Keep monitoring {{name}} over the next few sessions." }),
   };
 }
 
@@ -290,17 +384,19 @@ export type AttentionState = ReturnType<typeof getAttentionState>;
 
 /* ── Monitoring status ──────────────────────────────────────────────────── */
 
-const STATUS_LABELS: Record<MonitoringStatusId, string> = {
-  stable: "Stable",
-  monitoring: "Needs Monitoring",
-  attention: "Attention Required",
-};
+function statusLabel(id: MonitoringStatusId): string {
+  return dt(
+    id === "stable" ? "dashboard.statusStable" : id === "monitoring" ? "dashboard.statusMonitoring" : "dashboard.statusAttention",
+    { defaultValue: id },
+  );
+}
 
-const STATUS_DESCRIPTIONS: Record<MonitoringStatusId, string> = {
-  stable: "Activity and performance are in line with the previous period.",
-  monitoring: "One or more areas have changed since the previous period.",
-  attention: "A sustained change was recorded. Review recent sessions.",
-};
+function statusDescription(id: MonitoringStatusId): string {
+  return dt(
+    id === "stable" ? "dashboard.statusDescStable" : id === "monitoring" ? "dashboard.statusDescMonitoring" : "dashboard.statusDescAttention",
+    { defaultValue: id },
+  );
+}
 
 /**
  * A monitoring indicator, not a diagnosis. One weaker result never escalates
@@ -329,7 +425,7 @@ export function getMonitoringStatus() {
     id = "monitoring";
   }
 
-  return { id, label: STATUS_LABELS[id], description: STATUS_DESCRIPTIONS[id] };
+  return { id, label: statusLabel(id), description: statusDescription(id) };
 }
 
 export type MonitoringStatus = ReturnType<typeof getMonitoringStatus>;
@@ -356,40 +452,67 @@ export function getCaregiverInsights(): CaregiverInsight[] {
     tone: performance.direction === "up" ? "positive" : performance.direction === "down" ? "watch" : "neutral",
     title:
       performance.direction === "up"
-        ? "Overall performance is trending upward."
+        ? dt("dashboard.insightTrendUp", { defaultValue: "Overall performance is trending upward." })
         : performance.direction === "down"
-          ? "Overall performance is lower than last week."
-          : "Overall performance is unchanged from last week.",
-    detail: `Performance Index ${performance.current}, compared with an average of ${performance.previous} the previous week.`,
+          ? dt("dashboard.insightTrendDown", { defaultValue: "Overall performance is lower than last week." })
+          : dt("dashboard.insightTrendFlat", { defaultValue: "Overall performance is unchanged from last week." }),
+    detail: dt("dashboard.insightTrendDetail", {
+      current: performance.current,
+      previous: performance.previous,
+      defaultValue: "Performance Index {{current}}, compared with an average of {{previous}} the previous week.",
+    }),
   });
 
   insights.push({
     id: "activity",
     tone: activity.level === "high" ? "positive" : activity.level === "moderate" ? "neutral" : "watch",
     title: activity.interpretation,
-    detail: `${activity.activeDays} of the last ${activity.windowDays} days active · ${activity.averageSessionMinutes} min average session · ${streak.current}-day current streak.`,
+    detail: dt("dashboard.insightActivityDetail", {
+      active: activity.activeDays,
+      window: activity.windowDays,
+      average: activity.averageSessionMinutes,
+      streak: streak.current,
+      defaultValue: "{{active}} of the last {{window}} days active · {{average}} min average session · {{streak}}-day current streak.",
+    }),
   });
 
   insights.push({
     id: "strength",
     tone: "positive",
-    title: `${strongest.name} is currently the strongest area.`,
-    detail: `Score ${strongest.score} out of 100. Most recent related activity: ${strongest.relatedActivity}, ${strongest.relatedActivityWhen}.`,
+    title: dt("dashboard.insightStrengthTitle", { name: strongest.name, defaultValue: "{{name}} is currently the strongest area." }),
+    detail: dt("dashboard.insightStrengthDetail", {
+      score: strongest.score,
+      activity: strongest.relatedActivity,
+      when: strongest.relatedActivityWhen,
+      defaultValue: "Score {{score}} out of 100. Most recent related activity: {{activity}}, {{when}}.",
+    }),
   });
 
   if (declining) {
     insights.push({
       id: "monitor",
       tone: "watch",
-      title: `${declining.name} is the area to monitor.`,
-      detail: `Down ${Math.abs(declining.changePercent)}% from last week (${declining.previousScore} to ${declining.score}). Related activity: ${declining.relatedActivity}, ${declining.relatedActivityWhen}.`,
+      title: dt("dashboard.insightMonitorTitle", { name: declining.name, defaultValue: "{{name}} is the area to monitor." }),
+      detail: dt("dashboard.insightMonitorDetail", {
+        drop: Math.abs(declining.changePercent),
+        previous: declining.previousScore,
+        current: declining.score,
+        activity: declining.relatedActivity,
+        when: declining.relatedActivityWhen,
+        defaultValue: "Down {{drop}}% from last week ({{previous}} to {{current}}). Related activity: {{activity}}, {{when}}.",
+      }),
     });
   } else if (improving) {
     insights.push({
       id: "improving",
       tone: "positive",
-      title: `${improving.name} has improved since last week.`,
-      detail: `Up ${improving.changePercent}% (${improving.previousScore} to ${improving.score}).`,
+      title: dt("dashboard.insightImprovingTitle", { name: improving.name, defaultValue: "{{name}} has improved since last week." }),
+      detail: dt("dashboard.insightImprovingDetail", {
+        change: improving.changePercent,
+        previous: improving.previousScore,
+        current: improving.score,
+        defaultValue: "Up {{change}}% ({{previous}} to {{current}}).",
+      }),
     });
   }
 
@@ -402,7 +525,7 @@ export function getGamePerformance() {
   const games = dashboardData.gameScores
     .map((game) => {
       const changePercent = percentChange(game.score, game.previousScore);
-      return { ...game, changePercent, direction: directionOf(changePercent) };
+      return { ...game, name: gameTitle(game.name), focus: focusLabel(game.focus), changePercent, direction: directionOf(changePercent) };
     })
     .sort((a, b) => b.score - a.score);
 
@@ -425,7 +548,10 @@ export function getGamePerformance() {
   return {
     games,
     strongestFocus,
-    focusInsight: `${strongestFocus}-focused activities currently show the strongest performance.`,
+    focusInsight: dt("dashboard.focusInsight", {
+      focus: focusLabel(strongestFocus),
+      defaultValue: "{{focus}}-focused activities currently show the strongest performance.",
+    }),
   };
 }
 

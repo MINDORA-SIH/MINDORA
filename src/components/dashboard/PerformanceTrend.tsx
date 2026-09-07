@@ -41,7 +41,7 @@ export function PerformanceTrend() {
             )}
             style={isActive ? undefined : { color: "var(--muted)" }}
           >
-            {option.label}
+            {t(option.labelKey, { defaultValue: option.id })}
           </button>
         );
       })}

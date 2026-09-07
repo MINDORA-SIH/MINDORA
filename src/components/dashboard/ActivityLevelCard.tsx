@@ -1,8 +1,7 @@
 import { clsx } from "clsx";
 import { Activity } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { WEEKDAY_INITIALS } from "@/data/dashboardData";
-import { type ActivitySummary, formatShortDate } from "@/data/dashboardSelectors";
+import { type ActivitySummary, formatShortDate, weekdayInitials } from "@/data/dashboardSelectors";
 import type { CalendarDayStatus } from "@/data/dashboardTypes";
 import { ACTIVITY_TONE, type SemanticTone, TONES } from "./tokens";
 import { SectionCard, SegmentedMeter, StatTile } from "./ui";
@@ -72,7 +71,7 @@ export function ActivityLevelCard({ activity }: { activity: ActivitySummary }) {
           return (
             <li key={day.isoDate} className="flex flex-col items-center gap-1">
               <span className="text-[12px] font-extrabold" style={{ color: "var(--muted)" }}>
-                {WEEKDAY_INITIALS[day.weekday]}
+                {weekdayInitials()[day.weekday]}
               </span>
               <span
                 title={`${formatShortDate(day.isoDate)} · ${detail}`}

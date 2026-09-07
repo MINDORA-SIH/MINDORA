@@ -2,12 +2,14 @@ import { clsx } from "clsx";
 import { CalendarDays, ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { WEEKDAY_INITIALS } from "@/data/dashboardData";
 import {
   formatFullDate,
   getCalendarMonths,
   getCurrentMonthIndex,
   getMostRecentActiveDay,
+  monthLabel,
+  sessionAreaLabel,
+  weekdayInitials,
   weekdayLabel,
 } from "@/data/dashboardSelectors";
 import type { CalendarDayStatus, DayRecord } from "@/data/dashboardTypes";
@@ -76,7 +78,7 @@ export function ActivityCalendar() {
         <ChevronLeft className="h-5 w-5" style={{ color: "var(--foreground)" }} />
       </button>
       <span className="min-w-[8.5rem] text-center text-[15px] font-extrabold" style={{ color: "var(--foreground)" }}>
-        {month.label}
+        {monthLabel(month.year, month.monthIndex)}
       </span>
       <button
         type="button"
@@ -113,7 +115,7 @@ export function ActivityCalendar() {
       </ul>
 
       <div className="mt-4 grid grid-cols-7 gap-1 sm:gap-2" aria-hidden="true">
-        {WEEKDAY_INITIALS.map((initial, index) => (
+        {weekdayInitials().map((initial, index) => (
           <span
             key={`${initial}-${index}`}
             className="text-center text-[13px] font-extrabold"
@@ -185,8 +187,8 @@ export function ActivityCalendar() {
             />
             <StatTile label={t("dashboard.statSessionLength", { defaultValue: "Session length" })} value={`${selectedDay.session.sessionMinutes} min`} />
             <StatTile label={t("dashboard.statPerformanceIndex", { defaultValue: "Performance Index" })} value={`${selectedDay.session.performanceIndex} / 100`} tone="info" />
-            <StatTile label={t("dashboard.statStrongestArea", { defaultValue: "Strongest area" })} value={selectedDay.session.strongestArea} tone="stable" />
-            <StatTile label={t("dashboard.statAreaToMonitor", { defaultValue: "Area to monitor" })} value={selectedDay.session.areaToMonitor} tone="monitor" />
+            <StatTile label={t("dashboard.statStrongestArea", { defaultValue: "Strongest area" })} value={sessionAreaLabel(selectedDay.session.strongestArea)} tone="stable" />
+            <StatTile label={t("dashboard.statAreaToMonitor", { defaultValue: "Area to monitor" })} value={sessionAreaLabel(selectedDay.session.areaToMonitor)} tone="monitor" />
           </dl>
         ) : (
           <p className="mt-2 text-[15px] font-semibold leading-snug" style={{ color: "var(--muted)" }}>

@@ -142,7 +142,7 @@ export function CaregiverDashboard() {
       <CaregiverActions />
 
       <p className="px-1 pb-1 text-center text-[14px] font-semibold leading-snug" style={{ color: "var(--muted)" }}>
-        {dashboardDisclaimer}
+        {t("dashboard.disclaimer", { defaultValue: dashboardDisclaimer })}
       </p>
     </div>
   );

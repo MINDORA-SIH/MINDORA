@@ -16,7 +16,7 @@ export function PatientHeader({ patient, status, lastActiveLabel, activity }: Pa
   const { t } = useTranslation();
   const facts = [
     { label: t("dashboard.age", { defaultValue: "Age" }), value: `${patient.age} ${t("profile.years", { count: 0, defaultValue: "years" }).replace(/^0\s*/, "")}` },
-    { label: t("dashboard.carePlan", { defaultValue: "Care plan" }), value: patient.carePlan },
+    { label: t("dashboard.carePlan", { defaultValue: "Care plan" }), value: t("dashboard.carePlanActive", { defaultValue: patient.carePlan }) },
     { label: t("dashboard.lastActive", { defaultValue: "Last active" }), value: lastActiveLabel },
   ];
 
@@ -41,7 +41,7 @@ export function PatientHeader({ patient, status, lastActiveLabel, activity }: Pa
               className="text-2xl font-extrabold leading-tight sm:text-3xl"
               style={{ color: "var(--foreground)" }}
             >
-              {patient.name}
+              {t("common.patientFullName", { defaultValue: patient.name })}
             </h1>
             <dl className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-[15px]">
               {facts.map((fact) => (
