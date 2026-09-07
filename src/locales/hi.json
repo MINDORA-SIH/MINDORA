@@ -8,6 +8,7 @@
     "playAgain": "फिर से खेलें",
     "allGames": "सभी खेल",
     "welcome": "स्वागत है {{name}}",
+    "patientName": "सावित्री",
     "cancel": "रद्द करें",
     "close": "बंद करें",
     "save": "सहेजें",
@@ -113,8 +114,8 @@
     },
     "colorSequence": {
       "title": "रंग क्रम",
-      "label": "Memory",
-      "description": "Watch and repeat the colour pattern",
+      "label": "स्मृति",
+      "description": "रंगों का क्रम देखें और दोहराएँ",
       "subtitle": "पैटर्न याद करें और दोहराएँ",
       "watchCarefully": "ध्यान से देखें!",
       "showingColor": "रंग {{current}} / {{total}}",
@@ -134,7 +135,7 @@
       "blue": "नीला",
       "green": "हरा",
       "yellow": "पीला",
-      "newColorHint": "Color #{{position}} in the sequence"
+      "newColorHint": "क्रम में रंग #{{position}}"
     }
   },
   "reminders": {

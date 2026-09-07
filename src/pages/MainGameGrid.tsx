@@ -91,7 +91,7 @@ export function MainGameGrid() {
       {/* Greeting Header Section */}
       <div className="pt-2 text-center w-full">
         <h1 className="text-[26px] md:text-[28px] font-bold tracking-tight" style={{ color: "var(--foreground)" }}>
-          {t("common.welcome", { name: "Savitri" })}
+          {t("common.welcome", { name: t("common.patientName") })}
         </h1>
       </div>
 

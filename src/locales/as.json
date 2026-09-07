@@ -8,6 +8,7 @@
     "playAgain": "আকৌ খেলক",
     "allGames": "সকলো খেল",
     "welcome": "স্বাগতম {{name}}",
+    "patientName": "সাবিত্ৰী",
     "cancel": "বাতিল কৰক",
     "close": "বন্ধ কৰক",
     "save": "সংৰক্ষণ কৰক",
@@ -113,8 +114,8 @@
     },
     "colorSequence": {
       "title": "ৰঙৰ ক্ৰম",
-      "label": "Memory",
-      "description": "Watch and repeat the colour pattern",
+      "label": "স্মৃতি",
+      "description": "ৰঙৰ ধাৰা চাওক আৰু পুনৰাবৃত্তি কৰক",
       "subtitle": "আৰ্হি মনত ৰাখি পুনৰ কৰক",
       "watchCarefully": "সাৱধানে চাওক!",
       "showingColor": "ৰং {{current}} / {{total}}",
@@ -134,7 +135,7 @@
       "blue": "নীলা",
       "green": "সেউজীয়া",
       "yellow": "হালধীয়া",
-      "newColorHint": "Color #{{position}} in the sequence"
+      "newColorHint": "ক্ৰমৰ {{position}} নম্বৰ ৰঙ"
     }
   },
   "reminders": {
