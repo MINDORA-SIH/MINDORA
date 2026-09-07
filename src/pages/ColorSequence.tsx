@@ -41,24 +41,23 @@ export function ColorSequence() {
     };
   }, []);
 
-  const playSequence = useCallback((sequence: string[]) => {
+  const flashNewColor = useCallback((sequence: string[]) => {
     setGameState("showing");
-    setShowingIndex(-1);
+    const newColor = sequence[sequence.length - 1];
+    setShowingIndex(sequence.length - 1);
 
-    sequence.forEach((color, index) => {
+    // Flash the single new color after a short pause
+    timeoutRef.current = setTimeout(() => {
+      setFlashingColor(newColor);
       setTimeout(() => {
-        setFlashingColor(color);
-        setShowingIndex(index);
+        setFlashingColor(null);
+        // Move to input phase — user must recall the full sequence
         setTimeout(() => {
-          setFlashingColor(null);
-        }, 400);
-      }, (index + 1) * 700);
-    });
-
-    setTimeout(() => {
-      setGameState("input");
-      setShowingIndex(-1);
-    }, (sequence.length + 1) * 700);
+          setGameState("input");
+          setShowingIndex(-1);
+        }, 300);
+      }, 600);
+    }, 400);
   }, []);
 
   const nextLevel = useCallback((currentLevel: number, currentSeq: string[]) => {
@@ -72,9 +71,9 @@ export function ColorSequence() {
     setGameState("showing");
 
     timeoutRef.current = setTimeout(() => {
-      playSequence(newSeq);
+      flashNewColor(newSeq);
     }, 600);
-  }, [playSequence]);
+  }, [flashNewColor]);
 
   const startGame = useCallback(() => {
     setLevel(0);
@@ -259,7 +258,7 @@ export function ColorSequence() {
                 </h3>
               </div>
               <p className="text-[20px] text-slate-500 font-bold">
-                {t("games.colorSequence.showingColor", { current: showingIndex + 1, total: gameSeq.length })}
+                {t("games.colorSequence.newColorHint", { position: gameSeq.length })}
               </p>
             </div>
           )}
@@ -331,7 +330,7 @@ export function ColorSequence() {
           <div className="flex items-center justify-center gap-1.5 mt-5">
             {gameSeq.map((colorId, idx) => {
               const color = COLORS.find((c) => c.id === colorId);
-              const isFilled = gameState === "input" ? idx < userSeq.length : idx <= showingIndex;
+              const isFilled = gameState === "input" ? idx < userSeq.length : idx === showingIndex;
               return (
                 <div
                   key={idx}

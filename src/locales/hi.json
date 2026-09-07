@@ -113,6 +113,8 @@
     },
     "colorSequence": {
       "title": "रंग क्रम",
+      "label": "Memory",
+      "description": "Watch and repeat the colour pattern",
       "subtitle": "पैटर्न याद करें और दोहराएँ",
       "watchCarefully": "ध्यान से देखें!",
       "showingColor": "रंग {{current}} / {{total}}",
@@ -131,7 +133,8 @@
       "red": "लाल",
       "blue": "नीला",
       "green": "हरा",
-      "yellow": "पीला"
+      "yellow": "पीला",
+      "newColorHint": "Color #{{position}} in the sequence"
     }
   },
   "reminders": {

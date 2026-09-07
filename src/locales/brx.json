@@ -113,6 +113,8 @@
     },
     "colorSequence": {
       "title": "Color Sequence",
+      "label": "Memory",
+      "description": "Watch and repeat the colour pattern",
       "subtitle": "Remember & repeat the pattern",
       "watchCarefully": "Watch carefully!",
       "showingColor": "Showing color {{current}} of {{total}}",
@@ -131,7 +133,8 @@
       "red": "Red",
       "blue": "Blue",
       "green": "Green",
-      "yellow": "Yellow"
+      "yellow": "Yellow",
+      "newColorHint": "Color #{{position}} in the sequence"
     }
   },
   "reminders": {

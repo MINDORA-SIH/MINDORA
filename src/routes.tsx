@@ -10,6 +10,7 @@ import { Chatbot } from "./pages/Chatbot";
 import { SpotTheDifference } from "./pages/SpotTheDifference";
 import { WhoIsThisGame } from "./pages/WhoIsThis";
 import { DailyRoutine } from "./pages/DailyRoutine";
+import { ColorSequence } from "./pages/ColorSequence";
 import { UnderDevelopment } from "./pages/UnderDevelopment";
 
 export const router = createBrowserRouter([
@@ -27,6 +28,7 @@ export const router = createBrowserRouter([
       { path: "daily-routine", Component: DailyRoutine },
       // Daily routine setup is now part of Manage Game Data. Keep existing links working.
       { path: "daily-routines", element: <Navigate to="/manage-data" replace /> },
+      { path: "color-sequence", Component: ColorSequence },
       { path: "spot-the-difference", Component: SpotTheDifference },
       { path: "who-is-this", Component: WhoIsThisGame },
       { path: "*", Component: UnderDevelopment },

@@ -1,4 +1,4 @@
-import { Users, FileText, LayoutGrid, Music, ListCheck, Eye } from "lucide-react";
+import { Users, FileText, LayoutGrid, Music, ListCheck, Eye, Palette } from "lucide-react";
 import { useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
 
@@ -7,6 +7,7 @@ export function MainGameGrid() {
   const { t } = useTranslation();
 
   const games = [
+    // 1. Who Is This
     {
       id: 1,
       title: t("games.whoIsThis.title"),
@@ -17,16 +18,18 @@ export function MainGameGrid() {
       textColor: "text-[#993C1D]",
       path: "/who-is-this",
     },
+    // 2. Color Sequence
     {
       id: 2,
-      title: t("games.storyQuiz.title"),
-      label: t("games.storyQuiz.label"),
-      description: t("games.storyQuiz.description"),
-      icon: <FileText className="w-8 h-8 sm:w-10 sm:h-10 md:w-11 md:h-11 text-[#185FA5]" />,
-      bg: "bg-[#E6F1FB] border-[#185FA5]/20 hover:bg-[#185FA5]/10",
-      textColor: "text-[#185FA5]",
-      path: "/story-quiz",
+      title: t("games.colorSequence.title"),
+      label: t("games.colorSequence.label"),
+      description: t("games.colorSequence.description"),
+      icon: <Palette className="w-8 h-8 sm:w-10 sm:h-10 md:w-11 md:h-11 text-[#9333EA]" />,
+      bg: "bg-[#F5F0FF] border-[#9333EA]/20 hover:bg-[#9333EA]/10",
+      textColor: "text-[#9333EA]",
+      path: "/color-sequence",
     },
+    // 3. Daily Routine
     {
       id: 3,
       title: t("dailyRoutine.title"),
@@ -37,8 +40,31 @@ export function MainGameGrid() {
       textColor: "text-[#0F6E56]",
       path: "/daily-routine",
     },
+    // 4. Spot the Difference
     {
       id: 4,
+      title: t("games.spotTheDifference.title"),
+      label: t("games.spotTheDifference.label"),
+      description: t("games.spotTheDifference.description"),
+      icon: <Eye className="w-8 h-8 sm:w-10 sm:h-10 md:w-11 md:h-11 text-[#534AB7]" />,
+      bg: "bg-[#EEEDFE] border-[#534AB7]/20 hover:bg-[#534AB7]/10",
+      textColor: "text-[#534AB7]",
+      path: "/spot-the-difference",
+    },
+    // 5. Story Quiz
+    {
+      id: 5,
+      title: t("games.storyQuiz.title"),
+      label: t("games.storyQuiz.label"),
+      description: t("games.storyQuiz.description"),
+      icon: <FileText className="w-8 h-8 sm:w-10 sm:h-10 md:w-11 md:h-11 text-[#185FA5]" />,
+      bg: "bg-[#E6F1FB] border-[#185FA5]/20 hover:bg-[#185FA5]/10",
+      textColor: "text-[#185FA5]",
+      path: "/story-quiz",
+    },
+    // 6. Word-Sound Memory
+    {
+      id: 6,
       title: t("games.wordSoundMemory.title"),
       label: t("games.wordSoundMemory.label"),
       description: t("games.wordSoundMemory.description"),
@@ -47,8 +73,9 @@ export function MainGameGrid() {
       textColor: "text-[#3B6D11]",
       path: "/word-sound-memory",
     },
+    // 7. Pattern Recognition
     {
-      id: 5,
+      id: 7,
       title: t("games.patternRecognition.title"),
       label: t("games.patternRecognition.label"),
       description: t("games.patternRecognition.description"),
@@ -56,16 +83,6 @@ export function MainGameGrid() {
       bg: "bg-[#FAEEDA] border-[#854F0B]/20 hover:bg-[#854F0B]/10",
       textColor: "text-[#854F0B]",
       path: "/pattern-recognition",
-    },
-    {
-      id: 6,
-      title: t("games.spotTheDifference.title"),
-      label: t("games.spotTheDifference.label"),
-      description: t("games.spotTheDifference.description"),
-      icon: <Eye className="w-8 h-8 sm:w-10 sm:h-10 md:w-11 md:h-11 text-[#534AB7]" />,
-      bg: "bg-[#EEEDFE] border-[#534AB7]/20 hover:bg-[#534AB7]/10",
-      textColor: "text-[#534AB7]",
-      path: "/spot-the-difference",
     },
   ];
 

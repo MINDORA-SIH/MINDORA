@@ -113,9 +113,12 @@
     },
     "colorSequence": {
       "title": "Color Sequence",
+      "label": "Memory",
+      "description": "Watch and repeat the colour pattern",
       "subtitle": "Remember & repeat the pattern",
       "watchCarefully": "Watch carefully!",
       "showingColor": "Showing color {{current}} of {{total}}",
+      "newColorHint": "Color #{{position}} in the sequence",
       "yourTurn": "Your turn!",
       "tapColors": "Tap the colors in the right order ({{done}}/{{total}})",
       "getReady": "Get ready for the next level...",

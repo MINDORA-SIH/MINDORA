@@ -113,6 +113,8 @@
     },
     "colorSequence": {
       "title": "ৰঙৰ ক্ৰম",
+      "label": "Memory",
+      "description": "Watch and repeat the colour pattern",
       "subtitle": "আৰ্হি মনত ৰাখি পুনৰ কৰক",
       "watchCarefully": "সাৱধানে চাওক!",
       "showingColor": "ৰং {{current}} / {{total}}",
@@ -131,7 +133,8 @@
       "red": "ৰঙা",
       "blue": "নীলা",
       "green": "সেউজীয়া",
-      "yellow": "হালধীয়া"
+      "yellow": "হালধীয়া",
+      "newColorHint": "Color #{{position}} in the sequence"
     }
   },
   "reminders": {
