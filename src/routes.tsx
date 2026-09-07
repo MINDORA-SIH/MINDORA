@@ -1,4 +1,4 @@
-import { createBrowserRouter, Navigate } from "react-router";
+import { createHashRouter, Navigate } from "react-router";
 import { Layout } from "./Layout";
 import { MainGameGrid } from "./pages/MainGameGrid";
 import { Dashboard } from "./pages/Dashboard";
@@ -12,11 +12,13 @@ import { WhoIsThisGame } from "./pages/WhoIsThis";
 import { DailyRoutine } from "./pages/DailyRoutine";
 import { ColorSequence } from "./pages/ColorSequence";
 import { UnderDevelopment } from "./pages/UnderDevelopment";
+import { ErrorBoundary } from "./components/ErrorBoundary";
 
-export const router = createBrowserRouter([
+export const router = createHashRouter([
   {
     path: "/",
     Component: Layout,
+    errorElement: <ErrorBoundary><Layout /></ErrorBoundary>,
     children: [
       { index: true, Component: MainGameGrid },
       { path: "dashboard", Component: Dashboard },

@@ -31,10 +31,15 @@ function withDashboardNamespace(bundle: LocaleBundle): LocaleBundle {
  * a language the dropdown cannot display.
  */
 function resolveInitialLanguage(): string {
-  const stored = localStorage.getItem('app_user_language');
-  return SUPPORTED_LANGUAGES.some((language) => language.code === stored)
-    ? (stored as string)
-    : DEFAULT_LANGUAGE;
+  try {
+    const stored = localStorage.getItem('app_user_language');
+    if (SUPPORTED_LANGUAGES.some((language) => language.code === stored)) {
+      return stored as string;
+    }
+  } catch {
+    // localStorage may throw in private browsing or restricted environments.
+  }
+  return DEFAULT_LANGUAGE;
 }
 
 /**
@@ -70,7 +75,7 @@ i18n.use(initReactI18next).init({
  * `useLanguageSync` listens for this event.
  */
 i18n.on('languageChanged', (lang) => {
-  localStorage.setItem('app_user_language', lang);
+  try { localStorage.setItem('app_user_language', lang); } catch { /* storage unavailable */ }
   // Keep assistive tech (screen readers, font shaping) in sync with the UI.
   document.documentElement.lang = lang;
   window.dispatchEvent(new CustomEvent('mindoraLangChange', { detail: lang }));

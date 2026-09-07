@@ -19,7 +19,9 @@ export function Layout() {
     void i18n.changeLanguage(nextLanguage.code);
   };
 
-  const [darkMode, setDarkMode] = useState(() => localStorage.getItem("mindora_dark") === "true");
+  const [darkMode, setDarkMode] = useState(() => {
+    try { return localStorage.getItem("mindora_dark") === "true"; } catch { return false; }
+  });
 
   // Emergency SOS state
   const [sosActive, setSosActive] = useState(false);
@@ -83,7 +85,7 @@ export function Layout() {
   // Apply dark mode class to <html> element and persist
   useEffect(() => {
     document.documentElement.classList.toggle("dark", darkMode);
-    localStorage.setItem("mindora_dark", String(darkMode));
+    try { localStorage.setItem("mindora_dark", String(darkMode)); } catch { /* storage unavailable */ }
   }, [darkMode]);
 
   useEffect(() => {
