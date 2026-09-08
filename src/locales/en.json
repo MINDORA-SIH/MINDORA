@@ -167,6 +167,14 @@
     "doctorVisit": "Doctor Visit"
   },
   "dashboard": {
+    "sessions": "Sessions",
+    "thisWeek": "this week",
+    "avgSession": "Average session",
+    "perActiveDay": "per active day",
+    "completedThisWeek": "completed this week",
+    "totalTime": "Total time",
+    "last30Days": "Last 30 days",
+    "activitiesCompleted": "activities completed",
     "alertThreshold": "Alert if score drops below {{threshold}}",
     "performanceIndex": "Performance Index",
     "compositeScore": "Composite score across recent activities",

@@ -167,6 +167,14 @@
     "doctorVisit": "डाक्टर भेट्ने"
   },
   "dashboard": {
+    "sessions": "सत्रहरू",
+    "thisWeek": "यो हप्ता",
+    "avgSession": "औसत सत्र",
+    "perActiveDay": "प्रति सक्रिय दिन",
+    "completedThisWeek": "यो हप्ता पूरा",
+    "totalTime": "कुल समय",
+    "last30Days": "पछिल्ला ३० दिन",
+    "activitiesCompleted": "पूरा गतिविधिहरू",
     "alertThreshold": "स्कोर {{threshold}} भन्दा तल गएमा सचेत गराउनुहोस्",
     "performanceIndex": "कार्यसम्पादन सूचक",
     "compositeScore": "हालका गतिविधिको संयुक्त अङ्क",

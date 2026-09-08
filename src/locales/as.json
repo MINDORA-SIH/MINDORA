@@ -167,6 +167,14 @@
     "doctorVisit": "চিকিৎসকৰ ওচৰলৈ যোৱা"
   },
   "dashboard": {
+    "sessions": "সত্ৰ",
+    "thisWeek": "এই সপ্তাহত",
+    "avgSession": "গড় সত্ৰ",
+    "perActiveDay": "প্ৰতি সক্ৰিয় দিনত",
+    "completedThisWeek": "এই সপ্তাহত সম্পূৰ্ণ",
+    "totalTime": "মুঠ সময়",
+    "last30Days": "যোৱা ৩০ দিন",
+    "activitiesCompleted": "সম্পূৰ্ণ কৰা কাৰ্যকলাপ",
     "alertThreshold": "স্ক'ৰ {{threshold}} ৰ তললৈ গ'লে সতৰ্ক কৰক",
     "performanceIndex": "কৰ্মক্ষমতা সূচক",
     "compositeScore": "সাম্প্ৰতিক কাৰ্যকলাপৰ সামগ্ৰিক স্ক'ৰ",

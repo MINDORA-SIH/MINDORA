@@ -38,7 +38,7 @@ export function RecentActivity({ sessions }: { sessions: SessionEntry[] }) {
                   {session.gameName}
                 </p>
                 <p className="mt-0.5 text-[13px] font-semibold" style={{ color: "var(--muted)" }}>
-                  {session.dayLabel} · {session.timeLabel} · {session.minutes} min
+                  {session.dayLabel} · {session.timeLabel} · {session.minutes} {t("dashboard.min", { defaultValue: "min" })}
                 </p>
               </div>
 

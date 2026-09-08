@@ -167,6 +167,14 @@
     "doctorVisit": "Doctor Visit"
   },
   "dashboard": {
+    "sessions": "सेसनफोर",
+    "thisWeek": "बे सबारआव",
+    "avgSession": "गेजेर सेसन",
+    "perActiveDay": "मावग्रा सानआव",
+    "completedThisWeek": "बे सबारआव फोजोबबाय",
+    "totalTime": "आबुं सम",
+    "last30Days": "जोबथा 30 सान",
+    "activitiesCompleted": "खामानिफोर फोजोबबाय",
     "alertThreshold": "स्कोर {{threshold}} नि गाहायाव थाङब्ला सांग्रां खालाम",
     "performanceIndex": "खामानि सुचक",
     "compositeScore": "गोजाननि खामानिनि मिलान नाम्बार",

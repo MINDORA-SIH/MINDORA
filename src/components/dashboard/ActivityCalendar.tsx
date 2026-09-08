@@ -50,13 +50,13 @@ export function ActivityCalendar() {
   const statusText = (status: CalendarDayStatus) => {
     switch (status) {
       case "completed":
-        return t("dashboard.statusCompleted", { defaultValue: "Full session completed" });
+        return t("dashboard.fullSessionCompleted", { defaultValue: "Full session completed" });
       case "partial":
-        return t("dashboard.statusPartial", { defaultValue: "Short activity only" });
+        return t("dashboard.shortActivityOnly", { defaultValue: "Short activity only" });
       case "none":
-        return t("dashboard.statusNone", { defaultValue: "No activity recorded" });
+        return t("dashboard.noActivityRecorded", { defaultValue: "No activity recorded" });
       case "future":
-        return t("dashboard.statusFuture", { defaultValue: "Upcoming date" });
+        return t("dashboard.upcomingDate", { defaultValue: "Upcoming date" });
     }
   };
 
@@ -94,8 +94,8 @@ export function ActivityCalendar() {
 
   return (
     <SectionCard
-      title={t("dashboard.activityCalendarTitle", { defaultValue: "Activity Calendar" })}
-      subtitle={t("dashboard.activityCalendarSubtitle", { defaultValue: "Patient participation by day" })}
+      title={t("dashboard.activityCalendar", { defaultValue: "Activity Calendar" })}
+      subtitle={t("dashboard.patientParticipationByDay", { defaultValue: "Patient participation by day" })}
       icon={CalendarDays}
       tone="info"
       action={monthNav}
@@ -181,14 +181,14 @@ export function ActivityCalendar() {
         {selectedDay.session ? (
           <dl className="mt-3 grid grid-cols-2 gap-2.5 sm:grid-cols-3">
             <StatTile
-              label={t("dashboard.statActivities", { defaultValue: "Activities" })}
+              label={t("dashboard.activities", { defaultValue: "Activities" })}
               value={`${selectedDay.session.gamesCompleted}`}
               tone={DETAIL_TONE[selectedDay.status]}
             />
-            <StatTile label={t("dashboard.statSessionLength", { defaultValue: "Session length" })} value={`${selectedDay.session.sessionMinutes} min`} />
-            <StatTile label={t("dashboard.statPerformanceIndex", { defaultValue: "Performance Index" })} value={`${selectedDay.session.performanceIndex} / 100`} tone="info" />
-            <StatTile label={t("dashboard.statStrongestArea", { defaultValue: "Strongest area" })} value={sessionAreaLabel(selectedDay.session.strongestArea)} tone="stable" />
-            <StatTile label={t("dashboard.statAreaToMonitor", { defaultValue: "Area to monitor" })} value={sessionAreaLabel(selectedDay.session.areaToMonitor)} tone="monitor" />
+            <StatTile label={t("dashboard.sessionLength", { defaultValue: "Session length" })} value={`${selectedDay.session.sessionMinutes} ${t("dashboard.min", { defaultValue: "min" })}`} />
+            <StatTile label={t("dashboard.performanceIndex", { defaultValue: "Performance Index" })} value={`${selectedDay.session.performanceIndex} / 100`} tone="info" />
+            <StatTile label={t("dashboard.strongestArea", { defaultValue: "Strongest area" })} value={sessionAreaLabel(selectedDay.session.strongestArea)} tone="stable" />
+            <StatTile label={t("dashboard.areaToMonitor", { defaultValue: "Area to monitor" })} value={sessionAreaLabel(selectedDay.session.areaToMonitor)} tone="monitor" />
           </dl>
         ) : (
           <p className="mt-2 text-[15px] font-semibold leading-snug" style={{ color: "var(--muted)" }}>

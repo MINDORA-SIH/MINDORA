@@ -21,8 +21,8 @@ export function ActivityLevelCard({ activity }: { activity: ActivitySummary }) {
 
   return (
     <SectionCard
-      title={t("dashboard.activityLevelTitle", { defaultValue: "Activity Level" })}
-      subtitle={t("dashboard.activityLevelSubtitle", { defaultValue: "Participation over the last 7 days" })}
+      title={t("dashboard.activityLevel", { defaultValue: "Activity Level" })}
+      subtitle={t("dashboard.participationOver7Days", { defaultValue: "Participation over the last 7 days" })}
       icon={Activity}
       tone={tone}
       className="h-full"
@@ -92,29 +92,29 @@ export function ActivityLevelCard({ activity }: { activity: ActivitySummary }) {
 
       <dl className="mt-4 grid grid-cols-2 gap-2.5 sm:grid-cols-3">
         <StatTile
-          label={t("dashboard.statSessions", { defaultValue: "Sessions" })}
+          label={t("dashboard.sessions", { defaultValue: "Sessions" })}
           value={`${activity.sessions}`}
-          hint={t("dashboard.statSessionsHint", { defaultValue: "this week" })}
+          hint={t("dashboard.thisWeek", { defaultValue: "this week" })}
         />
         <StatTile
-          label={t("dashboard.statAverageSession", { defaultValue: "Average session" })}
-          value={`${activity.averageSessionMinutes} min`}
-          hint={t("dashboard.statAverageSessionHint", { defaultValue: "per active day" })}
+          label={t("dashboard.avgSession", { defaultValue: "Average session" })}
+          value={`${activity.averageSessionMinutes} ${t("dashboard.min", { defaultValue: "min" })}`}
+          hint={t("dashboard.perActiveDay", { defaultValue: "per active day" })}
         />
         <StatTile
-          label={t("dashboard.statActivitiesCompleted", { defaultValue: "Activities" })}
+          label={t("dashboard.activities", { defaultValue: "Activities" })}
           value={`${activity.activitiesThisWeek}`}
-          hint={t("dashboard.statActivitiesHint", { defaultValue: "completed this week" })}
+          hint={t("dashboard.completedThisWeek", { defaultValue: "completed this week" })}
         />
         <StatTile
-          label={t("dashboard.statTotalTime", { defaultValue: "Total time" })}
-          value={`${activity.totalMinutes} min`}
-          hint={t("dashboard.statTotalTimeHint", { defaultValue: "this week" })}
+          label={t("dashboard.totalTime", { defaultValue: "Total time" })}
+          value={`${activity.totalMinutes} ${t("dashboard.min", { defaultValue: "min" })}`}
+          hint={t("dashboard.thisWeek", { defaultValue: "this week" })}
         />
         <StatTile
-          label={t("dashboard.statLast30Days", { defaultValue: "Last 30 days" })}
+          label={t("dashboard.last30Days", { defaultValue: "Last 30 days" })}
           value={`${activity.activitiesLast30Days}`}
-          hint={t("dashboard.statLast30DaysHint", { defaultValue: "activities completed" })}
+          hint={t("dashboard.activitiesCompleted", { defaultValue: "activities completed" })}
           tone="info"
         />
       </dl>

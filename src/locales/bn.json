@@ -167,6 +167,14 @@
     "doctorVisit": "ডাক্তার দেখানো"
   },
   "dashboard": {
+    "sessions": "সেশন",
+    "thisWeek": "এই সপ্তাহে",
+    "avgSession": "গড় সেশন",
+    "perActiveDay": "প্রতি সক্রিয় দিনে",
+    "completedThisWeek": "এই সপ্তাহে সম্পন্ন",
+    "totalTime": "মোট সময়",
+    "last30Days": "গত ৩০ দিন",
+    "activitiesCompleted": "সম্পন্ন কার্যকলাপ",
     "alertThreshold": "স্কোর {{threshold}} এর নিচে গেলে সতর্ক করুন",
     "performanceIndex": "কর্মদক্ষতা সূচক",
     "compositeScore": "সাম্প্রতিক কাজের সম্মিলিত স্কোর",
