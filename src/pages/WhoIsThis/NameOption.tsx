@@ -1,5 +1,6 @@
 import { clsx } from "clsx";
 import { Check } from "lucide-react";
+import { useDynamicTranslation } from "@/hooks/useDynamicTranslation";
 import type { Person } from "./types";
 
 interface NameOptionProps {
@@ -26,6 +27,9 @@ export default function NameOption({
   isRevealed,
   onSelect,
 }: NameOptionProps) {
+  // Translate the person's name so it updates when the language changes.
+  const { text: translatedName } = useDynamicTranslation(person.name);
+
   // After the reveal the correct name is always highlighted, even when the
   // patient picked another one — seeing the right answer is the reinforcement.
   const showCorrect = isRevealed && isCorrectAnswer;
@@ -53,7 +57,7 @@ export default function NameOption({
       )}
     >
       {showCorrect ? <Check className="h-6 w-6 shrink-0" aria-hidden="true" /> : null}
-      {person.name}
+      {translatedName}
     </button>
   );
 }
